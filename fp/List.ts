@@ -226,18 +226,16 @@ export default abstract class List<A> {
     }
 
     startsWith(that: List<A>): boolean {
-        function loop(xs1: List<A>, xs2: List<A>): boolean {
-            if (xs1 instanceof Cons) {
-                if (xs2 instanceof Cons) {
-                    return xs1.head == xs2.head ? loop(xs1.tail, xs2.tail) : false
-                } else {
-                    return true
-                }
+        if (this instanceof Cons) {
+            if (that instanceof Cons) {
+                return this.head == that.head ? this.tail.startsWith(that.tail) : false
             } else {
-                return !(xs2 instanceof Cons)
+                return true
             }
+        } else {
+            return that instanceof Nil
         }
-        return loop(this, that)
+        
     }
 
     endsWith(that: List<A>): boolean {
@@ -245,6 +243,10 @@ export default abstract class List<A> {
     }
 
     zip <B> (that: List<B>): List<Tuple2<A, B>> {
+        TODO()
+    }
+
+    zipWithIndex(): List<Tuple2<A, number>> {
         TODO()
     }
 }

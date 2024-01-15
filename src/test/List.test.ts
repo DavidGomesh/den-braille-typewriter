@@ -430,3 +430,14 @@ describe("zip", () => {
         expect(list123.zip(emptyList)).toEqual(emptyList)
     })
 })
+
+describe("zipWithIndex", () => {
+    test("zipWithIndex must create a List of Tuples", () => {
+        expect(List.of(["a", "b", "c"]).zipWithIndex()).toEqual(List.of([
+            tuple("a", 1), tuple("b", 2), tuple("c", 3)
+        ]))
+    })
+    test("zipWithIndex must do nothing", () => {
+        expect(emptyList.zipWithIndex()).toEqual(emptyList)
+    })
+})
