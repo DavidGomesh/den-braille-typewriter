@@ -1,4 +1,4 @@
-import { Tuple2, tuple } from "../../fp/Tuples"
+import { Tuple2, tuple } from "../../main/fp/Tuples"
 
 describe("tuple", () => {
     test("tuple must create a Tuple2", () => {

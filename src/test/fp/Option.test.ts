@@ -1,4 +1,4 @@
-import Option, { None, Some, flatten } from "../../fp/Option"
+import Option, { None, Some, flatten } from "../../main/fp/Option"
 
 const some: Option<number> = new Some(1)
 const none: Option<number> = new None

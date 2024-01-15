@@ -1,5 +1,5 @@
-import Either, { Left, Right } from "../../fp/Either"
-import { None, Some } from "../../fp/Option"
+import Either, { Left, Right } from "../../main/fp/Either"
+import { None, Some } from "../../main/fp/Option"
 
 const left:  Either<string, number> = new Left("Error")
 const right: Either<string, number> = new Right(1)
