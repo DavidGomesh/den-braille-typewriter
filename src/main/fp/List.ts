@@ -7,7 +7,7 @@ export default abstract class List<A> {
     static empty <B> () { return new Nil<B> }
 
     static of <B> (xs: B[]): List<B> {
-        return xs.length == 0 ? new Nil : new Cons(xs[0], List.of(xs.slice(1)))
+        return xs.length === 0 ? new Nil : new Cons(xs[0], List.of(xs.slice(1)))
     }
 
     static cons <B> (head: B, tail: List<B>): List<B> {
@@ -80,7 +80,7 @@ export default abstract class List<A> {
 
     contains(elem: A): boolean {
         function loop(xs: List<A>): boolean {
-            return xs instanceof Cons ? xs.head == elem || loop(xs.tail) : false
+            return xs instanceof Cons ? xs.head === elem || loop(xs.tail) : false
         }
         return loop(this)
     }
@@ -218,7 +218,7 @@ export default abstract class List<A> {
 
     updated(pos: number, elem: A): List<A> {
         function loop(i: number, r: List<A>, xs: List<A>): List<A> {
-            return xs.htOption().fold(() => r, ht => (i == pos ? 
+            return xs.htOption().fold(() => r, ht => (i === pos ? 
                 r.appendedAll(ht.second.prepended(elem)) : loop(i + 1, r.prepended(ht.first), ht.second)
             ))
         }
@@ -228,7 +228,7 @@ export default abstract class List<A> {
     startsWith(that: List<A>): boolean {
         if (this instanceof Cons) {
             if (that instanceof Cons) {
-                return this.head == that.head ? this.tail.startsWith(that.tail) : false
+                return this.head === that.head ? this.tail.startsWith(that.tail) : false
             } else {
                 return true
             }

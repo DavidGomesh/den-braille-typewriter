@@ -21,7 +21,7 @@ export default abstract class Either<A, B> {
     }
 
     contains(elem: B): boolean {
-        return this.fold(_ => false, _ => _ == elem)
+        return this.fold(_ => false, _ => _ === elem)
     }
 
     exists(p: (_: B) => boolean): boolean {

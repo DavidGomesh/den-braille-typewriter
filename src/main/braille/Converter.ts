@@ -23,7 +23,7 @@ export function toText(text: List<Cell>): string {
                 ))
             }
 
-            if (cell == Cell.C0) {
+            if (cell === Cell.C0) {
                 return loop(concat(result, " "), remaining)
             }
 

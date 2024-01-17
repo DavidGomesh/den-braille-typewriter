@@ -21,7 +21,7 @@ export default abstract class Option<A> {
     }
 
     contains(elem: A): boolean {
-        return this.fold(() => false, _ => _ == elem)
+        return this.fold(() => false, _ => _ === elem)
     }
 
     exists(p: (_: A) => boolean): boolean {

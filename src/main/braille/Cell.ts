@@ -51,7 +51,7 @@ export class Alphabet {
 }
 
 export function isEmpty(cell: Cell): boolean {
-    return cell == Cell.C0
+    return cell === Cell.C0
 }
 
 export function isNotEmpty(cell: Cell): boolean {
@@ -59,5 +59,5 @@ export function isNotEmpty(cell: Cell): boolean {
 }
 
 export function isCapital(cell: Cell): boolean {
-    return cell == Cell.C46
+    return cell === Cell.C46
 }
