@@ -1,6 +1,6 @@
-import Option, { None, Some } from "./Option"
-import { Tuple2, tuple } from "./Tuples"
-import TODO from "./Utils"
+import Option, { None, Some } from "./Option.ts"
+import { Tuple2, tuple } from "./Tuples.ts"
+import TODO from "./Utils.ts"
 
 export default abstract class List<A> {
     

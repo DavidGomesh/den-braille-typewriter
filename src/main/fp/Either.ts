@@ -1,4 +1,4 @@
-import Option, { None, Some } from "./Option"
+import Option, { None, Some } from "./Option.ts"
 
 export default abstract class Either<A, B> {
     
