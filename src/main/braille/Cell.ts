@@ -1,4 +1,4 @@
-import List from "../fp/List";
+import { List } from "immutable";
 
 export enum Cell {
     C0,
@@ -38,7 +38,7 @@ export class Alphabet {
     static Y: Cell = Cell.C13456; static Z: Cell = Cell.C1356;
 
     static isAlphabet(cell: Cell): boolean {
-        return List.of([
+        return List([
             Alphabet.A, Alphabet.B, Alphabet.C, Alphabet.D, Alphabet.E,
             Alphabet.F, Alphabet.G, Alphabet.H, Alphabet.I, Alphabet.J,
             Alphabet.K, Alphabet.L, Alphabet.M, Alphabet.N, Alphabet.O,
@@ -46,7 +46,6 @@ export class Alphabet {
             Alphabet.U, Alphabet.V, Alphabet.W, Alphabet.X, Alphabet.Y, 
             Alphabet.Z
         ]).contains(cell)
-        
     }
 }
 

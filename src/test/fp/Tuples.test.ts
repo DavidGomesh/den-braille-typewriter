@@ -1,7 +1,18 @@
-import { Tuple2, tuple } from "../../main/fp/Tuples"
+import { pipe } from "fp-ts/lib/function"
+import { Tuple, fold } from "../../main/fp/Tuples"
 
-describe("tuple", () => {
-    test("tuple must create a Tuple2", () => {
-        expect(tuple(1, "One")).toEqual(new Tuple2(1, "One"))
+describe("Tuple", () => {
+    test("Tuple must create a new Tuple", () => {
+        const tuple = Tuple(1, "one")
+        expect(tuple.first).toEqual(1)
+        expect(tuple.second).toEqual("one")
+    })
+})
+
+describe("fold", () => {
+    test("fold must transform the Tuple", () => {
+        const tuple = Tuple(1, 2)
+        expect(pipe(tuple, fold((a, b) => a + b))).toEqual(3)
+        expect(pipe(tuple, fold((a, b) => Tuple(a + b, a * b)))).toEqual(Tuple(3, 2))
     })
 })

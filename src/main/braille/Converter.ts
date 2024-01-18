@@ -1,41 +1,44 @@
-import List from "../fp/List"
-import { Alphabet, Cell, isCapital, isEmpty, isNotEmpty } from "./Cell"
+
+import { List } from "immutable"
+
+import { Alphabet, Cell, isCapital, isEmpty } from "./Cell"
+import { pipe } from "fp-ts/lib/function"
+import { fold } from "fp-ts/lib/Option"
+import { fold as foldTuple } from "../fp/Tuples.ts"
+import { span, htOption } from "../fp/utils/List.ts"
 
 export function toText(text: List<Cell>): string { 
     function loop(result: string, text: List<Cell>): string {
-        return text.htOption().fold(() => result, t => {
-            
-            const cell: Cell = t.first
-            const remaining: List<Cell> = t.second
+        return pipe(text, htOption, fold(() => result, t => {
 
-            if (Alphabet.isAlphabet(cell)) { 
-                return loop(concat(result, toAlphabet(cell)), remaining) 
+            const cell: Cell = t.first
+            const remaing: List<Cell> = t.second
+
+            if (Alphabet.isAlphabet(cell)) {
+                return loop(result.concat(toAlphabet(cell)), remaing)
             }
 
             if (isCapital(cell)) {
-                return remaining.htOption().fold(() => loop(result, remaining), t => t.fold(
-                    (nc, rem) => !isCapital(nc) ? 
-                        loop(result.concat(toUpper(toText(List.of([nc])))), rem) : (
-                        rem.span(_ => !isEmpty(_)).fold(
-                            (ut, rt) => loop(result.concat(toUpper(toText(ut))), rt)
+                return pipe(remaing, htOption, fold(() => loop(result, remaing), foldTuple(
+                    (nc, rem) => (!isCapital(nc) ? 
+                        loop(result.concat(toUpper(toText(List([nc])))), rem) : (
+                            pipe(rem, span(_ => !isEmpty(_)), foldTuple(
+                                (ut, rt) => loop(result.concat(toUpper(toText(ut))), rt)
+                            ))
                         )
                     )
-                ))
+                )))
             }
 
-            if (cell === Cell.C0) {
-                return loop(concat(result, " "), remaining)
+            if (isEmpty(cell)) {
+                return loop(result.concat(" "), remaing)
             }
 
-            return loop(result, remaining)
-            
-        })
+            return loop(result, remaing)
+        }))
     }
-    return loop("", text)
-}
 
-function concat(str1: string, str2: string): string {
-    return str1.concat(str2)
+    return loop("", text)
 }
 
 function toUpper(str: string): string {
