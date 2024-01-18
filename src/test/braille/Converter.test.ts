@@ -1,43 +1,24 @@
 import { List } from "immutable"
-import { Alphabet as ABC, Cell } from "../../main/braille/Cell"
-import { toText } from "../../main/braille/Converter"
+import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z } from "../../main/braille/Alphabet.ts"
+import { toText } from "../../main/braille/converters/Converter.ts"
+import { CAP } from "../../main/braille/Identifiers.ts"
+import { SPC } from "../../main/braille/Symbols.ts"
 
 describe("Portuguese Spelling", () => {
     test("correct", () => {
-        expect(toText(List([
-            ABC.H as Cell, ABC.E as Cell, ABC.L as Cell, ABC.L as Cell, ABC.O as Cell
-        ]))).toEqual("hello")
+        expect(toText(List([H,E,L,L,O]))).toEqual("hello")
     })
     
     test("Upper Case", () => {
-        expect(toText(List([
-            Cell.C46, ABC.H, ABC.E, ABC.L, ABC.L, ABC.O
-        ]))).toEqual("Hello")
-
-        expect(toText(List([
-            ABC.H, ABC.E, ABC.L, Cell.C46, ABC.L, ABC.O 
-        ]))).toEqual("helLo")
-        
-        expect(toText(List([
-            ABC.H, ABC.E, ABC.L, ABC.L, ABC.O, Cell.C46
-        ]))).toEqual("hello")
+        expect(toText(List([CAP,H,E,L,L,O]))).toEqual("Hello")
+        expect(toText(List([H,E,L,CAP,L,O]))).toEqual("helLo")
+        expect(toText(List([H,E,L,L,O,CAP]))).toEqual("hello")
     })
 
     test("Full Upper Case", () => {
-        expect(toText(List([
-            Cell.C46, Cell.C46, ABC.H, ABC.E, ABC.L, ABC.L, ABC.O, Cell.C0, ABC.W, ABC.O, ABC.R, ABC.L, ABC.D
-        ]))).toEqual("HELLO world")
-        
-        expect(toText(List([
-            Cell.C46, Cell.C46, ABC.H, ABC.E, ABC.L, ABC.L, ABC.O, Cell.C0, Cell.C46, Cell.C46, ABC.W, ABC.O, ABC.R, ABC.L, ABC.D
-        ]))).toEqual("HELLO WORLD")
-        
-        expect(toText(List([
-            Cell.C46, Cell.C46, ABC.H, ABC.E, ABC.L, ABC.L, ABC.O, Cell.C0, Cell.C46, ABC.W, ABC.O, ABC.R, ABC.L, ABC.D
-        ]))).toEqual("HELLO World")
-
-        expect(toText(List([
-            ABC.H, ABC.E, ABC.L, ABC.L, ABC.O, Cell.C0, ABC.W, ABC.O, ABC.R, ABC.L, ABC.D, Cell.C46, Cell.C46
-        ]))).toEqual("hello world")
+        expect(toText(List([CAP,CAP,H,E,L,L,O,SPC,W,O,R,L,D]))).toEqual("HELLO world")
+        expect(toText(List([CAP,CAP,H,E,L,L,O,SPC,CAP,CAP,W,O,R,L,D]))).toEqual("HELLO WORLD")
+        expect(toText(List([CAP,CAP,H,E,L,L,O,SPC,CAP,W,O,R,L,D]))).toEqual("HELLO World")
+        expect(toText(List([H,E,L,L,O,SPC,W,O,R,L,D,CAP,CAP]))).toEqual("hello world")
     })
 })
