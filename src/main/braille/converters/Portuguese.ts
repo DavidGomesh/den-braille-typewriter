@@ -1,3 +1,4 @@
+import { COMMA, SEMICOLON, COLON, DOT, APOSTROPHE, QUESTION, EXCLAMATION, HYPHEN, ASTERISK, OPEN_PARENTHESES, CLOSE_PARENTHESES, OPEN_BRACKETS, CLOSE_BRACKETS, QUOTES, DASH, OPEN_PARENTHESES_2, CLOSE_PARENTHESES_2, OPEN_BRACKETS_2, CLOSE_BRACKETS_2, SINGLE_QUOTES, isPunctuation, isCompositePunctuation } from "../Punctuation";
 import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z } from "../Alphabet"
 import { Á, À, Â, Ã, É, Ê, Í, Ó, Ô, Õ, Ú, Ç, isDiacritic } from "../Diacritics";
 import { Tuple, fold as foldTuple } from "../../fp/Tuples";
@@ -28,6 +29,14 @@ function toText(result: string, next: List<Cell>): string {
                 return toText(result.concat(toAlphabet(cell)), remaining)
             }
 
+            if (isDiacritic(cell)) {
+                return toText(result.concat(toDiacritic(cell)), remaining)
+            }
+
+            if (isPunctuation(cell)) {
+                return pipe(toPunctuation(cell, remaining), foldTuple((r, nc) => toText(result.concat(r), nc)))
+            }
+
             if (isSpace(cell)) {
                 return toText(result.concat(toSpace()), remaining)
             }
@@ -36,9 +45,6 @@ function toText(result: string, next: List<Cell>): string {
                 return pipe(toCapital(remaining), foldTuple((r, nc) => toText(result.concat(r), nc)))
             }
 
-            if (isDiacritic(cell)) {
-                return toText(result.concat(toDiacritic(cell)), remaining)
-            }
 
             return toText(result, remaining)
         }))
@@ -56,6 +62,72 @@ function toAlphabet(cell: Cell): string {
     const letter = alphabet.get(cell, none)
     return letter == none ? empty : letter as string
 }
+
+
+const diacritics = Map([
+    [Á, "á"], [À, "à"], [Â, "â"], [Ã, "ã"], 
+    [É, "é"], [Ê, "ê"], [Í, "í"], [Ó, "ó"], 
+    [Ô, "ô"], [Õ, "õ"], [Ú, "ú"], [Ç, "ç"],
+])
+function toDiacritic(cell: Cell): string {
+    const diacritic = diacritics.get(cell, none)
+    return diacritic == none ? empty : diacritic as string
+}
+
+
+const punctuations = Map([
+    [COMMA, ","],
+    [SEMICOLON, ";"],
+    [COLON, ":"],
+    [DOT, "."],
+    // [APOSTROPHE, "'"],
+    [QUESTION, "?"],
+    [EXCLAMATION, "!"],
+    [HYPHEN, "-"],
+    [ASTERISK, "*"],
+    [OPEN_PARENTHESES, "("],
+    [CLOSE_PARENTHESES, ")"],
+    [OPEN_BRACKETS, "["],
+    [CLOSE_BRACKETS, "]"],
+    [QUOTES, `"`],
+])
+const compositePunctuations = Map([
+    [DASH, "—"],
+    [OPEN_PARENTHESES_2, "("],
+    [CLOSE_PARENTHESES_2, ")"],
+    [OPEN_BRACKETS_2, "["],
+    [CLOSE_BRACKETS_2, "]"],
+    [SINGLE_QUOTES, "'"],
+    // [QUOTES_VARIATION, "«"],
+])
+function toPunctuation(cell: Cell, next: List<Cell>): Tuple<string, List<Cell>> {
+    return pipe(next, htOption, foldOption(() => Tuple(toSimplePunctuation(cell), next), _ => 
+        pipe(_, foldTuple((nextCell, remaining) => {
+            const cp = List([cell, nextCell])
+            if (isCompositePunctuation(cp)) {
+                return Tuple(toCompositePunctuation(cp), remaining)
+            } else {
+                return Tuple(toSimplePunctuation(cell), next)
+            }
+        }))
+    ))
+}
+
+function toSimplePunctuation(cell: Cell): string {
+    const punctuation = punctuations.get(cell, none)
+    return punctuation == none ? empty : punctuation as string
+}
+
+function toCompositePunctuation(cells: List<Cell>): string {
+    const punctuation = compositePunctuations.get(cells, none)
+    return punctuation == none ? empty : punctuation as string
+}
+
+
+
+
+
+
 
 const space = " "
 function toSpace(): string {
@@ -78,12 +150,3 @@ function toCapital(next: List<Cell>): Tuple<string, List<Cell>> {
 }
 
 
-const diacritics = Map([
-    [Á, "á"], [À, "à"], [Â, "â"], [Ã, "ã"], 
-    [É, "é"], [Ê, "ê"], [Í, "í"], [Ó, "ó"], 
-    [Ô, "ô"], [Õ, "õ"], [Ú, "ú"], [Ç, "ç"],
-])
-function toDiacritic(cell: Cell): string {
-    const diacritic = diacritics.get(cell, none)
-    return diacritic == none ? empty : diacritic as string
-}

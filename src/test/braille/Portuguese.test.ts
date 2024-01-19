@@ -1,3 +1,4 @@
+import { COMMA, SEMICOLON, COLON, DOT, APOSTROPHE, QUESTION, EXCLAMATION, HYPHEN, ASTERISK, OPEN_PARENTHESES, CLOSE_PARENTHESES, OPEN_BRACKETS, CLOSE_BRACKETS, QUOTES, DASH, OPEN_PARENTHESES_2, CLOSE_PARENTHESES_2, OPEN_BRACKETS_2, CLOSE_BRACKETS_2, SINGLE_QUOTES } from "../../main/braille/Punctuation";
 import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z } from "../../main/braille/Alphabet.ts"
 import { Á, À, Â, Ã, É, Ê, Í, Ó, Ô, Õ, Ú, Ç } from "../../main/braille/Diacritics";
 import { Portuguese } from "../../main/braille/converters/Portuguese.ts"
@@ -58,6 +59,47 @@ describe("Letters with diacritics", () => {
     test("Simple tests", () => {
         expect(c.convert(List([Á,À,Â,Ã,É,Ê,Í,Ó,Ô,Õ,Ú,Ç]))).toEqual("áàâãéêíóôõúç")
         expect(c.convert(List([Á,R,V,O,R,E,SPC,Ô,N,I,B,U,S,SPC,Í,M,Ã]))).toEqual("árvore ônibus ímã")
+    })
+})
+
+describe("Punctuation", () => {
+    describe("Simple punctuation", () => {
+        test("COMMA", () => expect(c.convert(List([COMMA]))).toEqual(","))
+        test("SEMICOLON", () => expect(c.convert(List([SEMICOLON]))).toEqual(";"))
+        test("COLON", () => expect(c.convert(List([COLON]))).toEqual(":"))
+        test("DOT", () => expect(c.convert(List([DOT]))).toEqual("."))
+        // test("APOSTROPHE", () => expect(c.convert(List([APOSTROPHE]))).toEqual("'"))
+        test("QUESTION", () => expect(c.convert(List([QUESTION]))).toEqual("?"))
+        test("EXCLAMATION", () => expect(c.convert(List([EXCLAMATION]))).toEqual("!"))
+        test("HYPHEN", () => expect(c.convert(List([HYPHEN]))).toEqual("-"))
+        test("ASTERISK", () => expect(c.convert(List([ASTERISK]))).toEqual("*"))
+
+        // Fails (Expected: ( || Received: ê)
+        test("OPEN_PARENTHESES", () => expect(c.convert(List([OPEN_PARENTHESES]))).toEqual("("))
+        // Fails (Expected: ) || Received: ã)
+        test("CLOSE_PARENTHESES", () => expect(c.convert(List([CLOSE_PARENTHESES]))).toEqual(")"))
+        
+        // Fails (Expected: [ || Received: á)
+        test("OPEN_BRACKETS", () => expect(c.convert(List([OPEN_BRACKETS]))).toEqual("["))
+        // Fails (Expected: ] || Received: ú)
+        test("CLOSE_BRACKETS", () => expect(c.convert(List([CLOSE_BRACKETS]))).toEqual("]"))
+
+        test("QUOTES", () => expect(c.convert(List([QUOTES]))).toEqual(`"`))
+    })
+    describe("Composite punctuation", () => {
+        test("DASH", () => expect(c.convert(DASH)).toEqual("—"))
+
+        // Fails (Expected: ( || Received: ê)
+        test("OPEN_PARENTHESES_2", () => expect(c.convert(OPEN_PARENTHESES_2)).toEqual("("))
+
+        test("CLOSE_PARENTHESES_2", () => expect(c.convert(CLOSE_PARENTHESES_2)).toEqual(")"))
+
+        // Fails (Expected: [ || Received: á)
+        test("OPEN_BRACKETS_2", () => expect(c.convert(OPEN_BRACKETS_2)).toEqual("["))
+        
+        test("CLOSE_BRACKETS_2", () => expect(c.convert(CLOSE_BRACKETS_2)).toEqual("]"))
+        test("SINGLE_QUOTES", () => expect(c.convert(SINGLE_QUOTES)).toEqual("'"))
+        // test("QUOTES_VARIATION", () => expect(c.convert(QUOTES_VARIATION)).toEqual("«"))
     })
 })
 
