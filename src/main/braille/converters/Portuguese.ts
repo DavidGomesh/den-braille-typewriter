@@ -1,4 +1,5 @@
 import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z } from "../Alphabet"
+import { Á, À, Â, Ã, É, Ê, Í, Ó, Ô, Õ, Ú, Ç, isDiacritic } from "../Diacritics";
 import { Tuple, fold as foldTuple } from "../../fp/Tuples";
 import { htOption, span } from "../../fp/utils/List";
 import { pipe } from "fp-ts/lib/function";
@@ -33,6 +34,10 @@ function toText(result: string, next: List<Cell>): string {
             
             if (isCapital(cell)) {
                 return pipe(toCapital(remaining), foldTuple((r, nc) => toText(result.concat(r), nc)))
+            }
+
+            if (isDiacritic(cell)) {
+                return toText(result.concat(toDiacritic(cell)), remaining)
             }
 
             return toText(result, remaining)
@@ -70,4 +75,15 @@ function toCapital(next: List<Cell>): Tuple<string, List<Cell>> {
             }
         }))
     ))
+}
+
+
+const diacritics = Map([
+    [Á, "á"], [À, "à"], [Â, "â"], [Ã, "ã"], 
+    [É, "é"], [Ê, "ê"], [Í, "í"], [Ó, "ó"], 
+    [Ô, "ô"], [Õ, "õ"], [Ú, "ú"], [Ç, "ç"],
+])
+function toDiacritic(cell: Cell): string {
+    const diacritic = diacritics.get(cell, none)
+    return diacritic == none ? empty : diacritic as string
 }

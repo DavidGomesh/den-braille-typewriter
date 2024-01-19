@@ -1,4 +1,5 @@
 import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z } from "../../main/braille/Alphabet.ts"
+import { Á, À, Â, Ã, É, Ê, Í, Ó, Ô, Õ, Ú, Ç } from "../../main/braille/Diacritics";
 import { Portuguese } from "../../main/braille/converters/Portuguese.ts"
 import { CAP } from "../../main/braille/Identifiers.ts"
 import { List } from "immutable"
@@ -30,5 +31,10 @@ describe("Portuguese Spelling", () => {
         expect(converter.convert(List([CAP,CAP,H,E,L,L,O,SPC,CAP,CAP,W,O,R,L,D]))).toEqual("HELLO WORLD")
         expect(converter.convert(List([CAP,CAP,H,E,L,L,O,SPC,CAP,W,O,R,L,D]))).toEqual("HELLO World")
         expect(converter.convert(List([H,E,L,L,O,SPC,W,O,R,L,D,CAP,CAP]))).toEqual("hello world")
+    })
+
+    test("Letters with diacritics", () => {
+        expect(converter.convert(List([Á,À,Â,Ã,É,Ê,Í,Ó,Ô,Õ,Ú,Ç]))).toEqual("áàâãéêíóôõúç")
+        expect(converter.convert(List([Á,R,V,O,R,E,SPC,Ô,N,I,B,U,S,SPC,Í,M,Ã]))).toEqual("árvore ônibus ímã")
     })
 })
