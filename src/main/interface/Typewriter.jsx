@@ -1,12 +1,18 @@
+import { List, Set } from 'immutable'
 import React, { useEffect, useState } from 'react'
-import List from '../fp/List.ts'
-
-const validKeys = List.of([83, 68, 70, 74, 75, 76])
+import { dotsToCell, keyToDot } from '../braille/BrailleKeyMap.ts'
+import { pipe } from 'fp-ts/lib/function'
+import { fold as foldOption } from 'fp-ts/lib/Option'
+import { cellToGlyph } from '../braille/BrailleGlyph.ts'
+import { cellToASCII } from '../braille/BrailleASCII.ts'
 
 export default function Typewriter() {
 
-    const [currPressedKeys, setCurrPressedKeys] = useState(List.empty())
-    const [pressedKeys, setPressedKeys] = useState(List.empty())
+    const [currPressedDots, setCurrPressedDots] = useState(Set([]))
+    const [pressedDots, setPressedDots] = useState(Set([]))
+
+    const [metabraille, setMetabraille] = useState(List([]))
+    const [glyphs, setGlyphs] = useState(List([]))
 
     const style = {
         backgroundColor: 'cyan',
@@ -16,32 +22,37 @@ export default function Typewriter() {
     }
 
     function keyPressed({keyCode}) {
-        if (validKeys.contains(keyCode)) {
-            if (!pressedKeys.contains(keyCode)) {
-                setPressedKeys(pressedKeys.appended(keyCode))
-            }
-
-            if (!currPressedKeys.contains(keyCode)) {
-                setCurrPressedKeys(currPressedKeys.appended(keyCode))
-            }
-        }
+        pipe(keyCode, keyToDot, foldOption(() => null, dot => {
+            setPressedDots(pressedDots.add(dot))
+            setCurrPressedDots(currPressedDots.add(dot))
+        }))
     }
-
+    
     function keyReleased({keyCode}) {
-        if (validKeys.contains(keyCode)) {
-            setCurrPressedKeys(currPressedKeys.filter(k => k !== keyCode))
-        }
-
+        pipe(keyCode, keyToDot, foldOption(() => null, dot => {
+            setCurrPressedDots(currPressedDots.remove(dot))
+        }))
     }
     
     useEffect(() => {
-        if (currPressedKeys.isEmpty()) {
-            console.log("Result: " + pressedKeys.foldLeft("", (acc, k) => acc + ' ' + k))
-            setPressedKeys(List.empty())
+        console.log("Current Pressed Dots: ")
+        console.log(currPressedDots.reduce((acc, d) => acc.concat(d), ""))
+
+        if (currPressedDots.isEmpty()) {
+            const dots = pressedDots.toList().sort().reduce((acc, d) => acc.concat(d), "")
+            pipe(dots, dotsToCell, foldOption(() => null, cell => {
+                pipe(cellToASCII(cell), foldOption(() => "", _ => setMetabraille(metabraille.concat(_))))
+                pipe(cellToGlyph(cell), foldOption(() => "", _ => setGlyphs(glyphs.concat(_))))
+            }))
+
+            setPressedDots(Set([]))
         }
-    }, [currPressedKeys])
+    }, [currPressedDots])
 
     return (<>
-        <div onKeyDown={keyPressed} onKeyUp={keyReleased} style={style} tabIndex={0}></div>
+        <div onKeyDown={keyPressed} onKeyUp={keyReleased} style={style} tabIndex={0}>
+            <div style={{fontFamily: 'monospace', fontSize: '18pt'}}>{metabraille.reduce((acc, t) => acc.concat(t), "")}</div>
+            <div style={{fontFamily: 'monospace', fontSize: '18pt'}}>{glyphs.reduce((acc, g) => acc.concat(g), "")}</div>
+        </div>
     </>)
 }
