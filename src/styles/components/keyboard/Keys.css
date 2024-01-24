@@ -1,0 +1,25 @@
+.typewriter-key {
+    height: 45px;
+}
+
+.typewriter-backspace-key {
+    width: 45px;
+    height: 45px;
+}
+
+.typewriter-dot-key {
+    width: 45px;
+}
+
+.typewriter-enter-key {
+    width: 45px;
+}
+
+.typewriter-space-key {
+    width: 85px;
+}
+
+.typewriter-pressed-key {
+    background-color: red;
+}
+

@@ -8,7 +8,7 @@ import { cellToASCII } from '../service/BrailleASCII.ts'
 import { cellToGlyph } from '../service/BrailleGlyph.ts'
 import { dotsToCell, keyToDot } from '../service/BrailleKeyMap.ts'
 
-import Keyboard from '../components/keyboard/Keyboard.jsx'
+import Keyboard, { pressKey, releasedKeys } from '../components/keyboard/Keyboard.jsx'
 
 export default function Typewriter() {
 
@@ -17,6 +17,8 @@ export default function Typewriter() {
 
     const [metabraille, setMetabraille] = useState(List([]))
     const [glyphs, setGlyphs] = useState(List([]))
+
+    const [keys, setKeys] = useState(releasedKeys())
 
     const style = {
         backgroundColor: 'cyan',
@@ -29,6 +31,7 @@ export default function Typewriter() {
         pipe(keyCode, keyToDot, foldOption(() => null, dot => {
             setPressedDots(pressedDots.add(dot))
             setCurrPressedDots(currPressedDots.add(dot))
+            setKeys(pressKey(dot, keys))
         }))
     }
     
@@ -50,6 +53,7 @@ export default function Typewriter() {
             }))
 
             setPressedDots(Set([]))
+            setKeys(releasedKeys())
         }
     }, [currPressedDots])
 
@@ -58,6 +62,7 @@ export default function Typewriter() {
             <div style={{fontFamily: 'monospace', fontSize: '18pt'}}>{metabraille.reduce((acc, t) => acc.concat(t), "")}</div>
             <div style={{fontFamily: 'monospace', fontSize: '18pt'}}>{glyphs.reduce((acc, g) => acc.concat(g), "")}</div>
         </div>
-        <Keyboard />
+        {/* {console.log(keys)} */}
+        <Keyboard pressedKeys={keys}/>
     </>)
 }
