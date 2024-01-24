@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react'
 
-import { fold as foldOption } from 'fp-ts/lib/Option'
-import { pipe } from 'fp-ts/lib/function'
 import { List, Set } from 'immutable'
+import { pipe } from 'fp-ts/lib/function'
+import { fold as foldOption } from 'fp-ts/lib/Option'
+import { keyCodeToKey, keysToCell } from '../service/BrailleKeyMap.ts'
 
 import { cellToASCII } from '../service/BrailleASCII.ts'
 import { cellToGlyph } from '../service/BrailleGlyph.ts'
-import { dotsToCell, keyToDot } from '../service/BrailleKeyMap.ts'
 
-import Keyboard, { pressKey, releasedKeys } from '../components/keyboard/Keyboard.jsx'
+import Keyboard, { allKeysReleased, pressKey } from '../components/keyboard/Keyboard.jsx'
 
 export default function Typewriter() {
 
-    const [currPressedDots, setCurrPressedDots] = useState(Set([]))
-    const [pressedDots, setPressedDots] = useState(Set([]))
+    const [currPressedKeys, setCurrPressedKeys] = useState(Set([]))
+    const [pressedKeys, setPressedKeys] = useState(Set([]))
 
     const [metabraille, setMetabraille] = useState(List([]))
     const [glyphs, setGlyphs] = useState(List([]))
 
-    const [keys, setKeys] = useState(releasedKeys())
+    const [keysState, setKeysState] = useState(allKeysReleased)
 
     const style = {
         backgroundColor: 'cyan',
@@ -28,41 +28,39 @@ export default function Typewriter() {
     }
 
     function keyPressed({keyCode}) {
-        pipe(keyCode, keyToDot, foldOption(() => null, dot => {
-            setPressedDots(pressedDots.add(dot))
-            setCurrPressedDots(currPressedDots.add(dot))
-            setKeys(pressKey(dot, keys))
+        pipe(keyCode, keyCodeToKey, foldOption(() => null, key => {
+            setPressedKeys(pressedKeys.add(key))
+            setCurrPressedKeys(currPressedKeys.add(key))
+            setKeysState(pressKey(keysState, key))
         }))
     }
     
     function keyReleased({keyCode}) {
-        pipe(keyCode, keyToDot, foldOption(() => null, dot => {
-            setCurrPressedDots(currPressedDots.remove(dot))
+        pipe(keyCode, keyCodeToKey, foldOption(() => null, key => {
+            setCurrPressedKeys(currPressedKeys.remove(key))
         }))
     }
     
     useEffect(() => {
-        console.log("Current Pressed Dots: ")
-        console.log(currPressedDots.reduce((acc, d) => acc.concat(d), ""))
+        console.log("Current Pressed Keys: ")
+        console.log(currPressedKeys.reduce((acc, d) => acc.concat(d), ""))
 
-        if (currPressedDots.isEmpty()) {
-            const dots = pressedDots.toList().sort().reduce((acc, d) => acc.concat(d), "")
-            pipe(dots, dotsToCell, foldOption(() => null, cell => {
-                pipe(cellToASCII(cell), foldOption(() => "", _ => setMetabraille(metabraille.concat(_))))
-                pipe(cellToGlyph(cell), foldOption(() => "", _ => setGlyphs(glyphs.concat(_))))
+        if (currPressedKeys.isEmpty()) {
+            pipe(pressedKeys, keysToCell, foldOption(() => null, cell => {
+                pipe(cell, cellToASCII, foldOption(() => "", _ => setMetabraille(metabraille.concat(_))))
+                pipe(cell, cellToGlyph, foldOption(() => "", _ => setGlyphs(glyphs.concat(_))))
             }))
 
-            setPressedDots(Set([]))
-            setKeys(releasedKeys())
+            setPressedKeys(Set([]))
+            setKeysState(allKeysReleased)
         }
-    }, [currPressedDots])
+    }, [currPressedKeys])
 
     return (<>
         <div onKeyDown={keyPressed} onKeyUp={keyReleased} style={style} tabIndex={0}>
             <div style={{fontFamily: 'monospace', fontSize: '18pt'}}>{metabraille.reduce((acc, t) => acc.concat(t), "")}</div>
             <div style={{fontFamily: 'monospace', fontSize: '18pt'}}>{glyphs.reduce((acc, g) => acc.concat(g), "")}</div>
         </div>
-        {/* {console.log(keys)} */}
-        <Keyboard pressedKeys={keys}/>
+        <Keyboard keysState={keysState}/>
     </>)
 }
