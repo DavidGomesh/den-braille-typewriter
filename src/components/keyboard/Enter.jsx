@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTurnDown } from "@fortawesome/free-solid-svg-icons"
-import "./Enter.css"
+
+import "../../styles/components/keyboard/Enter.css"
 
 export default function Enter({keyboardKey}) {
     return (<>

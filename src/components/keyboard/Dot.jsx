@@ -1,6 +1,7 @@
 import { faD, faF, faJ, faK, faL, faQuestion, faS } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./Dot.css"
+
+import "../../styles/components/keyboard/Dot.css"
 
 export default function Dot({keyboardKey}) {
     const icon = (() => { 

@@ -1,7 +1,7 @@
 import { pipe } from "fp-ts/lib/function"
 import { List } from "immutable"
-import { span } from "../../../main/fp/utils/List"
-import { Tuple } from "../../../main/fp/Tuples"
+import { Tuple } from "../../../utils/Tuples"
+import { span } from "../../../utils/List"
 
 const list123: List<number> = List([1, 2, 3])
 const emptyList: List<number> = List()

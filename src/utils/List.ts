@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import { Tuple } from "../Tuples";
+import { Tuple } from "./Tuples.ts";
 import { pipe } from "fp-ts/lib/function";
 import { spanLeft } from "fp-ts/lib/ReadonlyArray";
 import { Option, none, some } from "fp-ts/lib/Option";

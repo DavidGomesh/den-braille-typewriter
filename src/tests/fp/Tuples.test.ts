@@ -1,5 +1,5 @@
 import { pipe } from "fp-ts/lib/function"
-import { Tuple, fold } from "../../main/fp/Tuples"
+import { Tuple, fold } from "../../utils/Tuples"
 
 describe("Tuple", () => {
     test("Tuple must create a new Tuple", () => {

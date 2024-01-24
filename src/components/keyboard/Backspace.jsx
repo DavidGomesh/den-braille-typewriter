@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faLeftLong } from "@fortawesome/free-solid-svg-icons"
-import "./Backspace.css"
+
+import "../../styles/components/keyboard/Backspace.css"
 
 export default function Backspace({keyboardKey}) {
     return (<>

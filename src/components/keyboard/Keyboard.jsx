@@ -1,8 +1,9 @@
 import React from "react"
-import Backspace from "./keys/Backspace"
-import Dot from "./keys/Dot"
-import Enter from "./keys/Enter"
-import Space from "./keys/Space"
+
+import Dot from "./Dot.jsx"
+import Space from "./Space.jsx"
+import Enter from "./Enter.jsx"
+import Backspace from "./Backspace.jsx"
 
 export default function Keyboard() {
     return (<>

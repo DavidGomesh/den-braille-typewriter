@@ -1,8 +1,9 @@
 import { Map } from "immutable"
-import { Cell } from "./Cell.ts"
-import { Option } from "fp-ts/lib/Option"
 import { pipe } from "fp-ts/lib/function"
-import { getOption } from "../fp/utils/Map.ts"
+import { Option } from "fp-ts/lib/Option"
+
+import { Cell } from "./Cell.ts"
+import { getOption } from "../utils/Map.ts"
 
 export function cellToASCII(cell: Cell): Option<string> {
     return pipe(brailleASCII, getOption(cell))

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMinus } from "@fortawesome/free-solid-svg-icons"
-import "./Space.css"
+
+import "../../styles/components/keyboard/Space.css"
 
 export default function Space({keyboardKey}) {
     return (<>

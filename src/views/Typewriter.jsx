@@ -1,11 +1,14 @@
-import { List, Set } from 'immutable'
 import React, { useEffect, useState } from 'react'
-import { dotsToCell, keyToDot } from '../braille/BrailleKeyMap.ts'
-import { pipe } from 'fp-ts/lib/function'
+
 import { fold as foldOption } from 'fp-ts/lib/Option'
-import { cellToGlyph } from '../braille/BrailleGlyph.ts'
-import { cellToASCII } from '../braille/BrailleASCII.ts'
-import Keyboard from './keyboard/Keyboard.jsx'
+import { pipe } from 'fp-ts/lib/function'
+import { List, Set } from 'immutable'
+
+import { cellToASCII } from '../service/BrailleASCII.ts'
+import { cellToGlyph } from '../service/BrailleGlyph.ts'
+import { dotsToCell, keyToDot } from '../service/BrailleKeyMap.ts'
+
+import Keyboard from '../components/keyboard/Keyboard.jsx'
 
 export default function Typewriter() {
 
