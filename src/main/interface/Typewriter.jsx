@@ -5,6 +5,7 @@ import { pipe } from 'fp-ts/lib/function'
 import { fold as foldOption } from 'fp-ts/lib/Option'
 import { cellToGlyph } from '../braille/BrailleGlyph.ts'
 import { cellToASCII } from '../braille/BrailleASCII.ts'
+import Keyboard from './keyboard/Keyboard.jsx'
 
 export default function Typewriter() {
 
@@ -54,5 +55,6 @@ export default function Typewriter() {
             <div style={{fontFamily: 'monospace', fontSize: '18pt'}}>{metabraille.reduce((acc, t) => acc.concat(t), "")}</div>
             <div style={{fontFamily: 'monospace', fontSize: '18pt'}}>{glyphs.reduce((acc, g) => acc.concat(g), "")}</div>
         </div>
+        <Keyboard />
     </>)
 }
