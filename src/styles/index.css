@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Braille ASCII';
+    /* src: local('Braille ASCII'), url(../fonts/braille/borthick\'s-braille.ttf) format('truetype'); */
+    src: local('Braille ASCII'), url(../fonts/braille/Braille-ASCII.ttf) format('truetype');
+}
+
+.braille {
+    font-family: 'Braille ASCII';
+}
