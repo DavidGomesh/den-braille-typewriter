@@ -1,6 +1,6 @@
 export enum Cell {
-    C0, ENTER,
-
+    C0,
+    
     C1, C2, C3, C4, C5, C6,
 
     C12, C13, C14, C15, C16,

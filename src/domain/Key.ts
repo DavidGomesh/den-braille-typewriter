@@ -1,0 +1,4 @@
+export enum Key {
+    ENTER, SPACE, BACKSPACE,
+    DOT1, DOT2, DOT3, DOT4, DOT5, DOT6
+}

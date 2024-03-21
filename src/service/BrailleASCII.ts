@@ -1,78 +1,72 @@
-import { Map } from "immutable"
-import { pipe } from "fp-ts/lib/function"
-import { Option } from "fp-ts/lib/Option"
+import { Option, none, some } from "fp-ts/lib/Option"
+import { Cell } from "../domain/Cell.ts"
 
-import { Cell } from "./Cell.ts"
-import { getOption } from "../utils/Map.ts"
-
-export function cellToASCII(cell: Cell): Option<string> {
-    return pipe(brailleASCII, getOption(cell))
+export function cellToString(cell: Cell): Option<string> {
+    switch (cell) {
+        case Cell.C0:      return some(` `)
+        case Cell.C2346:   return some(`!`)
+        case Cell.C5:      return some(`"`)
+        case Cell.C3456:   return some(`#`)
+        case Cell.C1246:   return some(`$`)
+        case Cell.C146:    return some(`%`)
+        case Cell.C12346:  return some(`&`)
+        case Cell.C3:      return some(`'`)
+        case Cell.C12356:  return some(`(`)
+        case Cell.C23456:  return some(`)`)
+        case Cell.C16:     return some(`*`)
+        case Cell.C346:    return some(`+`)
+        case Cell.C6:      return some(`,`)
+        case Cell.C36:     return some(`-`)
+        case Cell.C46:     return some(`.`)
+        case Cell.C34:     return some(`/`)
+        case Cell.C356:    return some(`0`)
+        case Cell.C2:      return some(`1`)
+        case Cell.C23:     return some(`2`)
+        case Cell.C25:     return some(`3`)
+        case Cell.C256:    return some(`4`)
+        case Cell.C26:     return some(`5`)
+        case Cell.C235:    return some(`6`)
+        case Cell.C2356:   return some(`7`)
+        case Cell.C236:    return some(`8`)
+        case Cell.C35:     return some(`9`)
+        case Cell.C156:    return some(`:`)
+        case Cell.C56:     return some(`;`)
+        case Cell.C126:    return some(`<`)
+        case Cell.C123456: return some(`=`)
+        case Cell.C345:    return some(`>`)
+        case Cell.C1456:   return some(`?`)
+        case Cell.C4:      return some(`@`)
+        case Cell.C1:      return some(`A`)
+        case Cell.C12:     return some(`B`)
+        case Cell.C14:     return some(`C`)
+        case Cell.C145:    return some(`D`)
+        case Cell.C15:     return some(`E`)
+        case Cell.C124:    return some(`F`)
+        case Cell.C1245:   return some(`G`)
+        case Cell.C125:    return some(`H`)
+        case Cell.C24:     return some(`I`)
+        case Cell.C245:    return some(`J`)
+        case Cell.C13:     return some(`K`)
+        case Cell.C123:    return some(`L`)
+        case Cell.C134:    return some(`M`)
+        case Cell.C1345:   return some(`N`)
+        case Cell.C135:    return some(`O`)
+        case Cell.C1234:   return some(`P`)
+        case Cell.C12345:  return some(`Q`)
+        case Cell.C1235:   return some(`R`)
+        case Cell.C234:    return some(`S`)
+        case Cell.C2345:   return some(`T`)
+        case Cell.C136:    return some(`U`)
+        case Cell.C1236:   return some(`V`)
+        case Cell.C2456:   return some(`W`)
+        case Cell.C1346:   return some(`X`)
+        case Cell.C13456:  return some(`Y`)
+        case Cell.C1356:   return some(`Z`)
+        case Cell.C246:    return some(`[`)
+        case Cell.C1256:   return some(`\\`)
+        case Cell.C12456:  return some(`]`)
+        case Cell.C45:     return some(`^`)
+        case Cell.C456:    return some(`_`)
+        default:           return none
+    }
 }
-
-const brailleASCII: Map<Cell, string> = Map([
-    [Cell.ENTER,   `\n`],
-    [Cell.C0,      ` `],
-    [Cell.C2346,   `!`],
-    [Cell.C5,      `"`],
-    [Cell.C3456,   `#`],
-    [Cell.C1246,   `$`],
-    [Cell.C146,    `%`],
-    [Cell.C12346,  `&`],
-    [Cell.C3,      `'`],
-    [Cell.C12356,  `(`],
-    [Cell.C23456,  `)`],
-    [Cell.C16,     `*`],
-    [Cell.C346,    `+`],
-    [Cell.C6,      `,`],
-    [Cell.C36,     `-`],
-    [Cell.C46,     `.`],
-    [Cell.C34,     `/`],
-    [Cell.C356,    `0`],
-    [Cell.C2,      `1`],
-    [Cell.C23,     `2`],
-    [Cell.C25,     `3`],
-    [Cell.C256,    `4`],
-    [Cell.C26,     `5`],
-    [Cell.C235,    `6`],
-    [Cell.C2356,   `7`],
-    [Cell.C236,    `8`],
-    [Cell.C35,     `9`],
-    [Cell.C156,    `:`],
-    [Cell.C56,     `;`],
-    [Cell.C126,    `<`],
-    [Cell.C123456, `=`],
-    [Cell.C345,    `>`],
-    [Cell.C1456,   `?`],
-    [Cell.C4,      `@`],
-    [Cell.C1,      `A`],
-    [Cell.C12,     `B`],
-    [Cell.C14,     `C`],
-    [Cell.C145,    `D`],
-    [Cell.C15,     `E`],
-    [Cell.C124,    `F`],
-    [Cell.C1245,   `G`],
-    [Cell.C125,    `H`],
-    [Cell.C24,     `I`],
-    [Cell.C245,    `J`],
-    [Cell.C13,     `K`],
-    [Cell.C123,    `L`],
-    [Cell.C134,    `M`],
-    [Cell.C1345,   `N`],
-    [Cell.C135,    `O`],
-    [Cell.C1234,   `P`],
-    [Cell.C12345,  `Q`],
-    [Cell.C1235,   `R`],
-    [Cell.C234,    `S`],
-    [Cell.C2345,   `T`],
-    [Cell.C136,    `U`],
-    [Cell.C1236,   `V`],
-    [Cell.C2456,   `W`],
-    [Cell.C1346,   `X`],
-    [Cell.C13456,  `Y`],
-    [Cell.C1356,   `Z`],
-    [Cell.C246,    `[`],
-    [Cell.C1256,   `\\`],
-    [Cell.C12456,  `]`],
-    [Cell.C45,     `^`],
-    [Cell.C456,    `_`],
-])
