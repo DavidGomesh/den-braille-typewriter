@@ -1,9 +1,9 @@
 import { none, some } from "fp-ts/lib/Option"
+import { pipe } from "fp-ts/lib/function"
 import { Map, Set } from "immutable"
 import { Cell } from "../../domain/Cell.ts"
 import { Key } from "../../domain/Key.ts"
 import { defaultKeyCodeMap, keysToCell, numberToKey } from "../../service/BrailleKeyMap.ts"
-import { pipe } from "fp-ts/lib/function"
 
 describe("numberToKey", () => {
     describe("using default defaultKeyCodeMap", () => {

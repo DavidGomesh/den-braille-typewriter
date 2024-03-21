@@ -1,4 +1,4 @@
-import { Option, none, some } from "fp-ts/lib/Option"
+import { Option } from "fp-ts/lib/Option"
 import { pipe } from "fp-ts/lib/function"
 import { Map, Set } from "immutable"
 
@@ -8,14 +8,14 @@ import { getOption } from "../utils/Map.ts"
 
 export const defaultKeyCodeMap: Map<number, Key> = Map([
     [8,  Key.BACKSPACE], // Backspace
-    [81, Key.ENTER], // Enter
-    [32, Key.SPACE], // Space
-    [70, Key.DOT1],  // F
-    [68, Key.DOT2],  // D
-    [83, Key.DOT3],  // S
-    [74, Key.DOT4],  // J
-    [75, Key.DOT5],  // K
-    [76, Key.DOT6],  // L
+    [81, Key.ENTER],     // Enter
+    [32, Key.SPACE],     // Space
+    [70, Key.DOT1],      // F
+    [68, Key.DOT2],      // D
+    [83, Key.DOT3],      // S
+    [74, Key.DOT4],      // J
+    [75, Key.DOT5],      // K
+    [76, Key.DOT6],      // L
 ])
 
 export function numberToKey(n: number): (m: Map<number, Key>) => Option<Key> {

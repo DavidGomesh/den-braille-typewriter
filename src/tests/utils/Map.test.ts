@@ -1,7 +1,7 @@
+import { none, some } from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/function";
 import { Map } from "immutable";
-import { getOption } from "../../utils/Map";
-import { none, some } from "fp-ts/lib/Option";
+import { getOption } from "../../utils/Map.ts";
 
 describe("getOption", () => {
     const map = Map([['A', 1], ['B', 1]])
