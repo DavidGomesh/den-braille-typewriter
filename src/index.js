@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './views/App'
+import Home from './views/Home.tsx'
 
 import "./vendors/bootstrap/css/bootstrap.min.css"
 
@@ -8,6 +8,6 @@ import "./styles/index.css"
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <App />
+        <Home />
     </React.StrictMode>
 )
