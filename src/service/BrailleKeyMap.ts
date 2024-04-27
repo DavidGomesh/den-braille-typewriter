@@ -6,24 +6,30 @@ import { Cell } from "../domain/Cell.ts"
 import { Key } from "../domain/Key.ts"
 import { getOption } from "../utils/Map.ts"
 
-export const defaultKeyCodeMap: Map<number, Key> = Map([
-    [8,  Key.BACKSPACE], // Backspace
-    [81, Key.ENTER],     // Enter
-    [32, Key.SPACE],     // Space
-    [70, Key.DOT1],      // F
-    [68, Key.DOT2],      // D
-    [83, Key.DOT3],      // S
-    [74, Key.DOT4],      // J
-    [75, Key.DOT5],      // K
-    [76, Key.DOT6],      // L
+export const defaultKeyCodeMap: Map<string, Key> = Map([
+    ['Backspace',  Key.BACKSPACE],   // Backspace
+    ['KeyQ',       Key.ENTER],       // Enter
+    
+    ['Space',      Key.SPACE],       // Space
+    ['KeyF',       Key.DOT1],        // F
+    ['KeyD',       Key.DOT2],        // D
+    ['KeyS',       Key.DOT3],        // S
+    ['KeyJ',       Key.DOT4],        // J
+    ['KeyK',       Key.DOT5],        // K
+    ['KeyL',       Key.DOT6],        // L
+
+    ['ArrowUp',    Key.ARROW_UP],    // Arrow Up
+    ['ArrowDown',  Key.ARROW_DOWN],  // Arrow Down
+    ['ArrowRight', Key.ARROW_RIGHT], // Arrow Right
+    ['ArrowLeft',  Key.ARROW_LEFT],  // Arrow Left
 ])
 
-export function numberToKey(n: number): (m: Map<number, Key>) => Option<Key> {
-    return m => pipe(m, getOption(n))
+export function codeToKey(m: Map<string, Key>): (n: string) => Option<Key> {
+    return n => pipe(n, getOption(m))
 }
 
 export function keysToCell(keys: Set<Key>): Option<Cell> {
-    return pipe(Map([
+    return pipe(keys, getOption(Map([
         [Set([Key.SPACE]),                                                  Cell.C0],
         [Set([Key.DOT2, Key.DOT3, Key.DOT4, Key.DOT6]),                     Cell.C2346],
         [Set([Key.DOT5]),                                                   Cell.C5],
@@ -88,5 +94,5 @@ export function keysToCell(keys: Set<Key>): Option<Cell> {
         [Set([Key.DOT1, Key.DOT2, Key.DOT4, Key.DOT5, Key.DOT6]),           Cell.C12456],
         [Set([Key.DOT4, Key.DOT5]),                                         Cell.C45],
         [Set([Key.DOT4, Key.DOT5, Key.DOT6]),                               Cell.C456],
-    ]), getOption(keys))
+    ])))
 }

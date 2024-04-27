@@ -7,10 +7,10 @@ describe("getOption", () => {
     const map = Map([['A', 1], ['B', 1]])
 
     test('Should return some value if key exists in the map', () => {
-        expect(pipe(map, getOption('A'))).toEqual(some(1));
+        expect(pipe('A', getOption(map))).toEqual(some(1));
     });
 
     test('Should return none value if key does not exists in the map', () => {
-        expect(pipe(map, getOption('C'))).toEqual(none);
+        expect(pipe('C', getOption(map))).toEqual(none);
     });
 })

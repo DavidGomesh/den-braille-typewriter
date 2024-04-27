@@ -7,6 +7,7 @@ import "./vendors/bootstrap/css/bootstrap.min.css"
 
 import Home from './views/Home.tsx'
 import Lessons from './views/Lessons.tsx'
+import Typewriter from './views/Typewriter.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Routes>
                 <Route path='/' Component={Home} />
                 <Route path='/lessons' Component={Lessons} />
+                <Route path='/typewriter' Component={Typewriter} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>

@@ -1,7 +1,8 @@
 import { Set } from "immutable"
 
-describe("Just", () => {
+describe("Test", () => {
     test("that", () => {
-        expect(Set([1, 2, 3])).toEqual(Set([3, 2, 1]))
+        expect(Set(["1", "2", "3"]).reduce((acc, x) => acc + x, "")).toEqual("123")
+        console.log(Set(["1", "2", "3"]).reduce((acc, x) => acc + x, ""))
     })
 })

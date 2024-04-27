@@ -1,0 +1,22 @@
+@keyframes cursorBlink {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+#test {
+    /* Oculta o cursor padrão */
+    caret-color: transparent;
+    /* Cor de fundo do textarea */
+    background-color: #f0f0f0;
+    /* Animação do cursor personalizada */
+    animation: cursorBlink 1s infinite;
+}

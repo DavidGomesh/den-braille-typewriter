@@ -1,6 +1,6 @@
 import React from 'react'
 
-import '../../styles/components/keyboard/Key.css'
+import '../styles/components/keyboard/Key.css'
 
 interface KeyProps {
     className: string,
