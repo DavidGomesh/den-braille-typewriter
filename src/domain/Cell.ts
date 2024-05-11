@@ -1,6 +1,9 @@
+import { Option, fromNullable } from "fp-ts/lib/Option";
+import { Map } from "immutable";
+
 export enum Cell {
     C0,
-    
+
     C1, C2, C3, C4, C5, C6,
 
     C12, C13, C14, C15, C16,
@@ -22,4 +25,75 @@ export enum Cell {
     C23456,
 
     C123456,
+}
+
+export const defaultCellStringMap = Map<Cell, string>([
+    [Cell.C0,      ` `],
+    [Cell.C2346,   `!`],
+    [Cell.C5,      `"`],
+    [Cell.C3456,   `#`],
+    [Cell.C1246,   `$`],
+    [Cell.C146,    `%`],
+    [Cell.C12346,  `&`],
+    [Cell.C3,      `'`],
+    [Cell.C12356,  `(`],
+    [Cell.C23456,  `)`],
+    [Cell.C16,     `*`],
+    [Cell.C346,    `+`],
+    [Cell.C6,      `,`],
+    [Cell.C36,     `-`],
+    [Cell.C46,     `.`],
+    [Cell.C34,     `/`],
+    [Cell.C356,    `0`],
+    [Cell.C2,      `1`],
+    [Cell.C23,     `2`],
+    [Cell.C25,     `3`],
+    [Cell.C256,    `4`],
+    [Cell.C26,     `5`],
+    [Cell.C235,    `6`],
+    [Cell.C2356,   `7`],
+    [Cell.C236,    `8`],
+    [Cell.C35,     `9`],
+    [Cell.C156,    `:`],
+    [Cell.C56,     `;`],
+    [Cell.C126,    `<`],
+    [Cell.C123456, `=`],
+    [Cell.C345,    `>`],
+    [Cell.C1456,   `?`],
+    [Cell.C4,      `@`],
+    [Cell.C1,      `A`],
+    [Cell.C12,     `B`],
+    [Cell.C14,     `C`],
+    [Cell.C145,    `D`],
+    [Cell.C15,     `E`],
+    [Cell.C124,    `F`],
+    [Cell.C1245,   `G`],
+    [Cell.C125,    `H`],
+    [Cell.C24,     `I`],
+    [Cell.C245,    `J`],
+    [Cell.C13,     `K`],
+    [Cell.C123,    `L`],
+    [Cell.C134,    `M`],
+    [Cell.C1345,   `N`],
+    [Cell.C135,    `O`],
+    [Cell.C1234,   `P`],
+    [Cell.C12345,  `Q`],
+    [Cell.C1235,   `R`],
+    [Cell.C234,    `S`],
+    [Cell.C2345,   `T`],
+    [Cell.C136,    `U`],
+    [Cell.C1236,   `V`],
+    [Cell.C2456,   `W`],
+    [Cell.C1346,   `X`],
+    [Cell.C13456,  `Y`],
+    [Cell.C1356,   `Z`],
+    [Cell.C246,    `[`],
+    [Cell.C1256,   `\\`],
+    [Cell.C12456,  `]`],
+    [Cell.C45,     `^`],
+    [Cell.C456,    `_`],
+])
+
+export function cellToString(cellStringMap: Map<Cell, string>): (cell: Cell) => Option<string> {
+    return cell => fromNullable(cellStringMap.get(cell))
 }
