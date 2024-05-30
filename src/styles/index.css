@@ -1,7 +1,6 @@
 @font-face {
     font-family: 'Braille ASCII';
-    /* src: local('Braille ASCII'), url(../fonts/braille/borthick\'s-braille.ttf) format('truetype'); */
-    src: local('Braille ASCII'), url(../fonts/braille/Braille-ASCII.ttf) format('truetype');
+    src: local('Braille ASCII'), url(../fonts/braille/braille_v1_by_xchristaox.ttf) format('truetype');
 }
 
 .braille {

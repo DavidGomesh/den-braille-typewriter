@@ -6,8 +6,8 @@ import { Cell } from "./Cell.ts";
 export enum Key {
     ENTER, 
     SPACE, 
+    
     BACKSPACE,
-
     DOT1, 
     DOT2, 
     DOT3, 
@@ -16,11 +16,14 @@ export enum Key {
     DOT6,
 }
 
+export const DOTS: Set<Key> = Set([Key.DOT1, Key.DOT2, Key.DOT3, Key.DOT4, Key.DOT5, Key.DOT6])
+export const NonDOTS: Set<Key> = Set([Key.ENTER, Key.SPACE, Key.BACKSPACE])
+
 export const defaultCodeKeyMap = Map<string, Key>([
     ['KeyP',  Key.BACKSPACE], // Backspace
     ['KeyQ',  Key.ENTER],     // Enter
+    
     ['Space', Key.SPACE],     // Space
-
     ['KeyF',  Key.DOT1],      // F
     ['KeyD',  Key.DOT2],      // D
     ['KeyS',  Key.DOT3],      // S
@@ -96,10 +99,23 @@ export const defaultKeysCellMap = Map<Set<Key>, Cell>([
     [Set([Key.DOT4, Key.DOT5, Key.DOT6]),                               Cell.C456],
 ])
 
+export const defaultKeyEmptyStringMap = Map<Set<Key>, string>([
+    // [Set([Key.BACKSPACE]), '\b'],
+    [Set([Key.ENTER]), '\n'],
+])
+
 export function codeToKey(codeKeyMap: Map<string, Key>): (code: string) => Option<Key> {
     return code => O.fromNullable(codeKeyMap.get(code))
 }
 
 export function keysToCell(keysCellMap: Map<Set<Key>, Cell>): (keys: Set<Key>) => Option<Cell> {
     return keys => O.fromNullable(keysCellMap.get(keys))
+}
+
+export function keyToString(keyStringMap: Map<Set<Key>, string>): (key: Set<Key>) => Option<string> {
+    return key => O.fromNullable(keyStringMap.get(key))
+}
+
+export function isDotKey(key: Key): boolean {
+    return Set([Key.DOT1, Key.DOT2, Key.DOT3, Key.DOT4, Key.DOT5, Key.DOT6]).contains(key)
 }
