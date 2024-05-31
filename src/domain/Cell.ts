@@ -1,5 +1,5 @@
-import { Option, fromNullable } from "fp-ts/lib/Option";
-import { Map } from "immutable";
+import { Option, fromNullable } from "fp-ts/lib/Option"
+import { Map } from "immutable"
 
 export enum Cell {
     C0,
