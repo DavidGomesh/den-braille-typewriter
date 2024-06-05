@@ -8,12 +8,14 @@ export default function Output({ text = "" }) {
             readOnly={false}
             rows={3}
             defaultValue={text}
+            autoFocus={true}
             style={{
                 height: '400px',
                 letterSpacing: '15px',
                 fontSize: '4rem',
                 textWrap: 'wrap',
                 overflowY: 'scroll',
+                overflow: 'hidden',
             }}>
         </textarea>
     </>)

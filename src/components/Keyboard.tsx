@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faD, faF, faJ, faK, faL, faLeftLong, faMinus, faS, faTurnDown } from '@fortawesome/free-solid-svg-icons'
 
 import Key from './Key.tsx'
-export default function Keyboard() {
+export default function Keyboard({ enterRef, spaceRef, backspaceRef, dot1Ref, dot2Ref, dot3Ref, dot4Ref, dot5Ref, dot6Ref }) {
 
     const BSPClasses = 'typewriter-backspace-key'
     const SPCClasses = 'typewriter-space-key'
@@ -32,19 +32,19 @@ export default function Keyboard() {
 
     return (<>
         <div className='container d-flex justify-content-center'>
-            <Key className={`${ENTClasses} ${ENTRadius} ${borders} ${margins}`} content={ENTIcon}/>
+            <Key reference={enterRef} className={`${ENTClasses} ${ENTRadius} ${borders} ${margins}`} content={ENTIcon}/>
 
-            <Key className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT3Icon}/>
-            <Key className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT2Icon}/>
-            <Key className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT1Icon}/>
+            <Key reference={dot3Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT3Icon}/>
+            <Key reference={dot2Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT2Icon}/>
+            <Key reference={dot1Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT1Icon}/>
 
-            <Key className={`${SPCClasses} ${SPCRadius} ${borders} ${margins}`} content={SPCIcon}/>
+            <Key reference={spaceRef} className={`${SPCClasses} ${SPCRadius} ${borders} ${margins}`} content={SPCIcon}/>
 
-            <Key className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT4Icon}/>
-            <Key className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT5Icon}/>
-            <Key className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT6Icon}/>
+            <Key reference={dot4Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT4Icon}/>
+            <Key reference={dot5Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT5Icon}/>
+            <Key reference={dot6Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT6Icon}/>
 
-            <Key className={`${BSPClasses} ${BSPRadius} ${borders} ${margins}`} content={BSPIcon}/>
+            <Key reference={backspaceRef} className={`${BSPClasses} ${BSPRadius} ${borders} ${margins}`} content={BSPIcon}/>
         </div>
     </>)
 }

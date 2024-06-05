@@ -1,10 +1,10 @@
-import React, { KeyboardEvent, useEffect, useState } from 'react'
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
 
 import { constVoid, pipe } from 'fp-ts/lib/function'
 import * as O from 'fp-ts/lib/Option'
 import { Option } from 'fp-ts/lib/Option'
 
-import { Set } from 'immutable'
+import { Set, Map } from 'immutable'
 
 import { codeToKey, defaultCodeKeyMap, defaultKeyEmptyStringMap, defaultKeysCellMap, DOTS, isDotKey, Key, keysToCell, keyToString } from '../domain/Key.ts'
 
@@ -17,6 +17,11 @@ import { Cell, cellToString, defaultCellStringMap } from '../domain/Cell.ts'
 import '../styles/views/Typewriter.css'
 
 import useSound from 'use-sound'
+
+import audio_key_pressed_1 from '../audio/cells/key-pressed-1.mp3'
+import audio_key_pressed_2 from '../audio/cells/key-pressed-2.mp3'
+import audio_key_pressed_3 from '../audio/cells/key-pressed-3.mp3'
+import audio_key_pressed_4 from '../audio/cells/key-pressed-4.mp3'
 
 import audio_espaco from '../audio/cells/espaco.mp3'
 
@@ -90,13 +95,70 @@ import audio_sinal_de_maiusculo from '../audio/cells/sinal-de-maiusculo.mp3'
 import audio_cifrao from '../audio/cells/cifrao.mp3'
 import audio_apostrofo from '../audio/cells/apostrofo.mp3'
 
-import { Map } from 'immutable'
 
+export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCells = constVoid }) {
 
-export default function Typewriter() {
+    const backspaceRef = useRef()
+    const enterRef = useRef()
+    const spaceRef = useRef()
+    const dot1Ref = useRef()
+    const dot2Ref = useRef()
+    const dot3Ref = useRef()
+    const dot4Ref = useRef()
+    const dot5Ref = useRef()
+    const dot6Ref = useRef()
+
+    const keyRefMap: Map<Key, any> = Map([
+        [Key.BACKSPACE, backspaceRef],
+        [Key.ENTER, enterRef],
+        [Key.SPACE, spaceRef],
+        [Key.DOT1, dot1Ref],
+        [Key.DOT2, dot2Ref],
+        [Key.DOT3, dot3Ref],
+        [Key.DOT4, dot4Ref],
+        [Key.DOT5, dot5Ref],
+        [Key.DOT6, dot6Ref],
+    ])
+
+    function performKeyAnimation(key: Key): void {
+        pipe(
+            O.fromNullable(keyRefMap.get(key)),
+            O.map(keyRef => {
+                keyRef.current.classList.add('bg-dark')
+                keyRef.current.classList.add('text-light')
+            })
+        )
+    }
+
+    function cancelKeyAnimation(key: Key): void {
+        pipe(
+            O.fromNullable(keyRefMap.get(key)),
+            O.map(keyRef => {
+                keyRef.current.classList.remove('bg-dark')
+                keyRef.current.classList.remove('text-light')
+            })
+        )
+    }
 
     const [currPressedKeys, setCurrPressedKeys] = useState(Set<Key>())
     const [pressedKeys, setPressedKeys] = useState(Set<Key>())
+
+    const [play_key_pressed_1] = useSound(audio_key_pressed_1)
+    const [play_key_pressed_2] = useSound(audio_key_pressed_2)
+    const [play_key_pressed_3] = useSound(audio_key_pressed_3)
+    const [play_key_pressed_4] = useSound(audio_key_pressed_4)
+
+    const key_pressed_players = [
+        play_key_pressed_1,
+        play_key_pressed_2,
+        play_key_pressed_3,
+        play_key_pressed_4,
+    ]
+
+    function playKeyPressed() {
+        const idx = Math.floor(Math.random() * key_pressed_players.length)
+        key_pressed_players[idx]()
+    }
 
     const [play_espaco] = useSound(audio_espaco)
 
@@ -127,48 +189,48 @@ export default function Typewriter() {
     const [play_x] = useSound(audio_x)
     const [play_y] = useSound(audio_y)
     const [play_z] = useSound(audio_z)
-    const [play_audio_cedilha] = useSound(audio_cedilha)
-    const [play_audio_e_agudo] = useSound(audio_e_agudo)
-    const [play_audio_a_agudo] = useSound(audio_a_agudo)
-    const [play_audio_e_crase] = useSound(audio_e_crase)
-    const [play_audio_u_agudo] = useSound(audio_u_agudo)
+    const [play_cedilha] = useSound(audio_cedilha)
+    const [play_e_agudo] = useSound(audio_e_agudo)
+    const [play_a_agudo] = useSound(audio_a_agudo)
+    const [play_e_crase] = useSound(audio_e_crase)
+    const [play_u_agudo] = useSound(audio_u_agudo)
 
-    const [play_audio_a_circunflexo] = useSound(audio_a_circunflexo)
-    const [play_audio_e_circunflexo] = useSound(audio_e_circunflexo)
-    const [play_audio_i_crase] = useSound(audio_i_crase)
-    const [play_audio_o_circunflexo] = useSound(audio_o_circunflexo)
-    const [play_audio_u_crase] = useSound(audio_u_crase)
-    const [play_audio_a_crase] = useSound(audio_a_crase)
-    const [play_audio_n_til] = useSound(audio_n_til)
-    const [play_audio_u_trema] = useSound(audio_u_trema)
-    const [play_audio_o_til] = useSound(audio_o_til)
-    const [play_audio_w] = useSound(audio_w)
+    const [play_a_circunflexo] = useSound(audio_a_circunflexo)
+    const [play_e_circunflexo] = useSound(audio_e_circunflexo)
+    const [play_i_crase] = useSound(audio_i_crase)
+    const [play_o_circunflexo] = useSound(audio_o_circunflexo)
+    const [play_u_crase] = useSound(audio_u_crase)
+    const [play_a_crase] = useSound(audio_a_crase)
+    const [play_n_til] = useSound(audio_n_til)
+    const [play_u_trema] = useSound(audio_u_trema)
+    const [play_o_til] = useSound(audio_o_til)
+    const [play_w] = useSound(audio_w)
 
-    const [play_audio_virgula] = useSound(audio_virgula)
-    const [play_audio_ponto_e_virgula] = useSound(audio_ponto_e_virgula)
-    const [play_audio_dois_pontos] = useSound(audio_dois_pontos)
-    const [play_audio_divisao] = useSound(audio_divisao)
-    const [play_audio_interrogacao] = useSound(audio_interrogacao)
-    const [play_audio_exclamacao] = useSound(audio_exclamacao)
-    const [play_audio_igual] = useSound(audio_igual)
-    const [play_audio_aspa] = useSound(audio_aspa)
-    const [play_audio_asterisco] = useSound(audio_asterisco)
-    const [play_audio_grau] = useSound(audio_grau)
+    const [play_virgula] = useSound(audio_virgula)
+    const [play_ponto_e_virgula] = useSound(audio_ponto_e_virgula)
+    const [play_dois_pontos] = useSound(audio_dois_pontos)
+    const [play_divisao] = useSound(audio_divisao)
+    const [play_interrogacao] = useSound(audio_interrogacao)
+    const [play_exclamacao] = useSound(audio_exclamacao)
+    const [play_igual] = useSound(audio_igual)
+    const [play_aspa] = useSound(audio_aspa)
+    const [play_asterisco] = useSound(audio_asterisco)
+    const [play_grau] = useSound(audio_grau)
 
-    const [play_audio_i_agudo] = useSound(audio_i_agudo)
-    const [play_audio_a_til] = useSound(audio_a_til)
-    const [play_audio_o_agudo] = useSound(audio_o_agudo)
-    const [play_audio_sinal_de_numero] = useSound(audio_sinal_de_numero)
-    const [play_audio_ponto] = useSound(audio_ponto)
-    const [play_audio_hifen] = useSound(audio_hifen)
+    const [play_i_agudo] = useSound(audio_i_agudo)
+    const [play_a_til] = useSound(audio_a_til)
+    const [play_o_agudo] = useSound(audio_o_agudo)
+    const [play_sinal_de_numero] = useSound(audio_sinal_de_numero)
+    const [play_ponto] = useSound(audio_ponto)
+    const [play_hifen] = useSound(audio_hifen)
 
-    const [play_audio_circunflexo] = useSound(audio_circunflexo)
-    const [play_audio_sinal_de_negacao] = useSound(audio_sinal_de_negacao)
-    const [play_audio_barra] = useSound(audio_barra)
-    const [play_audio_sinal_de_delimitador] = useSound(audio_sinal_de_delimitador)
-    const [play_audio_sinal_de_maiusculo] = useSound(audio_sinal_de_maiusculo)
-    const [play_audio_cifrao] = useSound(audio_cifrao)
-    const [play_audio_apostrofo] = useSound(audio_apostrofo)
+    const [play_circunflexo] = useSound(audio_circunflexo)
+    const [play_sinal_de_negacao] = useSound(audio_sinal_de_negacao)
+    const [play_barra] = useSound(audio_barra)
+    const [play_sinal_de_delimitador] = useSound(audio_sinal_de_delimitador)
+    const [play_sinal_de_maiusculo] = useSound(audio_sinal_de_maiusculo)
+    const [play_cifrao] = useSound(audio_cifrao)
+    const [play_apostrofo] = useSound(audio_apostrofo)
 
     const cellPlayerMap: Map<Cell, any> = Map([
         [Cell.C0,      play_espaco],
@@ -200,48 +262,48 @@ export default function Typewriter() {
         [Cell.C1346,   play_x],
         [Cell.C13456,  play_y],
         [Cell.C1356,   play_z],
-        [Cell.C12346,  play_audio_cedilha],
-        [Cell.C123456, play_audio_e_agudo],
-        [Cell.C12356,  play_audio_a_agudo],
-        [Cell.C2346,   play_audio_e_crase],
-        [Cell.C23456,  play_audio_u_agudo],
+        [Cell.C12346,  play_cedilha],
+        [Cell.C123456, play_e_agudo],
+        [Cell.C12356,  play_a_agudo],
+        [Cell.C2346,   play_e_crase],
+        [Cell.C23456,  play_u_agudo],
 
-        [Cell.C16,     play_audio_a_circunflexo],
-        [Cell.C126,    play_audio_e_circunflexo],
-        [Cell.C146,    play_audio_i_crase],
-        [Cell.C1456,   play_audio_o_circunflexo],
-        [Cell.C156,    play_audio_u_crase],
-        [Cell.C1246,   play_audio_a_crase],
-        [Cell.C12456,  play_audio_n_til],
-        [Cell.C1256,   play_audio_u_trema],
-        [Cell.C246,    play_audio_o_til],
-        [Cell.C2456,   play_audio_w],
+        [Cell.C16,     play_a_circunflexo],
+        [Cell.C126,    play_e_circunflexo],
+        [Cell.C146,    play_i_crase],
+        [Cell.C1456,   play_o_circunflexo],
+        [Cell.C156,    play_u_crase],
+        [Cell.C1246,   play_a_crase],
+        [Cell.C12456,  play_n_til],
+        [Cell.C1256,   play_u_trema],
+        [Cell.C246,    play_o_til],
+        [Cell.C2456,   play_w],
     
-        [Cell.C2,      play_audio_virgula],
-        [Cell.C23,     play_audio_ponto_e_virgula],
-        [Cell.C25,     play_audio_dois_pontos],
-        [Cell.C256,    play_audio_divisao],
-        [Cell.C26,     play_audio_interrogacao],
-        [Cell.C235,    play_audio_exclamacao],
-        [Cell.C2356,   play_audio_igual],
-        [Cell.C236,    play_audio_aspa],
-        [Cell.C35,     play_audio_asterisco],
-        [Cell.C356,    play_audio_grau],
+        [Cell.C2,      play_virgula],
+        [Cell.C23,     play_ponto_e_virgula],
+        [Cell.C25,     play_dois_pontos],
+        [Cell.C256,    play_divisao],
+        [Cell.C26,     play_interrogacao],
+        [Cell.C235,    play_exclamacao],
+        [Cell.C2356,   play_igual],
+        [Cell.C236,    play_aspa],
+        [Cell.C35,     play_asterisco],
+        [Cell.C356,    play_grau],
         
-        [Cell.C34,     play_audio_i_agudo],
-        [Cell.C345,    play_audio_a_til],
-        [Cell.C346,    play_audio_o_agudo],
-        [Cell.C3456,   play_audio_sinal_de_numero],
-        [Cell.C3,      play_audio_ponto],
-        [Cell.C36,     play_audio_hifen],
+        [Cell.C34,     play_i_agudo],
+        [Cell.C345,    play_a_til],
+        [Cell.C346,    play_o_agudo],
+        [Cell.C3456,   play_sinal_de_numero],
+        [Cell.C3,      play_ponto],
+        [Cell.C36,     play_hifen],
     
-        [Cell.C4,      play_audio_circunflexo],
-        [Cell.C45,     play_audio_sinal_de_negacao],
-        [Cell.C456,    play_audio_barra],
-        [Cell.C5,      play_audio_sinal_de_delimitador],
-        [Cell.C46,     play_audio_sinal_de_maiusculo],
-        [Cell.C56,     play_audio_cifrao],
-        [Cell.C6,      play_audio_apostrofo],
+        [Cell.C4,      play_circunflexo],
+        [Cell.C45,     play_sinal_de_negacao],
+        [Cell.C456,    play_barra],
+        [Cell.C5,      play_sinal_de_delimitador],
+        [Cell.C46,     play_sinal_de_maiusculo],
+        [Cell.C56,     play_cifrao],
+        [Cell.C6,      play_apostrofo],
     ])
 
     function playCellAudio(cell: Cell): void {
@@ -288,6 +350,8 @@ export default function Typewriter() {
     }
 
     function handleTypewriterKeyPressed(key: Key): void {
+        updateKeyHistory(key)
+        performKeyAnimation(key)
         pipe(
             key,
             O.fromPredicate(_ => isDotKey(_)),
@@ -301,7 +365,7 @@ export default function Typewriter() {
     function handleNonDotKeyPressed(key: Key): void {
         pipe(
             constVoid(),
-            O.fromPredicate(_ => pressedKeys.isEmpty()),
+            O.fromPredicate(_ => pressedKeys.isEmpty()),    
             O.fold(
                 () => rejectKeyPressed(),
                 () => acceptKeyPressed(key)
@@ -325,8 +389,12 @@ export default function Typewriter() {
     }
     
     function acceptKeyPressed(key: Key): void {
+        if (!pressedKeys.contains(key)) {
+            playKeyPressed()
+        }
         setCurrPressedKeys(currPressedKeys.add(key))
         setPressedKeys(pressedKeys.add(key))
+        updateTypedCells(key)
     }
 
     function rejectKeyPressed(): void {
@@ -338,17 +406,14 @@ export default function Typewriter() {
         pipe(
             event.code,
             codeToKey(defaultCodeKeyMap),
-            O.map(key =>
+            O.map(key => {
                 setCurrPressedKeys(currPressedKeys.remove(key))
-            )
+                cancelKeyAnimation(key)
+            })
         )
     }
 
     useEffect(() => {
-        // currPressedKeys.map(_ => console.log(_))
-        // console.log("CPS:", currPressedKeys.reduce((acc, k) => acc + k, ""))
-        // console.log("PS:", pressedKeys.reduce((acc, k) => acc + k, ""))
-
         pipe(
             O.Do,
             O.bind('_',    () => pipe(currPressedKeys, O.fromPredicate(_ => _.isEmpty()))),
@@ -358,18 +423,6 @@ export default function Typewriter() {
                 ({ cell }) => handleCellCharacter(cell)
             )
         )
-
-        // pipe(
-        //     O.Do,
-        //     O.bind('_',             () => pipe(currPressedKeys, O.fromPredicate(_ => _.isEmpty()))),
-        //     O.bind('cell',          () => pipe(pressedKeys, keysToCell(defaultKeysCellMap))),
-        //     O.bind('text',  ({ cell }) => pipe(cell, cellToString(defaultCellStringMap))),
-        //     O.bind('textArea',      () => getElementById('test') as Option<HTMLTextAreaElement>),
-        //     O.map(({ textArea, text }) => {
-        //         pipe(textArea, addText(text))
-        //         setPressedKeys(pressedKeys.clear())
-        //     })
-        // )
     }, [currPressedKeys])
 
     function handleNonCellCharacter(): void {
@@ -404,9 +457,18 @@ export default function Typewriter() {
             onKeyDown={ keyPressed }
             onKeyUp={ keyReleased }
             className='container d-flex flex-column justify-content-center align-items-center'>
-            {/* <audio src='/assets/audio/cells/a.mp3'/> */}
             <Output />
-            <Keyboard />
+            <Keyboard 
+                backspaceRef={backspaceRef}
+                enterRef={enterRef}
+                spaceRef={spaceRef}
+                dot1Ref={dot1Ref}
+                dot2Ref={dot2Ref}
+                dot3Ref={dot3Ref}
+                dot4Ref={dot4Ref}
+                dot5Ref={dot5Ref}
+                dot6Ref={dot6Ref}
+            />
         </main>
     </>)
 }

@@ -4,11 +4,12 @@ import '../styles/components/keyboard/Key.css'
 
 interface KeyProps {
     className: string,
-    content: any
+    content: any,
+    reference: any,
 }
 
-export default function Key({ className, content }: KeyProps) {
+export default function Key({ className, content, reference }: KeyProps) {
     return (<>
-        <div className={'d-flex justify-content-center align-items-center ' + className}>{content}</div>
+        <div ref={reference} className={'d-flex justify-content-center align-items-center ' + className}>{content}</div>
     </>)
 }
