@@ -6,16 +6,16 @@ import "./styles/index.css"
 import "./vendors/bootstrap/css/bootstrap.min.css"
 
 import Home from './views/Home.tsx'
-import Lessons from './views/Lessons.tsx'
-import Typewriter from './views/Typewriter.tsx'
+import Lessons from './views/modes/Lessons.tsx'
+import Free from './views/modes/Free.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <BrowserRouter>
             <Routes>
                 <Route path='/' Component={Home} />
+                <Route path='/free' Component={Free} />
                 <Route path='/lessons' Component={Lessons} />
-                <Route path='/typewriter' Component={Typewriter} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>

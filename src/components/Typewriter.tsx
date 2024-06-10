@@ -8,13 +8,11 @@ import { Set, Map } from 'immutable'
 
 import { codeToKey, defaultCodeKeyMap, defaultKeyEmptyStringMap, defaultKeysCellMap, DOTS, isDotKey, Key, keysToCell, keyToString } from '../domain/Key.ts'
 
-import Keyboard from '../components/Keyboard.tsx'
-import Output, { addText } from '../components/Output.tsx'
+import Keyboard from './Keyboard.tsx'
+import Output, { addText } from './Output.tsx'
 
 import { codeToActionKey, defaultCodeActionKeyMap } from '../domain/ActionKey.ts'
 import { Cell, cellToString, defaultCellStringMap } from '../domain/Cell.ts'
-
-import '../styles/views/Typewriter.css'
 
 import useSound from 'use-sound'
 
@@ -453,7 +451,8 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
     }
 
     return (<>
-        <main
+        <div
+            id='typewriter'
             onKeyDown={ keyPressed }
             onKeyUp={ keyReleased }
             className='container d-flex flex-column justify-content-center align-items-center'>
@@ -469,6 +468,6 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
                 dot5Ref={dot5Ref}
                 dot6Ref={dot6Ref}
             />
-        </main>
+        </div>
     </>)
 }
