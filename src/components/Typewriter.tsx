@@ -4,7 +4,7 @@ import { constVoid, pipe } from 'fp-ts/lib/function'
 import * as O from 'fp-ts/lib/Option'
 import { Option } from 'fp-ts/lib/Option'
 
-import { Set, Map } from 'immutable'
+import { Map, Set } from 'immutable'
 
 import { codeToKey, defaultCodeKeyMap, defaultKeyEmptyStringMap, defaultKeysCellMap, DOTS, isDotKey, Key, keysToCell, keyToString } from '../domain/Key.ts'
 
@@ -45,54 +45,53 @@ import audio_r from '../audio/cells/r.mp3'
 import audio_s from '../audio/cells/s.mp3'
 import audio_t from '../audio/cells/t.mp3'
 
+import audio_a_agudo from '../audio/cells/a-agudo.mp3'
+import audio_cedilha from '../audio/cells/cedilha.mp3'
+import audio_e_agudo from '../audio/cells/e-agudo.mp3'
+import audio_e_crase from '../audio/cells/e-crase.mp3'
+import audio_u_agudo from '../audio/cells/u-agudo.mp3'
 import audio_u from '../audio/cells/u.mp3'
 import audio_v from '../audio/cells/v.mp3'
 import audio_x from '../audio/cells/x.mp3'
 import audio_y from '../audio/cells/y.mp3'
 import audio_z from '../audio/cells/z.mp3'
-import audio_cedilha from '../audio/cells/cedilha.mp3'
-import audio_e_agudo from '../audio/cells/e-agudo.mp3'
-import audio_a_agudo from '../audio/cells/a-agudo.mp3'
-import audio_e_crase from '../audio/cells/e-crase.mp3'
-import audio_u_agudo from '../audio/cells/u-agudo.mp3'
 
 import audio_a_circunflexo from '../audio/cells/a-circunflexo.mp3'
+import audio_a_crase from '../audio/cells/a-crase.mp3'
 import audio_e_circunflexo from '../audio/cells/e-circunflexo.mp3'
 import audio_i_crase from '../audio/cells/i-crase.mp3'
-import audio_o_circunflexo from '../audio/cells/o-circunflexo.mp3'
-import audio_u_crase from '../audio/cells/u-crase.mp3'
-import audio_a_crase from '../audio/cells/a-crase.mp3'
 import audio_n_til from '../audio/cells/n-til.mp3'
-import audio_u_trema from '../audio/cells/u-trema.mp3'
+import audio_o_circunflexo from '../audio/cells/o-circunflexo.mp3'
 import audio_o_til from '../audio/cells/o-til.mp3'
+import audio_u_crase from '../audio/cells/u-crase.mp3'
+import audio_u_trema from '../audio/cells/u-trema.mp3'
 import audio_w from '../audio/cells/w.mp3'
 
-import audio_virgula from '../audio/cells/virgula.mp3'
-import audio_ponto_e_virgula from '../audio/cells/ponto-e-virgula.mp3'
-import audio_dois_pontos from '../audio/cells/dois-pontos.mp3'
-import audio_divisao from '../audio/cells/divisao.mp3'
-import audio_interrogacao from '../audio/cells/interrogacao.mp3'
-import audio_exclamacao from '../audio/cells/exclamacao.mp3'
-import audio_igual from '../audio/cells/igual.mp3'
 import audio_aspa from '../audio/cells/aspa.mp3'
 import audio_asterisco from '../audio/cells/asterisco.mp3'
+import audio_divisao from '../audio/cells/divisao.mp3'
+import audio_dois_pontos from '../audio/cells/dois-pontos.mp3'
+import audio_exclamacao from '../audio/cells/exclamacao.mp3'
 import audio_grau from '../audio/cells/grau.mp3'
+import audio_igual from '../audio/cells/igual.mp3'
+import audio_interrogacao from '../audio/cells/interrogacao.mp3'
+import audio_ponto_e_virgula from '../audio/cells/ponto-e-virgula.mp3'
+import audio_virgula from '../audio/cells/virgula.mp3'
 
-import audio_i_agudo from '../audio/cells/i-agudo.mp3'
 import audio_a_til from '../audio/cells/a-til.mp3'
-import audio_o_agudo from '../audio/cells/o-agudo.mp3'
-import audio_sinal_de_numero from '../audio/cells/sinal-de-numero.mp3'
-import audio_ponto from '../audio/cells/ponto.mp3'
 import audio_hifen from '../audio/cells/hifen.mp3'
+import audio_i_agudo from '../audio/cells/i-agudo.mp3'
+import audio_o_agudo from '../audio/cells/o-agudo.mp3'
+import audio_ponto from '../audio/cells/ponto.mp3'
+import audio_sinal_de_numero from '../audio/cells/sinal-de-numero.mp3'
 
-import audio_circunflexo from '../audio/cells/circunflexo.mp3'
-import audio_sinal_de_negacao from '../audio/cells/sinal-de-negacao.mp3'
+import audio_apostrofo from '../audio/cells/apostrofo.mp3'
 import audio_barra from '../audio/cells/barra.mp3'
+import audio_cifrao from '../audio/cells/cifrao.mp3'
+import audio_circunflexo from '../audio/cells/circunflexo.mp3'
 import audio_sinal_de_delimitador from '../audio/cells/sinal-de-delimitador.mp3'
 import audio_sinal_de_maiusculo from '../audio/cells/sinal-de-maiusculo.mp3'
-import audio_cifrao from '../audio/cells/cifrao.mp3'
-import audio_apostrofo from '../audio/cells/apostrofo.mp3'
-
+import audio_sinal_de_negacao from '../audio/cells/sinal-de-negacao.mp3'
 
 export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCells = constVoid }) {
 
@@ -276,7 +275,7 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
         [Cell.C1256,   play_u_trema],
         [Cell.C246,    play_o_til],
         [Cell.C2456,   play_w],
-    
+
         [Cell.C2,      play_virgula],
         [Cell.C23,     play_ponto_e_virgula],
         [Cell.C25,     play_dois_pontos],
@@ -287,14 +286,14 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
         [Cell.C236,    play_aspa],
         [Cell.C35,     play_asterisco],
         [Cell.C356,    play_grau],
-        
+
         [Cell.C34,     play_i_agudo],
         [Cell.C345,    play_a_til],
         [Cell.C346,    play_o_agudo],
         [Cell.C3456,   play_sinal_de_numero],
         [Cell.C3,      play_ponto],
         [Cell.C36,     play_hifen],
-    
+
         [Cell.C4,      play_circunflexo],
         [Cell.C45,     play_sinal_de_negacao],
         [Cell.C456,    play_barra],
@@ -363,7 +362,7 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
     function handleNonDotKeyPressed(key: Key): void {
         pipe(
             constVoid(),
-            O.fromPredicate(_ => pressedKeys.isEmpty()),    
+            O.fromPredicate(_ => pressedKeys.isEmpty()),
             O.fold(
                 () => rejectKeyPressed(),
                 () => acceptKeyPressed(key)
@@ -385,7 +384,7 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
     function pressedKeysContainsDots(): boolean {
         return DOTS.some(_ => pressedKeys.contains(_))
     }
-    
+
     function acceptKeyPressed(key: Key): void {
         if (!pressedKeys.contains(key)) {
             playKeyPressed()
@@ -425,7 +424,7 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
 
     function handleNonCellCharacter(): void {
         pipe(
-            pressedKeys, 
+            pressedKeys,
             keyToString(defaultKeyEmptyStringMap),
             O.map(addTextToOutput)
         )
@@ -433,13 +432,13 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
 
     function handleCellCharacter(cell: Cell): void {
         pipe(
-            cell, 
+            cell,
             cellToString(defaultCellStringMap),
             O.map(addTextToOutput),
             O.map(_ => playCellAudio(cell))
         )
     }
-    
+
     function addTextToOutput(text: string): void {
         pipe(
             getElementById('test') as Option<HTMLTextAreaElement>,
@@ -457,7 +456,7 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
             onKeyUp={ keyReleased }
             className='container d-flex flex-column justify-content-center align-items-center'>
             <Output />
-            <Keyboard 
+            <Keyboard
                 backspaceRef={backspaceRef}
                 enterRef={enterRef}
                 spaceRef={spaceRef}

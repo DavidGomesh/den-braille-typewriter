@@ -1,7 +1,8 @@
 import React from 'react'
 
-import '../../styles/views/Lessons.css'
 import { Link } from 'react-router-dom'
+
+import '../../styles/views/modes/Lessons.css'
 
 export default function Lessons() {
     return (<>
