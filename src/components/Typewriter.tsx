@@ -16,10 +16,10 @@ import { Cell, cellToString, defaultCellStringMap } from '../domain/Cell.ts'
 
 import useSound from 'use-sound'
 
-import audio_key_pressed_1 from '../audio/cells/key-pressed-1.mp3'
-import audio_key_pressed_2 from '../audio/cells/key-pressed-2.mp3'
-import audio_key_pressed_3 from '../audio/cells/key-pressed-3.mp3'
-import audio_key_pressed_4 from '../audio/cells/key-pressed-4.mp3'
+import audio_key_pressed_1 from '../audio/keys/key-pressed-1.mp3'
+import audio_key_pressed_2 from '../audio/keys/key-pressed-2.mp3'
+import audio_key_pressed_3 from '../audio/keys/key-pressed-3.mp3'
+import audio_key_pressed_4 from '../audio/keys/key-pressed-4.mp3'
 
 import audio_espaco from '../audio/cells/espaco.mp3'
 
