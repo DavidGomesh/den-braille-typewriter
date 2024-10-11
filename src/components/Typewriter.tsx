@@ -351,7 +351,7 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
         performKeyAnimation(key)
         pipe(
             key,
-            O.fromPredicate(isDotKey),
+            O.fromPredicate(_ => isDotKey(_)),
             O.fold(
                 () => handleNonDotKeyPressed(key),
                 () => handleDotKeyPressed(key),
@@ -362,7 +362,7 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
     function handleNonDotKeyPressed(key: Key): void {
         pipe(
             constVoid(),
-            O.fromPredicate(pressedKeys.isEmpty),
+            O.fromPredicate(_ => pressedKeys.isEmpty()),
             O.fold(
                 () => rejectKeyPressed(),
                 () => acceptKeyPressed(key)
@@ -424,14 +424,16 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
 
     function handleNonCellCharacter(): void {
         pipe(
-            pressedKeys, keyToString(defaultKeyEmptyStringMap),
+            pressedKeys,
+            keyToString(defaultKeyEmptyStringMap),
             O.map(addTextToOutput)
         )
     }
 
     function handleCellCharacter(cell: Cell): void {
         pipe(
-            cell, cellToString(defaultCellStringMap),
+            cell,
+            cellToString(defaultCellStringMap),
             O.map(addTextToOutput),
             O.map(_ => playCellAudio(cell))
         )
