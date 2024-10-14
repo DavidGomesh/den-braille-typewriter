@@ -1,0 +1,88 @@
+import { faD, faF, faJ, faK, faL, faLeftLong, faMinus, faS, faTurnDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React from 'react'
+import { Key } from '../domain/Key.ts'
+
+interface NKeyPropos {
+    typewriterKey: Key,
+    pressed: boolean
+}
+
+export default function NKey({ typewriterKey, pressed }: NKeyPropos) {
+
+    const keyType = getKeyType(typewriterKey)
+
+    const typewriterClass = getTypewriterClass(keyType)
+    const keyPressedClass = getKeyPressedClass(pressed)
+    const defaultBootstrapClasses = getDefaultBootstrapClasses()
+    const specificBootstrapClasses = getSpecificBootstrapClasses(keyType)
+
+    const keyIcon = getKeyIcon(typewriterKey)
+
+    return (<>
+        <div className={`${typewriterClass} ${keyPressedClass} ${defaultBootstrapClasses} ${specificBootstrapClasses}`}>
+            {keyIcon}
+        </div>
+    </>)
+}
+
+enum KeyType {
+    DOT,
+    SPACE,
+    ENTER,
+    BACKSPACE,
+}
+
+function getKeyType(key: Key) {
+    switch (key) {
+        case Key.ENTER: return KeyType.ENTER
+        case Key.SPACE: return KeyType.SPACE
+        case Key.BACKSPACE: return KeyType.BACKSPACE
+        case Key.DOT1: return KeyType.DOT
+        case Key.DOT2: return KeyType.DOT
+        case Key.DOT3: return KeyType.DOT
+        case Key.DOT4: return KeyType.DOT
+        case Key.DOT5: return KeyType.DOT
+        case Key.DOT6: return KeyType.DOT
+    }
+}
+
+function getTypewriterClass(keyType: KeyType): string {
+    switch (keyType) {
+        case KeyType.DOT: return 'typewriter-dot-key'
+        case KeyType.SPACE: return 'typewriter-space-key'
+        case KeyType.ENTER: return 'typewriter-enter-key'
+        case KeyType.BACKSPACE: return 'typewriter-backspace-key'
+    }
+}
+
+function getKeyPressedClass(pressed: boolean) {
+    return pressed ? 'bg-dark text-light' : ''
+}
+
+function getDefaultBootstrapClasses() {
+    return 'd-flex justify-content-center align-items-center'
+}
+
+function getSpecificBootstrapClasses(keyType: KeyType): string {
+    switch (keyType) {
+        case KeyType.DOT: return 'rounded-circle border border-dark mx-1'
+        case KeyType.SPACE: return 'rounded-pill border border-dark mx-1'
+        case KeyType.ENTER: return 'rounded-4 border border-dark mx-1'
+        case KeyType.BACKSPACE: return 'rounded-4 border border-dark mx-1'
+    }
+}
+
+function getKeyIcon(key: Key) {
+    switch (key) {
+        case Key.ENTER: return <FontAwesomeIcon icon={faTurnDown}/>
+        case Key.SPACE: return <FontAwesomeIcon icon={faMinus}/>
+        case Key.BACKSPACE: return <FontAwesomeIcon icon={faLeftLong}/>
+        case Key.DOT1: return <FontAwesomeIcon icon={faF}/>
+        case Key.DOT2: return <FontAwesomeIcon icon={faD}/>
+        case Key.DOT3: return <FontAwesomeIcon icon={faS}/>
+        case Key.DOT4: return <FontAwesomeIcon icon={faJ}/>
+        case Key.DOT5: return <FontAwesomeIcon icon={faK}/>
+        case Key.DOT6: return <FontAwesomeIcon icon={faL}/>
+    }
+}
