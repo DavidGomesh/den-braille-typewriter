@@ -4,27 +4,23 @@ import { Key } from '../domain/Key.ts'
 
 import { useKeyboardAudioContext } from './KeyboardAudioPlayer.tsx'
 
-interface NKeyboardProps {
-    keyStatus: {
-        enter: boolean,
-        space: boolean,
-        backspace: boolean,
-        dot1: boolean,
-        dot2: boolean,
-        dot3: boolean,
-        dot4: boolean,
-        dot5: boolean,
-        dot6: boolean,
-    }
+export const status = {
+    enter: true,
+    space: false,
+    backspace: false,
+    dot1: true,
+    dot2: false,
+    dot3: false,
+    dot4: false,
+    dot5: false,
+    dot6: false,
 }
 
-export default function NKeyboard({ keyStatus }: NKeyboardProps) {
+export default function NKeyboard({ keyStatus = status }) {
 
     const { playKeyPress } = useKeyboardAudioContext()
 
     const defaultBootstrapClasses = getDefaultBootstrapClasses()
-
-    // playKeyPress()
 
     return (<>
         <div className={`${defaultBootstrapClasses}`} onMouseEnter={playKeyPress} onMouseLeave={playKeyPress}>

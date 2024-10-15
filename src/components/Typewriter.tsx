@@ -92,8 +92,11 @@ import audio_circunflexo from '../audio/cells/circunflexo.mp3'
 import audio_sinal_de_delimitador from '../audio/cells/sinal-de-delimitador.mp3'
 import audio_sinal_de_maiusculo from '../audio/cells/sinal-de-maiusculo.mp3'
 import audio_sinal_de_negacao from '../audio/cells/sinal-de-negacao.mp3'
+import { useCellAudioContext } from './CellAudioPlayer.tsx'
 
 export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCells = constVoid }) {
+
+    const { playCellAudio } = useCellAudioContext()
 
     const backspaceRef = useRef()
     const enterRef = useRef()
@@ -303,11 +306,13 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
         [Cell.C6,      play_apostrofo],
     ])
 
-    function playCellAudio(cell: Cell): void {
-        pipe(
-            O.fromNullable(cellPlayerMap.get(cell)),
-            O.map(play => play())
-        )
+    function playCellAudioOld(cell: Cell): void {
+        playCellAudio(cell)
+
+        // pipe(
+        //     O.fromNullable(cellPlayerMap.get(cell)),
+        //     O.map(play => play())
+        // )
     }
 
     function getElementById(id: string): Option<HTMLElement> {
@@ -435,7 +440,7 @@ export default function Typewriter({ updateKeyHistory = constVoid, updateTypedCe
             cell,
             cellToString(defaultCellStringMap),
             O.map(addTextToOutput),
-            O.map(_ => playCellAudio(cell))
+            O.map(_ => playCellAudioOld(cell))
         )
     }
 

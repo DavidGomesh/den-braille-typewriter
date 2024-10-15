@@ -8,20 +8,24 @@ export function useKeyboardAudioContext() {
     return useContext(KeyboardAudioContext)
 }
 
+function getRandomKeyboardAudio() {
+    const audioPaths = [
+        'assets/audio/keys/key-pressed-1.mp3',
+        'assets/audio/keys/key-pressed-2.mp3',
+        'assets/audio/keys/key-pressed-3.mp3',
+        'assets/audio/keys/key-pressed-4.mp3',
+    ]
+
+    const index = Math.floor(Math.random() * audioPaths.length)
+    return new Audio(audioPaths[index])
+}
 
 export default function KeyboardAudioProvider({ children }) {
-    const keyPressedAudios = [
-        useRef(new Audio('assets/audio/keys/key-pressed-1.mp3')),
-        useRef(new Audio('assets/audio/keys/key-pressed-2.mp3')),
-        useRef(new Audio('assets/audio/keys/key-pressed-3.mp3')),
-        useRef(new Audio('assets/audio/keys/key-pressed-4.mp3')),
-    ]
 
     const [currentPlaying, setCurrentPlaying] = useState<HTMLAudioElement | null>(null)
 
     async function playKeyPress() {
-        const idx = Math.floor(Math.random() * keyPressedAudios.length)
-        const audio = keyPressedAudios[idx].current
+        const audio = getRandomKeyboardAudio()
 
         await stopCurrentAudio()
 
@@ -37,6 +41,7 @@ export default function KeyboardAudioProvider({ children }) {
         if (currentPlaying) {
             currentPlaying.pause()
             currentPlaying.currentTime = 0
+            // currentPlaying.remove()
         }
     }
 

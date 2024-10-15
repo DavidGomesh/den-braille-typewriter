@@ -21,8 +21,6 @@ export default function Output({ text = "" }) {
     </>)
 }
 
-
-
 // It has side effects
 export function addText(text: string): (textArea: HTMLTextAreaElement) => void {
     return textArea => {
