@@ -9,8 +9,8 @@ export default function Home() {
             <div className='text-center'>
                 <h1 style={{fontSize: '5rem'}}>Máquina Den Braille</h1>
                 <div className='d-flex flex-column align-items-center'>
-                    <Link to={'/free'}><button className='btn btn-outline-primary btn-lg fw-bold mb-2' style={{width: '300px'}}>Modo livre</button></Link>
-                    <Link to='/lessons'><button className='btn btn-outline-primary btn-lg fw-bold mb-2' style={{width: '300px'}}>Modo lições</button></Link>
+                    <Link to={'/free'} className='btn btn-outline-primary btn-lg fw-bold mb-2' style={{width: '300px'}}>Modo livre</Link>
+                    <Link to='/lessons' className='btn btn-outline-primary btn-lg fw-bold mb-2' style={{width: '300px'}}>Modo lições</Link>
                     <button className='btn btn-outline-primary btn-lg fw-bold mb-2' style={{width: '300px'}}>Opções</button>
                     <button className='btn btn-outline-primary btn-lg fw-bold mb-2' style={{width: '300px'}}>Sobre</button>
                 </div>
