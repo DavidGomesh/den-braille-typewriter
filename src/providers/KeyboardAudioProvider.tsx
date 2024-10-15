@@ -8,18 +8,6 @@ export function useKeyboardAudioContext() {
     return useContext(KeyboardAudioContext)
 }
 
-function getRandomKeyboardAudio() {
-    const audioPaths = [
-        'assets/audio/keys/key-pressed-1.mp3',
-        'assets/audio/keys/key-pressed-2.mp3',
-        'assets/audio/keys/key-pressed-3.mp3',
-        'assets/audio/keys/key-pressed-4.mp3',
-    ]
-
-    const index = Math.floor(Math.random() * audioPaths.length)
-    return new Audio(audioPaths[index])
-}
-
 export default function KeyboardAudioProvider({ children }) {
 
     const [currentPlaying, setCurrentPlaying] = useState<HTMLAudioElement | null>(null)
@@ -52,3 +40,14 @@ export default function KeyboardAudioProvider({ children }) {
     )
 }
 
+function getRandomKeyboardAudio() {
+    const audioPaths = [
+        'assets/audio/keys/key-pressed-1.mp3',
+        'assets/audio/keys/key-pressed-2.mp3',
+        'assets/audio/keys/key-pressed-3.mp3',
+        'assets/audio/keys/key-pressed-4.mp3',
+    ]
+
+    const index = Math.floor(Math.random() * audioPaths.length)
+    return new Audio(audioPaths[index])
+}
