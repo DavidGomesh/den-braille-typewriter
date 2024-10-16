@@ -20,10 +20,15 @@ export default function TypewriterKey({ referenceKey, pressed }: TypewriterKeyPr
     const specificBootstrapClasses = getSpecificBootstrapClasses(keyType)
 
     const keyIcon = getKeyIcon(referenceKey)
+    const keyTip = getKeyTip(referenceKey)
 
     return (<>
-        <div className={`${typewriterClass} ${keyPressedClass} ${defaultBootstrapClasses} ${specificBootstrapClasses}`}>
-            {keyIcon}
+        <div className='d-flex flex-column align-items-center'>
+            <div className={`${typewriterClass} ${keyPressedClass} ${defaultBootstrapClasses} ${specificBootstrapClasses}`}>
+                {keyIcon}
+            </div>
+
+            { keyTip }
         </div>
     </>)
 }
@@ -90,5 +95,14 @@ function getKeyIcon(key: Key) {
         case Key.DOT4: return <FontAwesomeIcon icon={faJ}/>
         case Key.DOT5: return <FontAwesomeIcon icon={faK}/>
         case Key.DOT6: return <FontAwesomeIcon icon={faL}/>
+    }
+}
+
+function getKeyTip(key: Key) {
+    switch (key) {
+        case Key.SPACE: return <div>Espaço</div>
+        case Key.ENTER: return <div>Q</div>
+        case Key.BACKSPACE: return <div>Backspace</div>
+        default: return <div></div>
     }
 }

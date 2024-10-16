@@ -6,15 +6,15 @@ import './styles/index.css'
 import './vendors/bootstrap/css/bootstrap.min.css'
 
 import Home from './views/Home.tsx'
-import Lessons from './views/modes/Lessons.tsx'
 import Free from './views/modes/Free.tsx'
+import Lessons from './views/modes/Lessons.tsx'
 
 import 'bootstrap/dist/js/bootstrap.bundle.js'
-import MenuAudioProvider from './providers/MenuAudioProvider.tsx'
+import AudioProvider from './providers/AudioProvider.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <>
-        <MenuAudioProvider>
+        <AudioProvider>
             <BrowserRouter>
                 <Routes>
                     <Route path='/' Component={Home} />
@@ -22,6 +22,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                     <Route path='/lessons' Component={Lessons} />
                 </Routes>
             </BrowserRouter>
-        </MenuAudioProvider>
+        </AudioProvider>
     </>
 )

@@ -2,10 +2,9 @@ import { Set } from 'immutable'
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { cellToString, findCell } from '../domain/Cell.ts'
 import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
-import { useCellAudioContext } from '../providers/CellAudioProvider.tsx'
-import { useKeyboardAudioContext } from '../providers/KeyboardAudioProvider.tsx'
 import NKeyboard from './Keyboard.tsx'
 import NOutput, { addTextToTextArea, getPreviousCharacter } from './Output.tsx'
+import { useAudioContext } from '../providers/AudioProvider.tsx'
 
 
 export default function NTypewriter() {
@@ -37,9 +36,10 @@ export default function NTypewriter() {
         setOutputMuted(false)
     }
 
-    const { playKeyPress, playKeyboardMuted, playKeyboardUnmuted } = useKeyboardAudioContext()
-    const { playCellAudio, playOutputMuted, playOutputUnmuted, playEnterAudio } = useCellAudioContext()
-
+    const { 
+        playKeyPress, playKeyboardMuted, playKeyboardUnmuted,
+        playCellAudio, playOutputMuted, playOutputUnmuted, playEnterAudio
+    } = useAudioContext()
 
     const output = useRef<HTMLTextAreaElement>()
 
@@ -373,7 +373,21 @@ export default function NTypewriter() {
             id='typewriter'
             className='container d-flex flex-column justify-content-center align-items-center'
             onKeyDown={ handleKeyPressed } onKeyUp={ handleKeyReleased }
+            autoFocus
             >
+
+            <div className='fs-1'>
+                MODO LIVRE
+            </div>
+
+            <div className='d-flex justify-content-center w-100 fs-5 gap-3 mb-3'>
+                <div><strong>(i)</strong> Instruções</div>
+                <div><strong>(t)</strong> Ver texto a tinta ou em Braille</div>
+                <div><strong>(o)</strong> Liga/desliga áudio do conversor</div>
+                <div><strong>(m)</strong> Liga/desliga áudio do teclado</div>
+                {/* <div><strong>(enter)</strong> Confirma</div> */}
+            </div>
+
             <NOutput reference={output} />
             <NKeyboard keyStatus={keyStatus} />
         </div>

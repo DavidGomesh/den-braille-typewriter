@@ -1,21 +1,56 @@
 import React, { createContext, useContext, useState } from 'react'
 import { Cell } from '../domain/Cell.ts'
 
-const CellAudioContext = createContext({
+const AudioContext = createContext({
+    // Menu players
+    playMainMenuAudio: () => { return },
+    playFreeModeAudio: () => { return },
+    playChallengeModeAudio: () => { return },
+    playAboutModeAudio: () => { return },
+    playFreeModeInstructionsAudio: () => { return },
+
+    // Cell players
     playCellAudio: (_: Cell) => { return },
     playOutputMuted: () => { return },
     playOutputUnmuted: () => { return },
     playEnterAudio: () => { return },
+
+    // Keyboard players
+    playKeyPress: () => { return },
+    playKeyboardMuted: () => { return },
+    playKeyboardUnmuted: () => { return },
 })
 
-export function useCellAudioContext() {
-    return useContext(CellAudioContext)
+export function useAudioContext() {
+    return useContext(AudioContext)
 }
 
-export default function CellAudioProvider({ children }) {
+export default function AudioProvider({ children }) {
 
     const [currentPlaying, setCurrentPlaying] = useState<HTMLAudioElement | null>(null)
 
+    // Menu players
+    function playMainMenuAudio() {
+        playAudio(getMainMenuAudio())
+    }
+
+    function playFreeModeAudio() {
+        playAudio(getFreeModeAudio())
+    }
+
+    function playChallengeModeAudio() {
+        playAudio(getChallengeModeAudio())
+    }
+
+    function playAboutModeAudio() {
+        playAudio(getAboutAudio())
+    }
+
+    function playFreeModeInstructionsAudio() {
+        playAudio(getFreeModeInstructionsAudio())
+    }
+
+    // Cell players
     async function playCellAudio(cell: Cell) {
         playAudio(getCellAudio(cell))
     }
@@ -31,7 +66,22 @@ export default function CellAudioProvider({ children }) {
     async function playEnterAudio() {
         playAudio(getEnterAudio())
     }
-    
+
+    // Keyboard players
+    async function playKeyPress() {
+        playAudio(getRandomKeyboardAudio())
+    }
+
+    async function playKeyboardMuted() {
+        playAudio(getKeyboardMutedAudio())
+    }
+
+    async function playKeyboardUnmuted() {
+        playAudio(getKeyboardUnmutedAudio())
+    }
+
+
+
     async function playAudio(audio: HTMLAudioElement) {
         await stopCurrentAudio()
         try {
@@ -46,24 +96,58 @@ export default function CellAudioProvider({ children }) {
         if (currentPlaying) {
             currentPlaying.pause()
             currentPlaying.currentTime = 0
-            // currentPlaying.remove()
         }
     }
 
     const playerFunctions = {
-        playCellAudio, 
-        playOutputMuted, 
+        // Menu players
+        playMainMenuAudio,
+        playFreeModeAudio,
+        playChallengeModeAudio,
+        playAboutModeAudio,
+        playFreeModeInstructionsAudio,
+
+        // Cell players
+        playCellAudio,
+        playOutputMuted,
         playOutputUnmuted,
         playEnterAudio,
+
+        // Keyboard players
+        playKeyPress,
+        playKeyboardMuted,
+        playKeyboardUnmuted,
     }
 
     return (
-        <CellAudioContext.Provider value={playerFunctions}>
+        <AudioContext.Provider value={playerFunctions}>
             { children }
-        </CellAudioContext.Provider>
+        </AudioContext.Provider>
     )
 }
 
+// Menu audio loaders
+function getMainMenuAudio() {
+    return new Audio('assets/audio/views/menu/menu-principal-da-maquina-den-braille.mp3')
+}
+
+function getFreeModeAudio() {
+    return new Audio('assets/audio/views/menu/modo-livre.mp3')
+}
+
+function getChallengeModeAudio() {
+    return new Audio('assets/audio/views/menu/modo-desafio.mp3')
+}
+
+function getAboutAudio() {
+    return new Audio('assets/audio/views/menu/sobre.mp3')
+}
+
+function getFreeModeInstructionsAudio() {
+    return new Audio('assets/audio/views/free/instrucoes-modo-livre.mp3')
+}
+
+// Cell audio loaders
 function getCellAudio(cell: Cell) {
     switch (cell) {
         case Cell.C0: return new Audio('assets/audio/cells/espaco.mp3')
@@ -150,4 +234,25 @@ function getOutputUnmutedAudio() {
 
 function getEnterAudio() {
     return new Audio('assets/audio/keys/enter.mp3')
+}
+
+// Keyboard audio loaders
+function getRandomKeyboardAudio() {
+    const audioPaths = [
+        'assets/audio/keys/key-pressed-1.mp3',
+        'assets/audio/keys/key-pressed-2.mp3',
+        'assets/audio/keys/key-pressed-3.mp3',
+        'assets/audio/keys/key-pressed-4.mp3',
+    ]
+
+    const index = Math.floor(Math.random() * audioPaths.length)
+    return new Audio(audioPaths[index])
+}
+
+function getKeyboardMutedAudio() {
+    return new Audio('assets/audio/actions/teclado-mutado.mp3')
+}
+
+function getKeyboardUnmutedAudio() {
+    return new Audio('assets/audio/actions/teclado-desmutado.mp3')
 }

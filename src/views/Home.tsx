@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 
 import { Link } from 'react-router-dom'
+import { useAudioContext } from '../providers/AudioProvider.tsx'
 import '../styles/views/Home.css'
-import { useMenuAudioContext } from '../providers/MenuAudioProvider.tsx'
 
 export default function Home() {
 
-    const { playMainMenuAudio, playFreeModeAudio, playChallengeModeAudio, playAboutModeAudio } = useMenuAudioContext()
+    const { playMainMenuAudio, playFreeModeAudio, playChallengeModeAudio, playAboutModeAudio } = useAudioContext()
 
     function handleBtnFreeModeFocused() {
         playFreeModeAudio()

@@ -1,19 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import '../../styles/views/modes/Free.css'
 
 import NTypewriter from '../../components/Typewriter.tsx'
-import KeyboardAudioProvider from '../../providers/KeyboardAudioProvider.tsx'
-import CellAudioProvider from '../../providers/CellAudioProvider.tsx'
+import { useAudioContext } from '../../providers/AudioProvider.tsx'
 
 export default function Free() {
+    const { playFreeModeInstructionsAudio } = useAudioContext()
+
+    useEffect(() => {
+        playFreeModeInstructionsAudio()
+    }, [])
+
     return (<>  
         <main>
-            <KeyboardAudioProvider>
-                <CellAudioProvider>
-                    <NTypewriter/>
-                </CellAudioProvider>
-            </KeyboardAudioProvider>
+            <NTypewriter/>
         </main>
     </>)
 }
