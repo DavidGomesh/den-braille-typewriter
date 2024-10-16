@@ -103,3 +103,7 @@ export const cellStringMap = Map<Cell, string>([
 export function cellToString(cell: Cell) {
     return cellStringMap.get(cell) as string
 }
+
+export function findCell(character: string) {
+    return cellStringMap.findEntry(c => c === character)
+}

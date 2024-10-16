@@ -1,11 +1,11 @@
 import { Set } from 'immutable'
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { cellToString } from '../domain/Cell.ts'
+import { cellToString, findCell } from '../domain/Cell.ts'
 import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
 import { useCellAudioContext } from '../providers/CellAudioProvider.tsx'
 import { useKeyboardAudioContext } from '../providers/KeyboardAudioProvider.tsx'
 import NKeyboard from './Keyboard.tsx'
-import NOutput, { addTextToTextArea } from './Output.tsx'
+import NOutput, { addTextToTextArea, getPreviousCharacter } from './Output.tsx'
 
 
 export default function NTypewriter() {
@@ -224,8 +224,34 @@ export default function NTypewriter() {
         const key = codeToKey(event.code)
         console.info(`Mapped Key Released: ${event.code}(${key})`)
 
-        if (!isActionKey(key)) {
-            handleTypewriterKeyReleased(key)
+        if (isActionKey(key)) {
+            handleActionKeyReleased(key)
+        } else {
+            handleTypewriterKeyReleased(key)  
+        }
+    }
+
+    function handleActionKeyReleased(key: Key) {
+        console.info(`Action Key Released: ${key}`)
+
+        if (isArrowKey(key)) {
+            handleArrowKeyReleased(key)
+        }
+    }
+
+    function handleArrowKeyReleased(key: Key) {
+        console.info(`Arrow Key Released: ${key}`)
+
+        const previousCharacter = getPreviousCharacter(output.current as HTMLTextAreaElement)
+        console.info('Previous character: ' + previousCharacter)
+        
+        if (previousCharacter) {
+            const previousCell = findCell(previousCharacter)
+            console.info('Previous cell: ' + previousCell)
+
+            if (previousCell && !isOutputMuted()) {
+                playCellAudio(previousCell[0])
+            }
         }
     }
 

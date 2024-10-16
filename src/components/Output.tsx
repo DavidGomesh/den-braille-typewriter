@@ -35,3 +35,8 @@ export function addTextToTextArea(text: string, textArea: HTMLTextAreaElement) {
 
     textArea.setSelectionRange(selectionStart+1, selectionStart+1)
 }
+
+export function getPreviousCharacter(textArea: HTMLTextAreaElement) {
+    const cursorPosition = textArea.selectionStart || 0
+    return cursorPosition != 0 ? textArea.value.charAt(cursorPosition-1) : null
+}
