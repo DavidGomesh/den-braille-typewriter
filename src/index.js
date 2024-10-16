@@ -10,15 +10,18 @@ import Lessons from './views/modes/Lessons.tsx'
 import Free from './views/modes/Free.tsx'
 
 import 'bootstrap/dist/js/bootstrap.bundle.js'
+import MenuAudioProvider from './providers/MenuAudioProvider.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <>
-        <BrowserRouter>
-            <Routes>
-                <Route path='/' Component={Home} />
-                <Route path='/free' Component={Free} />
-                <Route path='/lessons' Component={Lessons} />
-            </Routes>
-        </BrowserRouter>
+        <MenuAudioProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route path='/' Component={Home} />
+                    <Route path='/free' Component={Free} />
+                    <Route path='/lessons' Component={Lessons} />
+                </Routes>
+            </BrowserRouter>
+        </MenuAudioProvider>
     </>
 )
