@@ -1,235 +1,323 @@
+import { Set } from 'immutable'
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
+import { cellToString } from '../domain/Cell.ts'
+import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
+import { useCellAudioContext } from '../providers/CellAudioProvider.tsx'
+import { useKeyboardAudioContext } from '../providers/KeyboardAudioProvider.tsx'
+import NKeyboard from './Keyboard.tsx'
+import NOutput, { addTextToTextArea } from './Output.tsx'
 
-import { constVoid, pipe } from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
-import { Option } from 'fp-ts/lib/Option'
 
-import { Map, Set } from 'immutable'
+export default function NTypewriter() {
 
-import { codeToKey, codeKeyMap, defaultKeyEmptyStringMap, keysCellMap, DOTS, isDotKey, Key, keysToCell2, keyToString, codeToKey_OLD } from '../domain/Key.ts'
+    const [keyboardMuted, setKeyboardMuted] = useState(false)
+    const [outputMuted, setOutputMuted] = useState(false)
 
-import Keyboard from './Keyboard.tsx'
-import Output, { addText } from './Output.tsx'
-
-import { codeToActionKey, defaultCodeActionKeyMap } from '../domain/ActionKey.ts'
-import { Cell, cellToString, cellStringMap } from '../domain/Cell.ts'
-
-export default function Typewriter({ keyboardSound = true }) {
-
-    const backspaceRef = useRef()
-    const enterRef = useRef()
-    const spaceRef = useRef()
-    const dot1Ref = useRef()
-    const dot2Ref = useRef()
-    const dot3Ref = useRef()
-    const dot4Ref = useRef()
-    const dot5Ref = useRef()
-    const dot6Ref = useRef()
-
-    const keyRefMap: Map<Key, any> = Map([
-        [Key.BACKSPACE, backspaceRef],
-        [Key.ENTER, enterRef],
-        [Key.SPACE, spaceRef],
-        [Key.DOT1, dot1Ref],
-        [Key.DOT2, dot2Ref],
-        [Key.DOT3, dot3Ref],
-        [Key.DOT4, dot4Ref],
-        [Key.DOT5, dot5Ref],
-        [Key.DOT6, dot6Ref],
-    ])
-
-    function performKeyAnimation(key: Key): void {
-        pipe(
-            O.fromNullable(keyRefMap.get(key)),
-            O.map(keyRef => {
-                keyRef.current.classList.add('bg-dark')
-                keyRef.current.classList.add('text-light')
-            })
-        )
+    function isKeyboardMuted() {
+        return keyboardMuted
     }
 
-    function cancelKeyAnimation(key: Key): void {
-        pipe(
-            O.fromNullable(keyRefMap.get(key)),
-            O.map(keyRef => {
-                keyRef.current.classList.remove('bg-dark')
-                keyRef.current.classList.remove('text-light')
-            })
-        )
+    function muteKeyboard() {
+        setKeyboardMuted(true)
+    }
+
+    function unmuteKeyboard() {
+        setKeyboardMuted(false)
+    }
+
+    function isOutputMuted() {
+        return outputMuted
+    }
+
+    function muteOutput() {
+        setOutputMuted(true)
+    }
+
+    function unmuteOutput() {
+        setOutputMuted(false)
+    }
+
+    const { playKeyPress, playKeyboardMuted, playKeyboardUnmuted } = useKeyboardAudioContext()
+    const { playCellAudio, playOutputMuted, playOutputUnmuted, playEnterAudio } = useCellAudioContext()
+
+
+    const output = useRef<HTMLTextAreaElement>()
+
+    function handleKeyPressed(event: KeyboardEvent<HTMLElement>) {
+        console.info('Key Pressed: ' + event.code)
+
+        if (!wasKeyPressedWithCtrl(event)) {
+            if (isMappedKey(event.code)) {
+                handleMappedKeyPressed(event)
+            } else {
+                handleUnmappedKeyPressed(event)
+            }
+        }
+
+        console.info('Done!')
+    }
+
+    function wasKeyPressedWithCtrl(event: KeyboardEvent<HTMLElement>) {
+        return event.ctrlKey
+    }
+
+    function handleMappedKeyPressed(event: KeyboardEvent<HTMLElement>) {
+        const key = codeToKey(event.code)
+        console.info(`Mapped Key Pressed: ${event.code}(${key})`)
+
+        if (isActionKey(key)) {
+            handleActionKeyPressed(key, event)
+        } else {
+            handleTypewriterKeyPressed(key, event)
+        }
+    }
+
+    function handleActionKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+        console.info(`Action Key Pressed: ${event.code}(${key})`)
+
+        if (isArrowKey(key)) {
+            handleArrowKeyPressed(key, event)
+        } else {
+            handleControlKeyPressed(key, event)
+        }
+    }
+
+    function handleArrowKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+        console.info(`Arrow Key Pressed: ${event.code}(${key})`)
+    }
+
+    const controlKeyHandlerFunctions = {
+        [Key.CONFIRM]: handleConfirmKeyPressed,
+        [Key.MUTE_OUTPUT_SOUNDS]: handleMuteOutputSoundsKeyPressed,
+        [Key.MUTE_KEYBOARD_SOUNDS]: handleMuteKeyboardSoundsKeyPressed,
+    }
+
+    function handleControlKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+        console.info(`Control Key Pressed ${event.code}(${key})`)
+
+        event.preventDefault()
+        controlKeyHandlerFunctions[key]()
+    }
+
+    function handleConfirmKeyPressed() {
+        console.info('Confirm Key Pressed')
+    }
+
+    function handleMuteOutputSoundsKeyPressed() {
+        console.info('Mute Output Sounds Key Pressed')
+        
+        if (isOutputMuted()) {
+            unmuteOutput()
+            playOutputUnmuted()
+            console.info('Output muted')
+            
+        } else {
+            muteOutput()
+            playOutputMuted()
+            console.info('Output unmuted')
+        }
+    }
+
+    function handleMuteKeyboardSoundsKeyPressed() {
+        console.info('Mute Keyboard Sounds Key Pressed')
+
+        if (isKeyboardMuted()) {
+            unmuteKeyboard()
+            playKeyboardUnmuted()
+            console.info('Keyboard muted')
+            
+        } else {
+            muteKeyboard()
+            playKeyboardMuted()
+            console.info('Keyboard unmuted')
+        }
+    }
+
+    function handleTypewriterKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+        console.info(`Typewriter Key Pressed ${event.code}(${key})`)
+
+        if (isDotKey(key)) {
+            handleDotKeyPressed(key, event)
+        } else {
+            handleBlankKeyPressed(key, event)
+        }
+    }
+
+    function handleDotKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+        console.info(`Dot Key Pressed: ${key}`)
+        event.preventDefault()
+
+        if (noKeysPressed() || pressedKeysContainsDots()) {
+            setCurrPressedKeys(currPressedKeys.add(key))
+            setPressedKeys(pressedKeys.add(key))
+
+            updatePressedKeyStatus(key)
+
+            if (!isKeyboardMuted()) {
+                playKeyPress()
+            }
+        }
+    }
+
+    const blankKeyHandlerFunctions = {
+        [Key.SPACE]: handleSpaceKeyPressed,
+        [Key.ENTER]: handleEnterKeyPressed,
+        [Key.BACKSPACE]: handleBackspaceKeyPressed,
+    }
+
+    function handleBlankKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+        console.info(`Blank Key Pressed ${key}`)
+
+        if (noKeysPressed() || !pressedKeysContainsDots()) {
+            setCurrPressedKeys(currPressedKeys.add(key))
+            setPressedKeys(pressedKeys.add(key))
+
+            blankKeyHandlerFunctions[key](event)
+            updatePressedKeyStatus(key)
+
+            if (!isKeyboardMuted()) {
+                playKeyPress()
+            }
+        } else {
+            event.preventDefault()
+        }
+    }
+
+    function handleSpaceKeyPressed(event: KeyboardEvent<HTMLElement>) {
+        event.preventDefault()
+        console.info('Space Key Pressed')
+        // addText('_', output.current as HTMLTextAreaElement)
+    }
+
+    function handleEnterKeyPressed(event: KeyboardEvent<HTMLElement>) {
+        event.preventDefault()
+        console.info('Enter Key Pressed')
+        addTextToTextArea('\n', output.current as HTMLTextAreaElement)
+
+        if (!isOutputMuted()) {
+            playEnterAudio()
+        }
+    }
+
+    function handleBackspaceKeyPressed(event: KeyboardEvent<HTMLElement>) {
+        console.info('Backspace Key Pressed')
+    }
+
+    function handleUnmappedKeyPressed(event: KeyboardEvent<HTMLElement>) {
+        console.info(`Unmapped Key Pressed: ${event.code}`)
+        event.preventDefault()
+    }
+
+
+
+    function handleKeyReleased(event: KeyboardEvent<HTMLElement>) {
+        console.info('Key Released: ' + event.code)
+
+        if (isMappedKey(event.code)) {
+            handleMappedKeyReleased(event)
+        }
+
+        console.info('Done!')
+    }
+
+    function handleMappedKeyReleased(event: KeyboardEvent<HTMLElement>) {
+        const key = codeToKey(event.code)
+        console.info(`Mapped Key Released: ${event.code}(${key})`)
+
+        if (!isActionKey(key)) {
+            handleTypewriterKeyReleased(key)
+        }
+    }
+
+    function handleTypewriterKeyReleased(key: Key) {
+        console.info(`Typewriter Key Released: ${key}`)
+
+        setCurrPressedKeys(currPressedKeys.remove(key))
+        updateReleasedKeyStatus(key)
     }
 
     const [currPressedKeys, setCurrPressedKeys] = useState(Set<Key>())
     const [pressedKeys, setPressedKeys] = useState(Set<Key>())
 
-    function playKeyPressed() {
+    function noKeysPressed() {
+        return pressedKeys.isEmpty()
     }
 
-
-    function playCellAudioOld(cell: Cell): void {
-
-        // pipe(
-        //     O.fromNullable(cellPlayerMap.get(cell)),
-        //     O.map(play => play())
-        // )
+    function pressedKeysContainsDots() {
+        return pressedKeys.some(isDotKey)
     }
 
-    function getElementById(id: string): Option<HTMLElement> {
-        return O.fromNullable(document.getElementById(id))
+    function keyAlreadyPressed(key: Key) {
+        return pressedKeys.contains(key)
     }
 
-    function keyPressed(event: KeyboardEvent<HTMLElement>): void {
-        console.log(event.code)
-        pipe(
-            event.code,
-            codeToActionKey(defaultCodeActionKeyMap),
-            O.fold(
-                () => handleNonActionKeyPressed(event),
-                () => handleActionKeyPressed(),
-            )
-        )
+    const initialKeyStatus = {
+        [Key.DOT1]: false,
+        [Key.DOT2]: false,
+        [Key.DOT3]: false,
+        [Key.DOT4]: false,
+        [Key.DOT5]: false,
+        [Key.DOT6]: false,
+        [Key.SPACE]: false,
+        [Key.ENTER]: false,
+        [Key.BACKSPACE]: false
     }
 
-    function handleActionKeyPressed(): void {
-        return constVoid()
+    const [keyStatus, setKeyStatus] = useState(initialKeyStatus)
+
+    function updatePressedKeyStatus(key: Key) {
+        console.info('Pressed Key Status Updated: ' + key)
+        setKeyStatus({
+            ...keyStatus,
+            [key]: true
+        })
     }
 
-    function handleNonActionKeyPressed(event: KeyboardEvent<HTMLElement>): void {
-        event.preventDefault()
-        pipe(
-            event.code,
-            codeToKey_OLD(codeKeyMap),
-            O.fold(
-                ()  => handleNotMappedKeyPressed(),
-                key => handleTypewriterKeyPressed(key)
-            )
-        )
+    function updateReleasedKeyStatus(key: Key) {
+        console.info('Released Key Status Updated: ' + key)
+        setKeyStatus({
+            ...keyStatus,
+            [key]: false
+        })
     }
-
-    function handleNotMappedKeyPressed(): void {
-        return constVoid()
-    }
-
-    function handleTypewriterKeyPressed(key: Key): void {
-        // updateKeyHistory(key)
-        performKeyAnimation(key)
-        pipe(
-            key,
-            O.fromPredicate(_ => isDotKey(_)),
-            O.fold(
-                () => handleNonDotKeyPressed(key),
-                () => handleDotKeyPressed(key),
-            )
-        )
-    }
-
-    function handleNonDotKeyPressed(key: Key): void {
-        pipe(
-            constVoid(),
-            O.fromPredicate(_ => pressedKeys.isEmpty()),
-            O.fold(
-                () => rejectKeyPressed(),
-                () => acceptKeyPressed(key)
-            )
-        )
-    }
-
-    function handleDotKeyPressed(key: Key): void {
-        pipe(
-            constVoid(),
-            O.fromPredicate(_ => pressedKeys.isEmpty() || pressedKeysContainsDots()),
-            O.fold(
-                () => rejectKeyPressed(),
-                () => acceptKeyPressed(key)
-            )
-        )
-    }
-
-    function pressedKeysContainsDots(): boolean {
-        return DOTS.some(_ => pressedKeys.contains(_))
-    }
-
-    function acceptKeyPressed(key: Key): void {
-        if (!pressedKeys.contains(key)) {
-            playKeyPressed()
-        }
-        setCurrPressedKeys(currPressedKeys.add(key))
-        setPressedKeys(pressedKeys.add(key))
-        // updateTypedCells(key)
-    }
-
-    function rejectKeyPressed(): void {
-        return constVoid()
-    }
-
-    function keyReleased(event: KeyboardEvent<HTMLElement>): void {
-        event.preventDefault()
-        pipe(
-            event.code,
-            codeToKey_OLD(codeKeyMap),
-            O.map(key => {
-                setCurrPressedKeys(currPressedKeys.remove(key))
-                cancelKeyAnimation(key)
-            })
-        )
-    }   
 
     useEffect(() => {
-        pipe(
-            O.Do,
-            O.bind('_',    () => pipe(currPressedKeys, O.fromPredicate(_ => _.isEmpty()))),
-            O.bind('cell', () => pipe(pressedKeys, keysToCell2(keysCellMap))),
-            O.fold(
-                ()         => handleNonCellCharacter(),
-                ({ cell }) => handleCellCharacter(cell)
-            )
-        )
+        if (noKeyPressedCurrently()) {
+            console.info('All keys released')
+
+            if (canConvertKeysToCell(pressedKeys)) {
+                console.info('The keys previous pressed can be converted to a cell')
+                console.info('Keys previous pressed: ' + pressedKeys)
+
+                const cell = keysToCell(pressedKeys)
+                console.info('Keys converted to cell: ' + cell)
+
+                const char = cellToString(cell)
+                console.info('Cell converted to string: ' + char)
+                addTextToTextArea(char, output.current as HTMLTextAreaElement)
+                
+                if (!isOutputMuted()) {
+                    playCellAudio(cell)
+                }
+            }
+
+            console.info('Pressed Keys was reseted')
+            setPressedKeys(pressedKeys.clear())
+        }
     }, [currPressedKeys])
 
-    function handleNonCellCharacter(): void {
-        pipe(
-            pressedKeys,
-            keyToString(defaultKeyEmptyStringMap),
-            O.map(addTextToOutput)
-        )
-    }
-
-    function handleCellCharacter(cell: Cell): void {
-        pipe(
-            cell,
-            cellToString(cellStringMap),
-            O.map(addTextToOutput),
-            O.map(_ => playCellAudioOld(cell))
-        )
-    }
-
-    function addTextToOutput(text: string): void {
-        pipe(
-            getElementById('test') as Option<HTMLTextAreaElement>,
-            O.map(textArea => {
-                pipe(textArea, addText(text))
-                setPressedKeys(pressedKeys.clear())
-            })
-        )
+    function noKeyPressedCurrently() {
+        return currPressedKeys.isEmpty()
     }
 
     return (<>
         <div
             id='typewriter'
-            onKeyDown={ keyPressed }
-            onKeyUp={ keyReleased }
-            className='container d-flex flex-column justify-content-center align-items-center'>
-            <Output />
-            <Keyboard
-                backspaceRef={backspaceRef}
-                enterRef={enterRef}
-                spaceRef={spaceRef}
-                dot1Ref={dot1Ref}
-                dot2Ref={dot2Ref}
-                dot3Ref={dot3Ref}
-                dot4Ref={dot4Ref}
-                dot5Ref={dot5Ref}
-                dot6Ref={dot6Ref}
-            />
+            className='container d-flex flex-column justify-content-center align-items-center'
+            onKeyDown={ handleKeyPressed } onKeyUp={ handleKeyReleased }
+            >
+            <NOutput reference={output} />
+            <NKeyboard keyStatus={keyStatus} />
         </div>
     </>)
 }

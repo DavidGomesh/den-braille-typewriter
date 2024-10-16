@@ -3,21 +3,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { Key } from '../domain/Key.ts'
 
-interface NKeyPropos {
-    typewriterKey: Key,
+import '../styles/components/keyboard/Key.css'
+
+interface TypewriterKeyPropos {
+    referenceKey: Key,
     pressed: boolean
 }
 
-export default function NKey({ typewriterKey, pressed }: NKeyPropos) {
+export default function TypewriterKey({ referenceKey, pressed }: TypewriterKeyPropos) {
 
-    const keyType = getKeyType(typewriterKey)
+    const keyType = getKeyType(referenceKey)
 
     const typewriterClass = getTypewriterClass(keyType)
     const keyPressedClass = getKeyPressedClass(pressed)
     const defaultBootstrapClasses = getDefaultBootstrapClasses()
     const specificBootstrapClasses = getSpecificBootstrapClasses(keyType)
 
-    const keyIcon = getKeyIcon(typewriterKey)
+    const keyIcon = getKeyIcon(referenceKey)
 
     return (<>
         <div className={`${typewriterClass} ${keyPressedClass} ${defaultBootstrapClasses} ${specificBootstrapClasses}`}>

@@ -1,50 +1,46 @@
 import React from 'react'
+import { Key } from '../domain/Key.ts'
+import TypewriterKey from './TypewriterKey.tsx'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faD, faF, faJ, faK, faL, faLeftLong, faMinus, faS, faTurnDown } from '@fortawesome/free-solid-svg-icons'
+export interface KeyStatus {
+    [Key.DOT1]: boolean,
+    [Key.DOT2]: boolean,
+    [Key.DOT3]: boolean,
+    [Key.DOT4]: boolean,
+    [Key.DOT5]: boolean,
+    [Key.DOT6]: boolean,
+    [Key.SPACE]: boolean,
+    [Key.ENTER]: boolean,
+    [Key.BACKSPACE]: boolean,
+}
 
-import Key from './Key.tsx'
-export default function Keyboard({ enterRef, spaceRef, backspaceRef, dot1Ref, dot2Ref, dot3Ref, dot4Ref, dot5Ref, dot6Ref }) {
+interface NKeyboardProps {
+    keyStatus: KeyStatus
+}
 
-    const BSPClasses = 'typewriter-backspace-key'
-    const SPCClasses = 'typewriter-space-key'
-    const ENTClasses = 'typewriter-enter-key'
-    const DOTClasses = 'typewriter-dot-key'
+export default function NKeyboard({ keyStatus }: NKeyboardProps) {
 
-    const BSPRadius  = 'rounded-4'
-    const SPCRadius  = 'rounded-pill'
-    const ENTRadius  = 'rounded-4'
-    const DOTRadius  = 'rounded-circle'
-
-    const borders    = 'border border-dark'
-    const margins    = 'mx-1'
-    
-    const BSPIcon    = <FontAwesomeIcon icon={faLeftLong}/>
-    const SPCIcon    = <FontAwesomeIcon icon={faMinus}/>
-    const ENTIcon    = <FontAwesomeIcon icon={faTurnDown}/>
-
-    const DT1Icon    = <FontAwesomeIcon icon={faF}/>
-    const DT2Icon    = <FontAwesomeIcon icon={faD}/>
-    const DT3Icon    = <FontAwesomeIcon icon={faS}/>
-    const DT4Icon    = <FontAwesomeIcon icon={faJ}/>
-    const DT5Icon    = <FontAwesomeIcon icon={faK}/>
-    const DT6Icon    = <FontAwesomeIcon icon={faL}/>
+    const defaultBootstrapClasses = getDefaultBootstrapClasses()
 
     return (<>
-        <div className='container d-flex justify-content-center'>
-            <Key reference={enterRef} className={`${ENTClasses} ${ENTRadius} ${borders} ${margins}`} content={ENTIcon}/>
+        <div className={`${defaultBootstrapClasses}`}>
+            <TypewriterKey referenceKey={Key.ENTER} pressed={keyStatus[Key.ENTER]} />
 
-            <Key reference={dot3Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT3Icon}/>
-            <Key reference={dot2Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT2Icon}/>
-            <Key reference={dot1Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT1Icon}/>
+            <TypewriterKey referenceKey={Key.DOT3} pressed={keyStatus[Key.DOT3]} />
+            <TypewriterKey referenceKey={Key.DOT2} pressed={keyStatus[Key.DOT2]} />
+            <TypewriterKey referenceKey={Key.DOT1} pressed={keyStatus[Key.DOT1]} />
 
-            <Key reference={spaceRef} className={`${SPCClasses} ${SPCRadius} ${borders} ${margins}`} content={SPCIcon}/>
+            <TypewriterKey referenceKey={Key.SPACE} pressed={keyStatus[Key.SPACE]} />
 
-            <Key reference={dot4Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT4Icon}/>
-            <Key reference={dot5Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT5Icon}/>
-            <Key reference={dot6Ref} className={`${DOTClasses} ${DOTRadius} ${borders} ${margins}`} content={DT6Icon}/>
+            <TypewriterKey referenceKey={Key.DOT4} pressed={keyStatus[Key.DOT4]} />
+            <TypewriterKey referenceKey={Key.DOT5} pressed={keyStatus[Key.DOT5]} />
+            <TypewriterKey referenceKey={Key.DOT6} pressed={keyStatus[Key.DOT6]} />
 
-            <Key reference={backspaceRef} className={`${BSPClasses} ${BSPRadius} ${borders} ${margins}`} content={BSPIcon}/>
+            <TypewriterKey referenceKey={Key.BACKSPACE} pressed={keyStatus[Key.BACKSPACE]} />
         </div>
     </>)
+}
+
+function getDefaultBootstrapClasses() {
+    return 'container d-flex justify-content-center'
 }
