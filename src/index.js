@@ -7,10 +7,10 @@ import './vendors/bootstrap/css/bootstrap.min.css'
 
 import Home from './views/Home.tsx'
 import Free from './views/modes/Free.tsx'
-import Lessons from './views/modes/Lessons.tsx'
 
 import 'bootstrap/dist/js/bootstrap.bundle.js'
 import AudioProvider from './providers/AudioProvider.tsx'
+import Challenge from './views/modes/Challenge.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <>
@@ -19,7 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <Routes>
                     <Route path='/' Component={Home} />
                     <Route path='/free' Component={Free} />
-                    <Route path='/lessons' Component={Lessons} />
+                    <Route path='/lessons' Component={Challenge} />
                 </Routes>
             </BrowserRouter>
         </AudioProvider>

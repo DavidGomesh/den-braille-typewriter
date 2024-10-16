@@ -3,22 +3,29 @@ import { Cell } from '../domain/Cell.ts'
 
 const AudioContext = createContext({
     // Menu players
-    playMainMenuAudio: () => { return },
-    playFreeModeAudio: () => { return },
-    playChallengeModeAudio: () => { return },
-    playAboutModeAudio: () => { return },
-    playFreeModeInstructionsAudio: () => { return },
+    playMainMenuAudio: () => Promise.reject<void>(),
+    playFreeModeAudio: () => Promise.reject<void>(),
+    playChallengeModeAudio: () => Promise.reject<void>(),
+    playAboutModeAudio: () => Promise.reject<void>(),
+    playFreeModeInstructionsAudio: () => Promise.reject<void>(),
+    playChallengeModeInstructionsAudio: (_: () => void) => Promise.reject<void>(),
 
     // Cell players
-    playCellAudio: (_: Cell) => { return },
-    playOutputMuted: () => { return },
-    playOutputUnmuted: () => { return },
-    playEnterAudio: () => { return },
+    playCellAudio: (_: Cell) => Promise.reject<void>(),
+    playOutputMuted: () => Promise.reject<void>(),
+    playOutputUnmuted: () => Promise.reject<void>(),
+    playEnterAudio: () => Promise.reject<void>(),
 
     // Keyboard players
-    playKeyPress: () => { return },
-    playKeyboardMuted: () => { return },
-    playKeyboardUnmuted: () => { return },
+    playKeyPress: () => Promise.reject<void>(),
+    playKeyboardMuted: () => Promise.reject<void>(),
+    playKeyboardUnmuted: () => Promise.reject<void>(),
+    
+    // Challenge players
+    playWordAudio: (_: string) => Promise.reject<void>(),
+    playRightAnswer: (_: () => void) => Promise.reject<void>(),
+    playWrongAnswer: () => Promise.reject<void>(),
+
 })
 
 export function useAudioContext() {
@@ -30,63 +37,81 @@ export default function AudioProvider({ children }) {
     const [currentPlaying, setCurrentPlaying] = useState<HTMLAudioElement | null>(null)
 
     // Menu players
-    function playMainMenuAudio() {
-        playAudio(getMainMenuAudio())
+    async function playMainMenuAudio() {
+        return playAudio(getMainMenuAudio())
     }
 
-    function playFreeModeAudio() {
-        playAudio(getFreeModeAudio())
+    async function playFreeModeAudio() {
+        return playAudio(getFreeModeAudio())
     }
 
-    function playChallengeModeAudio() {
-        playAudio(getChallengeModeAudio())
+    async function playChallengeModeAudio() {
+        return playAudio(getChallengeModeAudio())
     }
 
-    function playAboutModeAudio() {
-        playAudio(getAboutAudio())
+    async function playAboutModeAudio() {
+        return playAudio(getAboutAudio())
     }
 
-    function playFreeModeInstructionsAudio() {
-        playAudio(getFreeModeInstructionsAudio())
+    async function playFreeModeInstructionsAudio() {
+        return playAudio(getFreeModeInstructionsAudio())
+    }
+
+    async function playChallengeModeInstructionsAudio(onEnded: () => void) {
+        return playAudio(getChallengeModeInstructionsAudio(), onEnded)
     }
 
     // Cell players
     async function playCellAudio(cell: Cell) {
-        playAudio(getCellAudio(cell))
+        return playAudio(getCellAudio(cell))
     }
 
     async function playOutputMuted() {
-        playAudio(getOutputMutedAudio())
+        return playAudio(getOutputMutedAudio())
     }
 
     async function playOutputUnmuted() {
-        playAudio(getOutputUnmutedAudio())
+        return playAudio(getOutputUnmutedAudio())
     }
 
     async function playEnterAudio() {
-        playAudio(getEnterAudio())
+        return playAudio(getEnterAudio())
     }
 
     // Keyboard players
     async function playKeyPress() {
-        playAudio(getRandomKeyboardAudio())
+        return playAudio(getRandomKeyboardAudio())
     }
 
     async function playKeyboardMuted() {
-        playAudio(getKeyboardMutedAudio())
+        return playAudio(getKeyboardMutedAudio())
     }
 
     async function playKeyboardUnmuted() {
-        playAudio(getKeyboardUnmutedAudio())
+        return playAudio(getKeyboardUnmutedAudio())
+    }
+
+    // Challenge players
+    async function playWordAudio(source: string) {
+        return playAudio(getWordAudio(source))
+    }
+
+    async function playRightAnswer(onEnded: () => void) {
+        return playAudio(getRightAnswerAudio(), onEnded)
+    }
+
+    async function playWrongAnswer() {
+        return playAudio(getWrongAnswerAudio())
     }
 
 
 
-    async function playAudio(audio: HTMLAudioElement) {
+    async function playAudio(audio: HTMLAudioElement, onEnded = () => {}) {
         await stopCurrentAudio()
         try {
             await audio.play()
             setCurrentPlaying(audio)
+            audio.onended = onEnded
         } catch (error) {
             console.error(error)
         }
@@ -99,6 +124,8 @@ export default function AudioProvider({ children }) {
         }
     }
 
+
+
     const playerFunctions = {
         // Menu players
         playMainMenuAudio,
@@ -106,6 +133,7 @@ export default function AudioProvider({ children }) {
         playChallengeModeAudio,
         playAboutModeAudio,
         playFreeModeInstructionsAudio,
+        playChallengeModeInstructionsAudio,
 
         // Cell players
         playCellAudio,
@@ -117,6 +145,11 @@ export default function AudioProvider({ children }) {
         playKeyPress,
         playKeyboardMuted,
         playKeyboardUnmuted,
+        
+        // Challenge players
+        playWordAudio,
+        playRightAnswer,
+        playWrongAnswer,
     }
 
     return (
@@ -145,6 +178,10 @@ function getAboutAudio() {
 
 function getFreeModeInstructionsAudio() {
     return new Audio('assets/audio/views/free/instrucoes-modo-livre.mp3')
+}
+
+function getChallengeModeInstructionsAudio() {
+    return new Audio('assets/audio/views/challenge/instrucoes-modo-desafio.mp3')
 }
 
 // Cell audio loaders
@@ -255,4 +292,17 @@ function getKeyboardMutedAudio() {
 
 function getKeyboardUnmutedAudio() {
     return new Audio('assets/audio/actions/teclado-desmutado.mp3')
+}
+
+// Challenge audio loader
+function getWordAudio(source: string) {
+    return new Audio(source)
+}
+
+function getRightAnswerAudio() {
+    return new Audio('assets/audio/views/challenge/certa-resposta.mp3')
+}
+
+function getWrongAnswerAudio() {
+    return new Audio('assets/audio/views/challenge/resposta-errada.mp3')
 }

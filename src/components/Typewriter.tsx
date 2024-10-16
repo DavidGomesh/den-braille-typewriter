@@ -1,13 +1,19 @@
-import { Set } from 'immutable'
+import { List, Set } from 'immutable'
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { cellToString, findCell } from '../domain/Cell.ts'
+import { Cell, cellToString, findCell } from '../domain/Cell.ts'
 import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
 import NKeyboard from './Keyboard.tsx'
 import NOutput, { addTextToTextArea, getPreviousCharacter } from './Output.tsx'
 import { useAudioContext } from '../providers/AudioProvider.tsx'
+import { RandomWord } from '../views/modes/Challenge.tsx'
 
+interface TypewriterProps {
+    challengeMode: boolean,
+    randomWord: RandomWord | undefined
+    onEnterPressed: (typedCells: List<Cell>) => void | undefined
+}
 
-export default function NTypewriter() {
+export default function Typewriter({ challengeMode = false, randomWord = undefined, onEnterPressed }: TypewriterProps) {
 
     const [keyboardMuted, setKeyboardMuted] = useState(false)
     const [outputMuted, setOutputMuted] = useState(false)
@@ -42,6 +48,8 @@ export default function NTypewriter() {
     } = useAudioContext()
 
     const output = useRef<HTMLTextAreaElement>()
+
+    const [typedCells, setTypedCells] = useState(List<Cell>())
 
     function handleKeyPressed(event: KeyboardEvent<HTMLElement>) {
         console.info('Key Pressed: ' + event.code)
@@ -101,6 +109,7 @@ export default function NTypewriter() {
 
     function handleConfirmKeyPressed() {
         console.info('Confirm Key Pressed')
+        onEnterPressed(typedCells as List<Cell>)
     }
 
     function handleMuteOutputSoundsKeyPressed() {
@@ -352,6 +361,9 @@ export default function NTypewriter() {
                 const char = cellToString(cell)
                 console.info('Cell converted to string: ' + char)
                 addTextToTextArea(char, output.current as HTMLTextAreaElement)
+
+                console.info('Cell included in typed cell: ' + cell)
+                setTypedCells(typedCells?.concat(cell))
                 
                 if (!isOutputMuted()) {
                     playCellAudio(cell)
@@ -368,6 +380,14 @@ export default function NTypewriter() {
         return currPressedKeys.isEmpty()
     }
 
+    function getTitle() {
+        return challengeMode ? 'MODO DESAFIO' : 'MODO LIVRE'
+    }
+
+    function showRandomWord() {
+        return challengeMode ? 'Palavra: ' + randomWord?.word : ''
+    }
+
     return (<>
         <div
             id='typewriter'
@@ -376,9 +396,8 @@ export default function NTypewriter() {
             autoFocus
             >
 
-            <div className='fs-1'>
-                MODO LIVRE
-            </div>
+            <div className='fs-1'>{ getTitle() }</div>
+            <div className='fs-3 mb-3'>{ showRandomWord() }</div>
 
             <div className='d-flex justify-content-center w-100 fs-5 gap-3 mb-3'>
                 <div><strong>(i)</strong> Instruções</div>

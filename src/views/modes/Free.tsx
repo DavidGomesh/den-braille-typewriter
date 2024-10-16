@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 
 import '../../styles/views/modes/Free.css'
 
-import NTypewriter from '../../components/Typewriter.tsx'
+import Typewriter from '../../components/Typewriter.tsx'
 import { useAudioContext } from '../../providers/AudioProvider.tsx'
 
 export default function Free() {
@@ -14,7 +14,7 @@ export default function Free() {
 
     return (<>  
         <main>
-            <NTypewriter/>
+            <Typewriter challengeMode={false} randomWord={undefined} onEnterPressed={() => {}} />
         </main>
     </>)
 }
