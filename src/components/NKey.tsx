@@ -31,6 +31,7 @@ enum KeyType {
     SPACE,
     ENTER,
     BACKSPACE,
+    ACTION_KEY,
 }
 
 function getKeyType(key: Key) {
@@ -44,6 +45,7 @@ function getKeyType(key: Key) {
         case Key.DOT4: return KeyType.DOT
         case Key.DOT5: return KeyType.DOT
         case Key.DOT6: return KeyType.DOT
+        default: return KeyType.ACTION_KEY
     }
 }
 
@@ -53,6 +55,7 @@ function getTypewriterClass(keyType: KeyType): string {
         case KeyType.SPACE: return 'typewriter-space-key'
         case KeyType.ENTER: return 'typewriter-enter-key'
         case KeyType.BACKSPACE: return 'typewriter-backspace-key'
+        case KeyType.ACTION_KEY: return ''
     }
 }
 
@@ -70,6 +73,7 @@ function getSpecificBootstrapClasses(keyType: KeyType): string {
         case KeyType.SPACE: return 'rounded-pill border border-dark mx-1'
         case KeyType.ENTER: return 'rounded-4 border border-dark mx-1'
         case KeyType.BACKSPACE: return 'rounded-4 border border-dark mx-1'
+        case KeyType.ACTION_KEY: return ''
     }
 }
 

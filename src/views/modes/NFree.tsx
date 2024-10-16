@@ -1,27 +1,19 @@
 import React from 'react'
-import Typewriter from '../../components/Typewriter.tsx'
 
 import '../../styles/views/modes/Free.css'
-import NKeyboard from '../../components/NKeyboard.tsx'
 
-import KeyboardAudioProvider from '../../components/KeyboardAudioPlayer.tsx'
+import NTypewriter from '../../components/NTypewriter.tsx'
+import KeyboardAudioProvider from '../../providers/KeyboardAudioProvider.tsx'
+import CellAudioProvider from '../../providers/CellAudioProvider.tsx'
 
 export default function NFree() {
     
     return (<>  
         <main>
             <KeyboardAudioProvider>
-                <NKeyboard keyStatus={{
-                    enter: true,
-                    space: false,
-                    backspace: false,
-                    dot1: true,
-                    dot2: false,
-                    dot3: false,
-                    dot4: false,
-                    dot5: false,
-                    dot6: false,
-                }} />
+                <CellAudioProvider>
+                    <NTypewriter/>
+                </CellAudioProvider>
             </KeyboardAudioProvider>
         </main>
     </>)

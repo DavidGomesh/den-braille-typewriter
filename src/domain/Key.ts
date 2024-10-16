@@ -4,35 +4,100 @@ import { Map, Set } from "immutable";
 import { Cell } from "./Cell.ts";
 
 export enum Key {
-    ENTER, 
-    SPACE, 
-    
-    BACKSPACE,
-    DOT1, 
-    DOT2, 
-    DOT3, 
-    DOT4, 
-    DOT5, 
+    DOT1,
+    DOT2,
+    DOT3,
+    DOT4,
+    DOT5,
     DOT6,
+
+    SPACE,
+    ENTER,
+    BACKSPACE,
+
+    CONFIRM,
+    MUTE_OUTPUT_SOUNDS,
+    MUTE_KEYBOARD_SOUNDS,
+
+    ARROW_UP,
+    ARROW_DOWN,
+    ARROW_RIGHT,
+    ARROW_LEFT,
 }
 
-export const DOTS: Set<Key> = Set([Key.DOT1, Key.DOT2, Key.DOT3, Key.DOT4, Key.DOT5, Key.DOT6])
-export const NonDOTS: Set<Key> = Set([Key.ENTER, Key.SPACE, Key.BACKSPACE])
 
-export const defaultCodeKeyMap = Map<string, Key>([
-    ['KeyP',  Key.BACKSPACE], // Backspace
-    ['KeyQ',  Key.ENTER],     // Enter
+
+export const codeKeyMap = Map<string, Key>([
+    ['KeyF', Key.DOT1],
+    ['KeyD', Key.DOT2],
+    ['KeyS', Key.DOT3],
+    ['KeyJ', Key.DOT4],
+    ['KeyK', Key.DOT5],
+    ['KeyL', Key.DOT6],
     
-    ['Space', Key.SPACE],     // Space
-    ['KeyF',  Key.DOT1],      // F
-    ['KeyD',  Key.DOT2],      // D
-    ['KeyS',  Key.DOT3],      // S
-    ['KeyJ',  Key.DOT4],      // J
-    ['KeyK',  Key.DOT5],      // K
-    ['KeyL',  Key.DOT6],      // L
+    ['Backspace', Key.BACKSPACE],
+    ['KeyQ', Key.ENTER],
+    ['Space', Key.SPACE],
+
+    ['Enter', Key.CONFIRM],
+    ['KeyO', Key.MUTE_OUTPUT_SOUNDS],
+    ['KeyM', Key.MUTE_KEYBOARD_SOUNDS],
+
+    ['ArrowUp', Key.ARROW_UP],
+    ['ArrowDown', Key.ARROW_DOWN],
+    ['ArrowRight', Key.ARROW_RIGHT],
+    ['ArrowLeft', Key.ARROW_LEFT],
 ])
 
-export const defaultKeysCellMap = Map<Set<Key>, Cell>([
+export function isMappedKey(code: string) {
+    return codeKeyMap.has(code)
+}
+
+export function codeToKey(code: string) {
+    const key = codeKeyMap.get(code)
+
+    if (key === null) {
+        throw `Can't to convert ${code} to a Key`
+    }
+
+    return key as Key
+}
+
+
+
+const actionKeys = Set([
+    Key.CONFIRM, Key.MUTE_OUTPUT_SOUNDS, Key.MUTE_KEYBOARD_SOUNDS,
+    Key.ARROW_UP, Key.ARROW_DOWN, Key.ARROW_RIGHT, Key.ARROW_LEFT,
+])
+
+export function isActionKey(key: Key) {
+    return actionKeys.contains(key)
+}
+
+
+
+const arrowKeys = Set([
+    Key.ARROW_UP, Key.ARROW_DOWN, Key.ARROW_RIGHT, Key.ARROW_LEFT,
+])
+
+export function isArrowKey(key: Key) {
+    return arrowKeys.contains(key)
+}
+
+
+
+const dotKeys = Set([
+    Key.DOT1, Key.DOT2, Key.DOT3,
+    Key.DOT4, Key.DOT5, Key.DOT6,
+])
+
+export function isDotKey(key: Key) {
+    return dotKeys.contains(key)
+}
+
+
+
+export const keysCellMap = Map<Set<Key>, Cell>([
     [Set([Key.SPACE]),                                                  Cell.C0],
     [Set([Key.DOT2, Key.DOT3, Key.DOT4, Key.DOT6]),                     Cell.C2346],
     [Set([Key.DOT5]),                                                   Cell.C5],
@@ -99,16 +164,72 @@ export const defaultKeysCellMap = Map<Set<Key>, Cell>([
     [Set([Key.DOT4, Key.DOT5, Key.DOT6]),                               Cell.C456],
 ])
 
+export function canConvertKeysToCell(keys: Set<Key>) {
+    return keysCellMap.has(keys)
+}
+
+export function keysToCell(keys: Set<Key>) {
+    const cell = keysCellMap.get(keys)
+
+    if (cell === null) {
+        throw `Can't to convert ${keys} to a Cell`
+    }
+
+    return cell as Cell
+}
+
+
+
+// const key = codeKeyMap.get(code)
+
+//     if (key === null) {
+//         throw `Can't to convert ${code} to a Key`
+//     }
+
+//     return key as Key
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const DOTS: Set<Key> = Set([Key.DOT1, Key.DOT2, Key.DOT3, Key.DOT4, Key.DOT5, Key.DOT6])
+export const NonDOTS: Set<Key> = Set([Key.ENTER, Key.SPACE, Key.BACKSPACE])
+
+
+
+
+
 export const defaultKeyEmptyStringMap = Map<Set<Key>, string>([
     // [Set([Key.BACKSPACE]), '\b'],
     [Set([Key.ENTER]), '\n'],
 ])
 
-export function codeToKey(codeKeyMap: Map<string, Key>): (code: string) => Option<Key> {
+export function codeToKey_OLD(codeKeyMap: Map<string, Key>): (code: string) => Option<Key> {
     return code => O.fromNullable(codeKeyMap.get(code))
 }
 
-export function keysToCell(keysCellMap: Map<Set<Key>, Cell>): (keys: Set<Key>) => Option<Cell> {
+export function keysToCell2(keysCellMap: Map<Set<Key>, Cell>): (keys: Set<Key>) => Option<Cell> {
     return keys => O.fromNullable(keysCellMap.get(keys))
 }
 
@@ -116,6 +237,6 @@ export function keyToString(keyStringMap: Map<Set<Key>, string>): (key: Set<Key>
     return key => O.fromNullable(keyStringMap.get(key))
 }
 
-export function isDotKey(key: Key): boolean {
+export function isDotKey2(key: Key): boolean {
     return Set([Key.DOT1, Key.DOT2, Key.DOT3, Key.DOT4, Key.DOT5, Key.DOT6]).contains(key)
 }

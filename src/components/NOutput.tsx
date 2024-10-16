@@ -1,10 +1,12 @@
 import React from 'react'
 
-export default function NOutput({ text = "" }){
+// export default function NOutput({ reference, text = "salve_o_corinthians\no_campeão_dos_campeões" }){
+export default function NOutput({ reference, text = "" }){
     return (<>
         <textarea
             id='test'
             className='form-control braille p-5 mb-3'
+            ref={reference}
             readOnly={false}
             rows={3}
             defaultValue={text}
@@ -21,16 +23,15 @@ export default function NOutput({ text = "" }){
     </>)
 }
 
-export function addText(text: string): (textArea: HTMLTextAreaElement) => void {
-    return textArea => {
-        const selectionStart = textArea.selectionStart
-        const value = textArea.value || ""
+export function addText(text: string, textArea: HTMLTextAreaElement) {
+    
+    const selectionStart = textArea.selectionStart
+    const value = textArea.value || ""
 
-        textArea.value = (
-            value.substring(0, selectionStart) + text +
-            value.substring(selectionStart)
-        )
+    textArea.value = (
+        value.substring(0, selectionStart) + text +
+        value.substring(selectionStart)
+    )
 
-        textArea.setSelectionRange(selectionStart+1, selectionStart+1)
-    }
+    textArea.setSelectionRange(selectionStart+1, selectionStart+1)
 }

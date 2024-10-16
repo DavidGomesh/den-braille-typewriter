@@ -1,4 +1,3 @@
-import { Option, fromNullable } from "fp-ts/lib/Option"
 import { Map } from "immutable"
 
 export enum Cell {
@@ -27,7 +26,7 @@ export enum Cell {
     C123456,
 }
 
-export const defaultCellStringMap = Map<Cell, string>([
+export const cellStringMap = Map<Cell, string>([
     [Cell.C0,      `_`],
 
     [Cell.C1,      `a`],
@@ -101,6 +100,6 @@ export const defaultCellStringMap = Map<Cell, string>([
     [Cell.C6,      `'`],
 ])
 
-export function cellToString(cellStringMap: Map<Cell, string>): (cell: Cell) => Option<string> {
-    return cell => fromNullable(cellStringMap.get(cell))
+export function cellToString(cell: Cell) {
+    return cellStringMap.get(cell) as string
 }

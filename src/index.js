@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <BrowserRouter>
             <Routes>
                 <Route path='/' Component={Home} />
-                <Route path='/free' Component={NFree} />
+                <Route path='/free' Component={Free} />
                 <Route path='/nfree' Component={NFree} />
                 <Route path='/lessons' Component={Lessons} />
                 {/* <Route path='/lesson-01' Component={Lesson01} /> */}

@@ -1,42 +1,42 @@
 import React from 'react'
-import NKey from './NKey.tsx'
 import { Key } from '../domain/Key.ts'
+import NKey from './NKey.tsx'
 
-import { useKeyboardAudioContext } from './KeyboardAudioPlayer.tsx'
-
-export const status = {
-    enter: true,
-    space: false,
-    backspace: false,
-    dot1: true,
-    dot2: false,
-    dot3: false,
-    dot4: false,
-    dot5: false,
-    dot6: false,
+export interface KeyStatus {
+    [Key.DOT1]: boolean,
+    [Key.DOT2]: boolean,
+    [Key.DOT3]: boolean,
+    [Key.DOT4]: boolean,
+    [Key.DOT5]: boolean,
+    [Key.DOT6]: boolean,
+    [Key.SPACE]: boolean,
+    [Key.ENTER]: boolean,
+    [Key.BACKSPACE]: boolean,
 }
 
-export default function NKeyboard({ keyStatus = status }) {
+interface NKeyboardProps {
+    keyStatus: KeyStatus
+}
 
-    const { playKeyPress } = useKeyboardAudioContext()
+export default function NKeyboard({ keyStatus }: NKeyboardProps) {
 
     const defaultBootstrapClasses = getDefaultBootstrapClasses()
 
     return (<>
-        <div className={`${defaultBootstrapClasses}`} onMouseEnter={playKeyPress} onMouseLeave={playKeyPress}>
-            <NKey typewriterKey={Key.ENTER} pressed={keyStatus.enter} />
+        <div className={`${defaultBootstrapClasses}`}>
+            <NKey typewriterKey={Key.ENTER} pressed={keyStatus[Key.ENTER]} />
 
-            <NKey typewriterKey={Key.DOT3} pressed={keyStatus.dot3} />
-            <NKey typewriterKey={Key.DOT2} pressed={keyStatus.dot2} />
-            <NKey typewriterKey={Key.DOT1} pressed={keyStatus.dot1} />
+            <NKey typewriterKey={Key.DOT3} pressed={keyStatus[Key.DOT3]} />
+            <NKey typewriterKey={Key.DOT2} pressed={keyStatus[Key.DOT2]} />
+            <NKey typewriterKey={Key.DOT1} pressed={keyStatus[Key.DOT1]} />
 
-            <NKey typewriterKey={Key.SPACE} pressed={keyStatus.space} />
+            <NKey typewriterKey={Key.SPACE} pressed={keyStatus[Key.SPACE]} />
 
-            <NKey typewriterKey={Key.DOT4} pressed={keyStatus.dot4} />
-            <NKey typewriterKey={Key.DOT5} pressed={keyStatus.dot5} />
-            <NKey typewriterKey={Key.DOT6} pressed={keyStatus.dot6} />
+            <NKey typewriterKey={Key.DOT4} pressed={keyStatus[Key.DOT4]} />
+            <NKey typewriterKey={Key.DOT5} pressed={keyStatus[Key.DOT5]} />
+            <NKey typewriterKey={Key.DOT6} pressed={keyStatus[Key.DOT6]} />
 
-            <NKey typewriterKey={Key.BACKSPACE} pressed={keyStatus.backspace} />
+            <NKey typewriterKey={Key.BACKSPACE} pressed={keyStatus[Key.BACKSPACE]} />
         </div>
     </>)
 }
