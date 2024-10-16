@@ -2,7 +2,7 @@ import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { useCellAudioContext } from '../providers/CellAudioProvider.tsx'
 import { useKeyboardAudioContext } from '../providers/KeyboardAudioProvider.tsx'
 import NKeyboard, { KeyStatus } from './NKeyboard.tsx'
-import NOutput, { addText } from './NOutput.tsx'
+import NOutput, { addTextToTextArea } from './NOutput.tsx'
 import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
 import { Set } from 'immutable'
 import { cellToString } from '../domain/Cell.ts'
@@ -134,8 +134,6 @@ export default function NTypewriter() {
         event.preventDefault()
 
         if (noKeysPressed() || pressedKeysContainsDots()) {
-            console.info(`Dot Key Pressed Accepted: ${key}`)
-
             setCurrPressedKeys(currPressedKeys.add(key))
             setPressedKeys(pressedKeys.add(key))
 
@@ -156,11 +154,18 @@ export default function NTypewriter() {
     function handleBlankKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
         console.info(`Blank Key Pressed ${key}`)
 
-        updatePressedKeyStatus(key)
         if (noKeysPressed() || !pressedKeysContainsDots()) {
             setCurrPressedKeys(currPressedKeys.add(key))
             setPressedKeys(pressedKeys.add(key))
+
             blankKeyHandlerFunctions[key](event)
+            updatePressedKeyStatus(key)
+
+            if (!isKeyboardMuted()) {
+                playKeyPress()
+            }
+        } else {
+            event.preventDefault()
         }
     }
 
@@ -173,7 +178,7 @@ export default function NTypewriter() {
     function handleEnterKeyPressed(event: KeyboardEvent<HTMLElement>) {
         event.preventDefault()
         console.info('Enter Key Pressed')
-        addText('\n', output.current as HTMLTextAreaElement)
+        addTextToTextArea('\n', output.current as HTMLTextAreaElement)
     }
 
     function handleBackspaceKeyPressed(event: KeyboardEvent<HTMLElement>) {
@@ -271,7 +276,9 @@ export default function NTypewriter() {
 
                 const char = cellToString(cell)
                 console.info('Cell converted to string: ' + char)
-                addText(char, output.current as HTMLTextAreaElement)
+                addTextToTextArea(char, output.current as HTMLTextAreaElement)
+                
+                playCellAudio(cell)
             }
 
             console.info('Pressed Keys was reseted')

@@ -23,7 +23,7 @@ export default function NOutput({ reference, text = "" }){
     </>)
 }
 
-export function addText(text: string, textArea: HTMLTextAreaElement) {
+export function addTextToTextArea(text: string, textArea: HTMLTextAreaElement) {
     
     const selectionStart = textArea.selectionStart
     const value = textArea.value || ""
