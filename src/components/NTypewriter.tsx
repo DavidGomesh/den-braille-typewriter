@@ -29,12 +29,16 @@ export default function NTypewriter() {
         return outputMuted
     }
 
-    function toogleOutputSounds() {
-        setOutputMuted(!outputMuted)
+    function muteOutput() {
+        setOutputMuted(true)
+    }
+
+    function unmuteOutput() {
+        setOutputMuted(false)
     }
 
     const { playKeyPress, playKeyboardMuted, playKeyboardUnmuted } = useKeyboardAudioContext()
-    const { playCellAudio } = useCellAudioContext()
+    const { playCellAudio, playOutputMuted, playOutputUnmuted } = useCellAudioContext()
 
 
     const output = useRef<HTMLTextAreaElement>()
@@ -101,7 +105,17 @@ export default function NTypewriter() {
 
     function handleMuteOutputSoundsKeyPressed() {
         console.info('Mute Output Sounds Key Pressed')
-        toogleOutputSounds()
+        
+        if (isOutputMuted()) {
+            unmuteOutput()
+            playOutputUnmuted()
+            console.info('Output muted')
+            
+        } else {
+            muteOutput()
+            playOutputMuted()
+            console.info('Output unmuted')
+        }
     }
 
     function handleMuteKeyboardSoundsKeyPressed() {
@@ -278,7 +292,9 @@ export default function NTypewriter() {
                 console.info('Cell converted to string: ' + char)
                 addTextToTextArea(char, output.current as HTMLTextAreaElement)
                 
-                playCellAudio(cell)
+                if (!isOutputMuted()) {
+                    playCellAudio(cell)
+                }
             }
 
             console.info('Pressed Keys was reseted')

@@ -2,7 +2,9 @@ import React, { createContext, useContext, useState } from 'react'
 import { Cell } from '../domain/Cell.ts'
 
 const CellAudioContext = createContext({
-    playCellAudio: (_: Cell) => { return }
+    playCellAudio: (_: Cell) => { return },
+    playOutputMuted: () => { return },
+    playOutputUnmuted: () => { return },
 })
 
 export function useCellAudioContext() {
@@ -14,8 +16,18 @@ export default function CellAudioProvider({ children }) {
     const [currentPlaying, setCurrentPlaying] = useState<HTMLAudioElement | null>(null)
 
     async function playCellAudio(cell: Cell) {
-        const audio = getCellAudio(cell)
+        playAudio(getCellAudio(cell))
+    }
 
+    async function playOutputMuted() {
+        playAudio(getOutputMutedAudio())
+    }
+
+    async function playOutputUnmuted() {
+        playAudio(getOutputUnmutedAudio())
+    }
+    
+    async function playAudio(audio: HTMLAudioElement) {
         await stopCurrentAudio()
         try {
             await audio.play()
@@ -34,7 +46,7 @@ export default function CellAudioProvider({ children }) {
     }
 
     return (
-        <CellAudioContext.Provider value={{ playCellAudio }}>
+        <CellAudioContext.Provider value={{ playCellAudio, playOutputMuted, playOutputUnmuted }}>
             { children }
         </CellAudioContext.Provider>
     )
@@ -114,4 +126,12 @@ function getCellAudio(cell: Cell) {
         case Cell.C56: return new Audio('assets/audio/cells/cifrao.mp3')
         case Cell.C6: return new Audio('assets/audio/cells/apostrofo.mp3')
     }
+}
+
+function getOutputMutedAudio() {
+    return new Audio('assets/audio/actions/conversor-mutado.mp3')
+}
+
+function getOutputUnmutedAudio() {
+    return new Audio('assets/audio/actions/conversor-desmutado.mp3')
 }
