@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useRef, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 
 const KeyboardAudioContext = createContext({
-    playKeyPress: () => { return }
+    playKeyPress: () => { return },
+    playKeyboardMuted: () => { return },
+    playKeyboardUnmuted: () => { return },
 })
 
 export function useKeyboardAudioContext() {
@@ -13,10 +15,20 @@ export default function KeyboardAudioProvider({ children }) {
     const [currentPlaying, setCurrentPlaying] = useState<HTMLAudioElement | null>(null)
 
     async function playKeyPress() {
-        const audio = getRandomKeyboardAudio()
+        playAudio(getRandomKeyboardAudio())
+    }
 
+    async function playKeyboardMuted() {
+        playAudio(getKeyboardMutedAudio())
+    }
+
+    async function playKeyboardUnmuted() {
+        playAudio(getKeyboardUnmutedAudio())
+    }
+    
+    async function playAudio(audio: HTMLAudioElement) {
         await stopCurrentAudio()
-
+    
         try {
             await audio.play()
             setCurrentPlaying(audio)
@@ -34,7 +46,7 @@ export default function KeyboardAudioProvider({ children }) {
     }
 
     return (
-        <KeyboardAudioContext.Provider value={{ playKeyPress }}>
+        <KeyboardAudioContext.Provider value={{ playKeyPress, playKeyboardMuted, playKeyboardUnmuted }}>
             {children}
         </KeyboardAudioContext.Provider>
     )
@@ -50,4 +62,12 @@ function getRandomKeyboardAudio() {
 
     const index = Math.floor(Math.random() * audioPaths.length)
     return new Audio(audioPaths[index])
+}
+
+function getKeyboardMutedAudio() {
+    return new Audio('assets/audio/actions/teclado-mutado.mp3')
+}
+
+function getKeyboardUnmutedAudio() {
+    return new Audio('assets/audio/actions/teclado-desmutado.mp3')
 }

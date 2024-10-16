@@ -10,8 +10,32 @@ import { cellToString } from '../domain/Cell.ts'
 
 export default function NTypewriter() {
 
-    const { playKeyPress } = useKeyboardAudioContext()
+    const [keyboardMuted, setKeyboardMuted] = useState(false)
+    const [outputMuted, setOutputMuted] = useState(false)
+
+    function isKeyboardMuted() {
+        return keyboardMuted
+    }
+
+    function muteKeyboard() {
+        setKeyboardMuted(true)
+    }
+
+    function unmuteKeyboard() {
+        setKeyboardMuted(false)
+    }
+
+    function isOutputMuted() {
+        return outputMuted
+    }
+
+    function toogleOutputSounds() {
+        setOutputMuted(!outputMuted)
+    }
+
+    const { playKeyPress, playKeyboardMuted, playKeyboardUnmuted } = useKeyboardAudioContext()
     const { playCellAudio } = useCellAudioContext()
+
 
     const output = useRef<HTMLTextAreaElement>()
 
@@ -69,7 +93,6 @@ export default function NTypewriter() {
 
         event.preventDefault()
         controlKeyHandlerFunctions[key]()
-
     }
 
     function handleConfirmKeyPressed() {
@@ -78,10 +101,22 @@ export default function NTypewriter() {
 
     function handleMuteOutputSoundsKeyPressed() {
         console.info('Mute Output Sounds Key Pressed')
+        toogleOutputSounds()
     }
 
     function handleMuteKeyboardSoundsKeyPressed() {
         console.info('Mute Keyboard Sounds Key Pressed')
+
+        if (isKeyboardMuted()) {
+            unmuteKeyboard()
+            playKeyboardUnmuted()
+            console.info('Keyboard muted')
+            
+        } else {
+            muteKeyboard()
+            playKeyboardMuted()
+            console.info('Keyboard unmuted')
+        }
     }
 
     function handleTypewriterKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
@@ -105,7 +140,10 @@ export default function NTypewriter() {
             setPressedKeys(pressedKeys.add(key))
 
             updatePressedKeyStatus(key)
-            playKeyPress()
+
+            if (!isKeyboardMuted()) {
+                playKeyPress()
+            }
         }
     }
 
