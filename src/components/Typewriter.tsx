@@ -54,7 +54,7 @@ export default function NTypewriter() {
             }
         }
 
-        console.info('Done!')
+        console.info('---------------------------')
     }
 
     function wasKeyPressedWithCtrl(event: KeyboardEvent<HTMLElement>) {
@@ -217,7 +217,7 @@ export default function NTypewriter() {
             handleMappedKeyReleased(event)
         }
 
-        console.info('Done!')
+        console.info('----------------------------')
     }
 
     function handleMappedKeyReleased(event: KeyboardEvent<HTMLElement>) {
@@ -241,18 +241,7 @@ export default function NTypewriter() {
 
     function handleArrowKeyReleased(key: Key) {
         console.info(`Arrow Key Released: ${key}`)
-
-        const previousCharacter = getPreviousCharacter(output.current as HTMLTextAreaElement)
-        console.info('Previous character: ' + previousCharacter)
-        
-        if (previousCharacter) {
-            const previousCell = findCell(previousCharacter)
-            console.info('Previous cell: ' + previousCell)
-
-            if (previousCell && !isOutputMuted()) {
-                playCellAudio(previousCell[0])
-            }
-        }
+        playPreviousCharacterAudio()
     }
 
     function handleTypewriterKeyReleased(key: Key) {
@@ -260,6 +249,34 @@ export default function NTypewriter() {
 
         setCurrPressedKeys(currPressedKeys.remove(key))
         updateReleasedKeyStatus(key)
+
+        if (!isDotKey(key)) {
+            handleBlankKeyReleased(key)
+        }
+    }
+
+    const blankKeyReleasedHandlerFunctions = {
+        [Key.SPACE]: handleSpaceKeyReleased,
+        [Key.ENTER]: handleEnterKeyReleased,
+        [Key.BACKSPACE]: handleBackspaceKeyReleased,
+    }
+
+    function handleBlankKeyReleased(key: Key) {
+        console.info(`Blank Key Released ${key}`)
+        blankKeyReleasedHandlerFunctions[key]()
+    }
+
+    function handleSpaceKeyReleased() {
+        console.info('Space Key Released')
+    }
+
+    function handleEnterKeyReleased() {
+        console.info('Enter Key Released')
+    }
+
+    function handleBackspaceKeyReleased() {
+        console.info('Backspace Key Released')
+        playPreviousCharacterAudio()
     }
 
     const [currPressedKeys, setCurrPressedKeys] = useState(Set<Key>())
@@ -292,7 +309,7 @@ export default function NTypewriter() {
     const [keyStatus, setKeyStatus] = useState(initialKeyStatus)
 
     function updatePressedKeyStatus(key: Key) {
-        console.info('Pressed Key Status Updated: ' + key)
+        console.info('Key status updated to pressed')
         setKeyStatus({
             ...keyStatus,
             [key]: true
@@ -300,11 +317,25 @@ export default function NTypewriter() {
     }
 
     function updateReleasedKeyStatus(key: Key) {
-        console.info('Released Key Status Updated: ' + key)
+        console.info('Key status updated released')
         setKeyStatus({
             ...keyStatus,
             [key]: false
         })
+    }
+
+    function playPreviousCharacterAudio() {
+        const previousCharacter = getPreviousCharacter(output.current as HTMLTextAreaElement)
+        console.info('Previous character: ' + previousCharacter)
+        
+        if (previousCharacter) {
+            const previousCell = findCell(previousCharacter)
+            console.info('Previous cell: ' + previousCell)
+
+            if (previousCell && !isOutputMuted()) {
+                playCellAudio(previousCell[0])
+            }
+        }
     }
 
     useEffect(() => {
@@ -312,8 +343,8 @@ export default function NTypewriter() {
             console.info('All keys released')
 
             if (canConvertKeysToCell(pressedKeys)) {
-                console.info('The keys previous pressed can be converted to a cell')
-                console.info('Keys previous pressed: ' + pressedKeys)
+                console.info('Previous pressed keys can be converted to a cell')
+                console.info('Previous pressed keys: ' + pressedKeys)
 
                 const cell = keysToCell(pressedKeys)
                 console.info('Keys converted to cell: ' + cell)
@@ -328,6 +359,7 @@ export default function NTypewriter() {
             }
 
             console.info('Pressed Keys was reseted')
+            console.info('------------------------')
             setPressedKeys(pressedKeys.clear())
         }
     }, [currPressedKeys])
