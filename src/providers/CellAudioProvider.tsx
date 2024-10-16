@@ -5,6 +5,7 @@ const CellAudioContext = createContext({
     playCellAudio: (_: Cell) => { return },
     playOutputMuted: () => { return },
     playOutputUnmuted: () => { return },
+    playEnterAudio: () => { return },
 })
 
 export function useCellAudioContext() {
@@ -26,6 +27,10 @@ export default function CellAudioProvider({ children }) {
     async function playOutputUnmuted() {
         playAudio(getOutputUnmutedAudio())
     }
+
+    async function playEnterAudio() {
+        playAudio(getEnterAudio())
+    }
     
     async function playAudio(audio: HTMLAudioElement) {
         await stopCurrentAudio()
@@ -45,8 +50,15 @@ export default function CellAudioProvider({ children }) {
         }
     }
 
+    const playerFunctions = {
+        playCellAudio, 
+        playOutputMuted, 
+        playOutputUnmuted,
+        playEnterAudio,
+    }
+
     return (
-        <CellAudioContext.Provider value={{ playCellAudio, playOutputMuted, playOutputUnmuted }}>
+        <CellAudioContext.Provider value={playerFunctions}>
             { children }
         </CellAudioContext.Provider>
     )
@@ -134,4 +146,8 @@ function getOutputMutedAudio() {
 
 function getOutputUnmutedAudio() {
     return new Audio('assets/audio/actions/conversor-desmutado.mp3')
+}
+
+function getEnterAudio() {
+    return new Audio('assets/audio/keys/enter.mp3')
 }

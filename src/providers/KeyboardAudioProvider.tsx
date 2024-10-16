@@ -45,8 +45,14 @@ export default function KeyboardAudioProvider({ children }) {
         }
     }
 
+    const playerFunctions = { 
+        playKeyPress, 
+        playKeyboardMuted, 
+        playKeyboardUnmuted
+    }
+
     return (
-        <KeyboardAudioContext.Provider value={{ playKeyPress, playKeyboardMuted, playKeyboardUnmuted }}>
+        <KeyboardAudioContext.Provider value={playerFunctions}>
             {children}
         </KeyboardAudioContext.Provider>
     )

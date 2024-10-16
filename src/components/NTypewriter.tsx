@@ -1,11 +1,11 @@
+import { Set } from 'immutable'
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
+import { cellToString } from '../domain/Cell.ts'
+import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
 import { useCellAudioContext } from '../providers/CellAudioProvider.tsx'
 import { useKeyboardAudioContext } from '../providers/KeyboardAudioProvider.tsx'
-import NKeyboard, { KeyStatus } from './NKeyboard.tsx'
+import NKeyboard from './NKeyboard.tsx'
 import NOutput, { addTextToTextArea } from './NOutput.tsx'
-import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
-import { Set } from 'immutable'
-import { cellToString } from '../domain/Cell.ts'
 
 
 export default function NTypewriter() {
@@ -38,7 +38,7 @@ export default function NTypewriter() {
     }
 
     const { playKeyPress, playKeyboardMuted, playKeyboardUnmuted } = useKeyboardAudioContext()
-    const { playCellAudio, playOutputMuted, playOutputUnmuted } = useCellAudioContext()
+    const { playCellAudio, playOutputMuted, playOutputUnmuted, playEnterAudio } = useCellAudioContext()
 
 
     const output = useRef<HTMLTextAreaElement>()
@@ -193,6 +193,10 @@ export default function NTypewriter() {
         event.preventDefault()
         console.info('Enter Key Pressed')
         addTextToTextArea('\n', output.current as HTMLTextAreaElement)
+
+        if (!isOutputMuted()) {
+            playEnterAudio()
+        }
     }
 
     function handleBackspaceKeyPressed(event: KeyboardEvent<HTMLElement>) {
