@@ -6,15 +6,21 @@ import Typewriter from '../../components/Typewriter.tsx'
 import { useAudioContext } from '../../providers/AudioProvider.tsx'
 
 export default function Free() {
-    const { playFreeModeInstructionsAudio } = useAudioContext()
+    const { playHowToAccessInstructionsAudio, playFreeModeInstructionsAudio } = useAudioContext()
 
     useEffect(() => {
-        playFreeModeInstructionsAudio()
+        playHowToAccessInstructionsAudio(() => {})
     }, [])
 
     return (<>  
         <main>
-            <Typewriter challengeMode={false} randomWord={undefined} onEnterPressed={() => {}} />
+            <Typewriter 
+                challengeMode={false} 
+                randomWord={undefined} 
+                onEnterPressed={() => {}} 
+                onInstructionsKeyPressed={() => { playFreeModeInstructionsAudio() }}
+                onRepeatWordKeyPressed={() => {}}
+            />
         </main>
     </>)
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 
 // export default function NOutput({ reference, text = "salve_o_corinthians\no_campeão_dos_campeões" }){
-export default function NOutput({ reference, text = "", showBraille = true }){
+export default function NOutput({ reference, text = '', showBraille = true }){
 
     const bootstrapClasses = 'form-control p-5 mb-3'
     const brailleClass = showBraille ? 'braille' : ''

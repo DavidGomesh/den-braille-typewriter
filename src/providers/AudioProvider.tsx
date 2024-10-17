@@ -8,7 +8,8 @@ const AudioContext = createContext({
     playChallengeModeAudio: () => Promise.reject<void>(),
     playAboutModeAudio: () => Promise.reject<void>(),
     playFreeModeInstructionsAudio: () => Promise.reject<void>(),
-    playChallengeModeInstructionsAudio: (_: () => void) => Promise.reject<void>(),
+    playChallengeModeInstructionsAudio: () => Promise.reject<void>(),
+    playHowToAccessInstructionsAudio: (_: () => void) => Promise.reject<void>(),
 
     // Cell players
     playCellAudio: (_: Cell) => Promise.reject<void>(),
@@ -59,8 +60,12 @@ export default function AudioProvider({ children }) {
         return playAudio(getFreeModeInstructionsAudio())
     }
 
-    async function playChallengeModeInstructionsAudio(onEnded: () => void) {
-        return playAudio(getChallengeModeInstructionsAudio(), onEnded)
+    async function playChallengeModeInstructionsAudio() {
+        return playAudio(getChallengeModeInstructionsAudio())
+    }
+
+    async function playHowToAccessInstructionsAudio(onEnded: () => void) {
+        return playAudio(getHowToAccessInstructionsAudio(), onEnded)
     }
 
     // Cell players
@@ -144,6 +149,7 @@ export default function AudioProvider({ children }) {
         playAboutModeAudio,
         playFreeModeInstructionsAudio,
         playChallengeModeInstructionsAudio,
+        playHowToAccessInstructionsAudio,
 
         // Cell players
         playCellAudio,
@@ -194,6 +200,10 @@ function getFreeModeInstructionsAudio() {
 
 function getChallengeModeInstructionsAudio() {
     return new Audio('assets/audio/views/challenge/instrucoes-modo-desafio.mp3')
+}
+
+function getHowToAccessInstructionsAudio() {
+    return new Audio('assets/audio/views/pressione-i-para-instrucoes.mp3')
 }
 
 // Cell audio loaders

@@ -1,4 +1,4 @@
-import { Map } from "immutable"
+import { List, Map } from "immutable"
 
 export enum Cell {
     C0,
@@ -107,3 +107,20 @@ export function cellToString(cell: Cell) {
 export function findCell(character: string) {
     return cellStringMap.findEntry(c => c === character)
 }
+
+export function stringToCellList(str: string) {
+    return List(str
+        .split('')
+        .filter(char => char !== '\n' && char !== '\r')
+        .map(char => {
+            const entry = findCell(char)
+
+            if (entry === undefined) {
+                throw new Error('Character not mapped: ' + char)
+            }
+
+            return entry[0]
+        }
+    ))
+}
+
