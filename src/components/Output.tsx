@@ -1,15 +1,19 @@
 import React from 'react'
 
 // export default function NOutput({ reference, text = "salve_o_corinthians\no_campeão_dos_campeões" }){
-export default function NOutput({ reference, text = "" }){
+export default function NOutput({ reference, text = "", showBraille = true }){
+
+    const bootstrapClasses = 'form-control p-5 mb-3'
+    const brailleClass = showBraille ? 'braille' : ''
+
     return (<>
         <textarea
-            id='test'
-            className='form-control braille p-5 mb-3'
+            className={`${bootstrapClasses} ${brailleClass}`}
             ref={reference}
             readOnly={false}
             rows={3}
             defaultValue={text}
+            spellCheck={false}
             autoFocus={true}
             style={{
                 height: '400px',

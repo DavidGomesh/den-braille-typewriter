@@ -16,6 +16,7 @@ export enum Key {
     BACKSPACE,
 
     CONFIRM,
+    TOOGLE_VIEW_MODE,
     MUTE_OUTPUT_SOUNDS,
     MUTE_KEYBOARD_SOUNDS,
 
@@ -40,6 +41,7 @@ export const codeKeyMap = Map<string, Key>([
     ['Space', Key.SPACE],
 
     ['Enter', Key.CONFIRM],
+    ['KeyT', Key.TOOGLE_VIEW_MODE],
     ['KeyO', Key.MUTE_OUTPUT_SOUNDS],
     ['KeyM', Key.MUTE_KEYBOARD_SOUNDS],
 
@@ -66,7 +68,7 @@ export function codeToKey(code: string) {
 
 
 const actionKeys = Set([
-    Key.CONFIRM, Key.MUTE_OUTPUT_SOUNDS, Key.MUTE_KEYBOARD_SOUNDS,
+    Key.CONFIRM, Key.TOOGLE_VIEW_MODE, Key.MUTE_OUTPUT_SOUNDS, Key.MUTE_KEYBOARD_SOUNDS,
     Key.ARROW_UP, Key.ARROW_DOWN, Key.ARROW_RIGHT, Key.ARROW_LEFT,
 ])
 

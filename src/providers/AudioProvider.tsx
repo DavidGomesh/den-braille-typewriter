@@ -15,12 +15,14 @@ const AudioContext = createContext({
     playOutputMuted: () => Promise.reject<void>(),
     playOutputUnmuted: () => Promise.reject<void>(),
     playEnterAudio: () => Promise.reject<void>(),
+    playBrailleViewAudio: () => Promise.reject<void>(),
+    playInkViewAudio: () => Promise.reject<void>(),
 
     // Keyboard players
     playKeyPress: () => Promise.reject<void>(),
     playKeyboardMuted: () => Promise.reject<void>(),
     playKeyboardUnmuted: () => Promise.reject<void>(),
-    
+
     // Challenge players
     playWordAudio: (_: string) => Promise.reject<void>(),
     playRightAnswer: (_: () => void) => Promise.reject<void>(),
@@ -76,6 +78,14 @@ export default function AudioProvider({ children }) {
 
     async function playEnterAudio() {
         return playAudio(getEnterAudio())
+    }
+
+    async function playBrailleViewAudio() {
+        return playAudio(getBrailleViewAudio())
+    }
+
+    async function playInkViewAudio() {
+        return playAudio(getInkViewAudio())
     }
 
     // Keyboard players
@@ -140,12 +150,14 @@ export default function AudioProvider({ children }) {
         playOutputMuted,
         playOutputUnmuted,
         playEnterAudio,
+        playBrailleViewAudio,
+        playInkViewAudio,
 
         // Keyboard players
         playKeyPress,
         playKeyboardMuted,
         playKeyboardUnmuted,
-        
+
         // Challenge players
         playWordAudio,
         playRightAnswer,
@@ -271,6 +283,14 @@ function getOutputUnmutedAudio() {
 
 function getEnterAudio() {
     return new Audio('assets/audio/keys/enter.mp3')
+}
+
+function getBrailleViewAudio() {
+    return new Audio('assets/audio/actions/visualizacao-em-braille.mp3')
+}
+
+function getInkViewAudio() {
+    return new Audio('assets/audio/actions/visualizacao-a-tinta.mp3')
 }
 
 // Keyboard audio loaders

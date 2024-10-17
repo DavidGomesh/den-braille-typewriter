@@ -10,7 +10,7 @@ import { RandomWord } from '../views/modes/Challenge.tsx'
 interface TypewriterProps {
     challengeMode: boolean,
     randomWord: RandomWord | undefined
-    onEnterPressed: (typedCells: List<Cell>) => void | undefined
+    onEnterPressed: (outputValue: string) => void | undefined
 }
 
 export default function Typewriter({ challengeMode = false, randomWord = undefined, onEnterPressed }: TypewriterProps) {
@@ -44,10 +44,11 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
 
     const { 
         playKeyPress, playKeyboardMuted, playKeyboardUnmuted,
-        playCellAudio, playOutputMuted, playOutputUnmuted, playEnterAudio
+        playCellAudio, playOutputMuted, playOutputUnmuted, playEnterAudio, playBrailleViewAudio, playInkViewAudio
     } = useAudioContext()
 
     const output = useRef<HTMLTextAreaElement>()
+    const [showBraille, setShowBraille] = useState(true)
 
     const [typedCells, setTypedCells] = useState(List<Cell>())
 
@@ -96,6 +97,7 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
 
     const controlKeyHandlerFunctions = {
         [Key.CONFIRM]: handleConfirmKeyPressed,
+        [Key.TOOGLE_VIEW_MODE]: handleToogleViewModeKeyPressed,
         [Key.MUTE_OUTPUT_SOUNDS]: handleMuteOutputSoundsKeyPressed,
         [Key.MUTE_KEYBOARD_SOUNDS]: handleMuteKeyboardSoundsKeyPressed,
     }
@@ -109,7 +111,21 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
 
     function handleConfirmKeyPressed() {
         console.info('Confirm Key Pressed')
-        onEnterPressed(typedCells as List<Cell>)
+        onEnterPressed((output.current as HTMLTextAreaElement).value)
+    }
+    
+    function handleToogleViewModeKeyPressed() {
+        console.info('Toogle View Mode Key Pressed')
+
+        if (showBraille) {
+            setShowBraille(false)
+            playInkViewAudio()
+
+        } else {
+            setShowBraille(true)
+            playBrailleViewAudio()
+        }
+
     }
 
     function handleMuteOutputSoundsKeyPressed() {
@@ -407,7 +423,7 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
                 {/* <div><strong>(enter)</strong> Confirma</div> */}
             </div>
 
-            <NOutput reference={output} />
+            <NOutput reference={output} showBraille={showBraille} />
             <NKeyboard keyStatus={keyStatus} />
         </div>
     </>)
