@@ -426,6 +426,10 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
         return challengeMode ? <div><strong>(r)</strong> Ouvir a palavra</div> : <div></div>
     }
 
+    function showConfirmTip() {
+        return challengeMode ? <div><strong>(enter)</strong> Verificar palavra</div> : <div></div>
+    }
+
     return (<>
         <div
             id='typewriter'
@@ -438,12 +442,14 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
             <div className='fs-3 mb-3'>{ showRandomWord() }</div>
 
             <div className='d-flex justify-content-center w-100 fs-5 gap-3 mb-3'>
+                
                 <div><strong>(i)</strong> Instruções</div>
                 { showListenWordTip() }
                 <div><strong>(t)</strong> Ver texto a tinta ou em Braille</div>
                 <div><strong>(o)</strong> Liga/desliga áudio do conversor</div>
                 <div><strong>(m)</strong> Liga/desliga áudio do teclado</div>
-                {/* <div><strong>(enter)</strong> Confirma</div> */}
+                { showConfirmTip() }
+
             </div>
 
             <NOutput reference={outputReference} showBraille={showBraille} />
