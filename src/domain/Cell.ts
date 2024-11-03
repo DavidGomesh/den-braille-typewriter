@@ -110,8 +110,7 @@ export function findCell(character: string) {
 
 export function stringToCellList(str: string) {
     return List(str
-        .split('')
-        .filter(char => char !== '\n' && char !== '\r')
+        .split('').filter(char => char !== '\n' && char !== '\r')
         .map(char => {
             const entry = findCell(char)
 

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { Key } from '../domain/Key.ts'
 
-import '../styles/components/keyboard/Key.css'
+import '../styles/components/TypewriterKey.css'
 
 interface TypewriterKeyPropos {
     referenceKey: Key,

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 
 import { Link } from 'react-router-dom'
 import { useAudioContext } from '../providers/AudioProvider.tsx'
+
 import '../styles/views/Home.css'
 
 export default function Home() {

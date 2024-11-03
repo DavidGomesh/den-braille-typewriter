@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import '../../styles/views/modes/Free.css'
+import '../../styles/views/modes/Challenge.css'
 
 import { List, Map } from 'immutable'
 import Typewriter from '../../components/Typewriter.tsx'

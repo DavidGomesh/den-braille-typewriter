@@ -1,11 +1,11 @@
 import { List, Set } from 'immutable'
-import React, { KeyboardEvent, MutableRefObject, useEffect, useRef, useState } from 'react'
+import React, { KeyboardEvent, MutableRefObject, useEffect, useState } from 'react'
 import { Cell, cellToString, findCell } from '../domain/Cell.ts'
 import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
-import NKeyboard from './Keyboard.tsx'
-import NOutput, { addTextToTextArea, getPreviousCharacter } from './Output.tsx'
 import { useAudioContext } from '../providers/AudioProvider.tsx'
 import { RandomWord } from '../views/modes/Challenge.tsx'
+import NKeyboard from './Keyboard.tsx'
+import NOutput, { addTextToTextArea, getPreviousCharacter } from './Output.tsx'
 
 interface TypewriterProps {
     challengeMode: boolean,
@@ -218,7 +218,7 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
             blankKeyHandlerFunctions[key](event)
             updatePressedKeyStatus(key)
 
-            if (!isKeyboardMuted()) {
+            if (!isKeyboardMuted()  && !keyAlreadyPressed(key)) {
                 playKeyPress()
             }
         } else {
