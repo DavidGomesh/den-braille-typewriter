@@ -60,7 +60,7 @@ export function isMappedKey(code: string) {
 export function codeToKey(code: string) {
     const key = codeKeyMap.get(code)
 
-    if (key === null) {
+    if (key === undefined) {
         throw Error(`Can't to convert ${code} to a Key`)
     }
 
@@ -175,7 +175,7 @@ export function canConvertKeysToCell(keys: Set<Key>) {
 export function keysToCell(keys: Set<Key>) {
     const cell = keysCellMap.get(keys)
 
-    if (cell === null) {
+    if (cell === undefined) {
         throw Error(`Can't to convert ${keys} to a Cell`)
     }
 
