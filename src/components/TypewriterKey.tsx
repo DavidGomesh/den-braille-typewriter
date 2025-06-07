@@ -24,7 +24,10 @@ export default function TypewriterKey({ referenceKey, pressed }: TypewriterKeyPr
 
     return (<>
         <div className='d-flex flex-column align-items-center'>
-            <div className={`${typewriterClass} ${keyPressedClass} ${defaultBootstrapClasses} ${specificBootstrapClasses}`}>
+            <div className={`
+                ${typewriterClass} ${keyPressedClass} 
+                ${defaultBootstrapClasses} ${specificBootstrapClasses}`}>
+                    
                 {keyIcon}
             </div>
 

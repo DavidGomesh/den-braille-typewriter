@@ -4,8 +4,8 @@ import { Cell, cellToString, findCell } from '../domain/Cell.ts'
 import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
 import { useAudioContext } from '../providers/AudioProvider.tsx'
 import { RandomWord } from '../views/modes/Challenge.tsx'
-import NKeyboard from './Keyboard.tsx'
-import NOutput, { addTextToTextArea, getPreviousCharacter } from './Output.tsx'
+import Keyboard from './Keyboard.tsx'
+import Output, { addTextToTextArea, getPreviousCharacter } from './Output.tsx'
 
 interface TypewriterProps {
     challengeMode: boolean,
@@ -16,7 +16,13 @@ interface TypewriterProps {
     onRepeatWordKeyPressed: () => void
 }
 
-export default function Typewriter({ challengeMode = false, randomWord = undefined, outputReference, onEnterPressed, onInstructionsKeyPressed, onRepeatWordKeyPressed }: TypewriterProps) {
+export default function Typewriter({challengeMode = false, 
+        randomWord = undefined, 
+        outputReference, 
+        onEnterPressed, 
+        onInstructionsKeyPressed, 
+        onRepeatWordKeyPressed 
+    }: TypewriterProps) {
 
     const [keyboardMuted, setKeyboardMuted] = useState(false)
     const [outputMuted, setOutputMuted] = useState(false)
@@ -215,8 +221,8 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
             setCurrPressedKeys(currPressedKeys.add(key))
             setPressedKeys(pressedKeys.add(key))
 
-            blankKeyHandlerFunctions[key](event)
             updatePressedKeyStatus(key)
+            blankKeyHandlerFunctions[key](event)
 
             if (!isKeyboardMuted()  && !keyAlreadyPressed(key)) {
                 playKeyPress()
@@ -229,7 +235,6 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
     function handleSpaceKeyPressed(event: KeyboardEvent<HTMLElement>) {
         event.preventDefault()
         console.info('Space Key Pressed')
-        // addText('_', output.current as HTMLTextAreaElement)
     }
 
     function handleEnterKeyPressed(event: KeyboardEvent<HTMLElement>) {
@@ -438,7 +443,9 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
             autoFocus
             >
 
-            <div className='fs-1'>{ getTitle() }</div>
+            <div>
+                <div className='fs-1'>{ getTitle() }</div>
+            </div>
             <div className='fs-3 mb-3'>{ showRandomWord() }</div>
 
             <div className='d-flex justify-content-center w-100 fs-5 gap-3 mb-3'>
@@ -452,8 +459,8 @@ export default function Typewriter({ challengeMode = false, randomWord = undefin
 
             </div>
 
-            <NOutput reference={outputReference} showBraille={showBraille} />
-            <NKeyboard keyStatus={keyStatus} />
+            <Output reference={outputReference} showBraille={showBraille} />
+            <Keyboard keyStatus={keyStatus} />
 
         </div>
     </>)

@@ -141,34 +141,34 @@ export default function AudioProvider({ children }) {
 
 
 
-    const playerFunctions = {
-        // Menu players
-        playMainMenuAudio,
-        playFreeModeAudio,
-        playChallengeModeAudio,
-        playAboutModeAudio,
-        playFreeModeInstructionsAudio,
-        playChallengeModeInstructionsAudio,
-        playHowToAccessInstructionsAudio,
+const playerFunctions = {
+    // Menu players
+    playMainMenuAudio,
+    playFreeModeAudio,
+    playChallengeModeAudio,
+    playAboutModeAudio,
+    playFreeModeInstructionsAudio,
+    playChallengeModeInstructionsAudio,
+    playHowToAccessInstructionsAudio,
 
-        // Cell players
-        playCellAudio,
-        playOutputMuted,
-        playOutputUnmuted,
-        playEnterAudio,
-        playBrailleViewAudio,
-        playInkViewAudio,
+    // Cell players
+    playCellAudio,
+    playOutputMuted,
+    playOutputUnmuted,
+    playEnterAudio,
+    playBrailleViewAudio,
+    playInkViewAudio,
 
-        // Keyboard players
-        playKeyPress,
-        playKeyboardMuted,
-        playKeyboardUnmuted,
+    // Keyboard players
+    playKeyPress,
+    playKeyboardMuted,
+    playKeyboardUnmuted,
 
-        // Challenge players
-        playWordAudio,
-        playRightAnswer,
-        playWrongAnswer,
-    }
+    // Challenge players
+    playWordAudio,
+    playRightAnswer,
+    playWrongAnswer,
+}
 
     return (
         <AudioContext.Provider value={playerFunctions}>

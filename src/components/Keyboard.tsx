@@ -18,7 +18,7 @@ interface NKeyboardProps {
     keyStatus: KeyStatus
 }
 
-export default function NKeyboard({ keyStatus }: NKeyboardProps) {
+export default function Keyboard({ keyStatus }: NKeyboardProps) {
 
     const defaultBootstrapClasses = getDefaultBootstrapClasses()
 

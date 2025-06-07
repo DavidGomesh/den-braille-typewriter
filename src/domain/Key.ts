@@ -165,6 +165,7 @@ export const keysCellMap = Map<Set<Key>, Cell>([
     [Set([Key.DOT1, Key.DOT2, Key.DOT5, Key.DOT6]),                     Cell.C1256],
     [Set([Key.DOT1, Key.DOT2, Key.DOT4, Key.DOT5, Key.DOT6]),           Cell.C12456],
     [Set([Key.DOT4, Key.DOT5]),                                         Cell.C45],
+    // ...
     [Set([Key.DOT4, Key.DOT5, Key.DOT6]),                               Cell.C456],
 ])
 

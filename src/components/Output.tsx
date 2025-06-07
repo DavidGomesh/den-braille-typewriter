@@ -7,6 +7,7 @@ export default function NOutput({ reference, text = '', showBraille = true }){
 
     return (<>
         <textarea
+            aria-label='Saída de Celas Braille digitadas'
             className={`${bootstrapClasses} ${brailleClass}`}
             ref={reference}
             readOnly={false}

@@ -49,12 +49,12 @@ export default function Home() {
                             Modo desafio
                     </Link>
 
-                    <button 
+                    {/* <button 
                         onFocus={handleBtnAboutFocused} 
                         className='btn btn-outline-primary btn-lg fw-bold mb-2' 
                         style={{width: '300px'}}>
                             Sobre
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </main>

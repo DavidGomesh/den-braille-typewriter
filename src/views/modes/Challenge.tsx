@@ -15,7 +15,8 @@ export interface RandomWord {
 
 export default function Challenge() {
 
-    const { playChallengeModeInstructionsAudio, playHowToAccessInstructionsAudio, playWordAudio, playRightAnswer, playWrongAnswer } = useAudioContext()
+    const { playChallengeModeInstructionsAudio, 
+        playHowToAccessInstructionsAudio, playWordAudio, playRightAnswer, playWrongAnswer } = useAudioContext()
 
     const output = useRef<HTMLTextAreaElement>()
     const [randomWord, setRandomWord] = useState<RandomWord>()

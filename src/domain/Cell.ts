@@ -97,6 +97,7 @@ export const cellStringMap = Map<Cell, string>([
     [Cell.C5,      `D`],
     [Cell.C46,     `M`],
     [Cell.C56,     `$`],
+    // ...
     [Cell.C6,      `'`],
 ])
 
