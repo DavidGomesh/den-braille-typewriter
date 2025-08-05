@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/den-braille-typewriter/static/css/main.b60e76a8.css",
-    "main.js": "/den-braille-typewriter/static/js/main.b219bc4e.js",
+    "main.js": "/den-braille-typewriter/static/js/main.1555ad25.js",
     "static/media/braille_v1_by_xchristaox.ttf": "/den-braille-typewriter/static/media/braille_v1_by_xchristaox.3b4ff8db6c14d921bad1.ttf",
     "index.html": "/den-braille-typewriter/index.html",
     "main.b60e76a8.css.map": "/den-braille-typewriter/static/css/main.b60e76a8.css.map",
-    "main.b219bc4e.js.map": "/den-braille-typewriter/static/js/main.b219bc4e.js.map"
+    "main.1555ad25.js.map": "/den-braille-typewriter/static/js/main.1555ad25.js.map"
   },
   "entrypoints": [
     "static/css/main.b60e76a8.css",
-    "static/js/main.b219bc4e.js"
+    "static/js/main.1555ad25.js"
   ]
 }
