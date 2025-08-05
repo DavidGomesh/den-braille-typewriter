@@ -15,7 +15,7 @@ import Challenge from './views/modes/Challenge.tsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
     <>
         <AudioProvider>
-            <BrowserRouter>
+            <BrowserRouter basename="/den-braille-typewriter">
                 <Routes>
                     <Route path='/' Component={Home} />
                     <Route path='/free' Component={Free} />
