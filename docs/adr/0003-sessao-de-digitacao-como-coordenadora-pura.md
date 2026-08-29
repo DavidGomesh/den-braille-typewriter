@@ -11,4 +11,4 @@ A Sessão de digitação será um módulo profundo e puro que coordena motor, Do
 - A Posição de revisão permite navegação acessível sem mover a escrita; comandos explícitos conectam revisão e edição quando a pessoa deseja alterar uma coordenada examinada.
 - Presets Assistido e Fidelidade física são combinações coerentes de políticas de interrupção, Retrocesso, escrita em posição ocupada, transbordamento, Apagamento físico, limites e troca de folha; o modo Personalizado aceita somente combinações validadas.
 - Preferências permanecem fora da sessão, são recebidas somente para leitura e usam uma interface própria de carregamento e persistência.
-- Efeitos de áudio, DOM, persistência e atividade educacional consomem eventos da sessão e não fazem parte de sua implementação.
+- Efeitos de áudio, DOM, persistência e Experiências do simulador consomem eventos da sessão e não fazem parte de sua implementação.

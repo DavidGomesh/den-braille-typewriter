@@ -8,6 +8,30 @@ Este contexto descreve a linguagem do simulador educacional de máquina Braille 
 Produto educacional que reproduz digitalmente a interação de uma máquina Braille para aprendizagem e prática.
 _Avoid_: Máquina virtual, teclado Braille
 
+**Experiência do simulador**:
+Contexto de uso do Simulador de máquina Braille que possui o ciclo de vida de suas Sessões de digitação e, quando aplicável, objetivo, conteúdo, progresso e requisitos temporários. Na apresentação, cada experiência é identificada como um modo.
+_Avoid_: Modo da máquina, página, tela
+
+**Modo livre**:
+Experiência do simulador sem objetivo imposto, na qual a pessoa cria e edita Documentos Braille com suas Preferências do simulador.
+_Avoid_: Prática livre, atividade livre
+
+**Modo desafio**:
+Experiência guiada que solicita uma produção Braille, mantém a resposta esperada e avalia a Sequência Braille produzida numa Sessão de digitação própria.
+_Avoid_: Modo de simulação, desafio da máquina
+
+**Modo lição**:
+Experiência guiada que ensina o uso do simulador ou o Braille por meio de instruções e etapas progressivas, usando Sessões de digitação próprias quando necessário.
+_Avoid_: Modo de simulação, página de lições
+
+**Requisito da experiência**:
+Restrição temporária que uma Experiência do simulador aplica ao comportamento de suas Sessões de digitação sem alterar as Preferências do simulador da pessoa.
+_Avoid_: Preferência temporária, configuração salva
+
+**Configuração efetiva da sessão**:
+Configuração usada por uma Sessão de digitação, formada pelas Preferências do simulador com a substituição temporária das políticas exigidas pelos Requisitos da experiência ativa.
+_Avoid_: Preferência da atividade, configuração persistente da sessão
+
 **Sessão de digitação**:
 Contexto transitório no qual uma pessoa produz e edita um Documento Braille por meio do simulador, independentemente da atividade que iniciou a interação.
 _Avoid_: Tela, textarea, modo livre
@@ -144,8 +168,8 @@ _Avoid_: Excluir cela, limpar caractere
 Solicitação que altera a interação da Sessão de digitação, como a captura de acordes, a posição de edição ou o modo de visualização, sem simular um Controle da máquina.
 _Avoid_: Tecla de atalho, ação da máquina
 
-**Ação da atividade**:
-Solicitação pertencente à atividade educacional que usa a Sessão de digitação, como confirmar uma resposta, repetir uma palavra ou ouvir instruções.
+**Ação da experiência**:
+Solicitação pertencente à Experiência do simulador que usa a Sessão de digitação, como confirmar uma resposta, repetir uma palavra ou ouvir instruções.
 _Avoid_: Controle da máquina, comando da sessão
 
 **Retrocesso**:
