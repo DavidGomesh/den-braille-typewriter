@@ -40,6 +40,22 @@ _Avoid_: Tela, textarea, modo livre
 Escolhas da pessoa que permanecem entre Sessões de digitação, como áudio, visualização preferida, mapeamento de controles e Modo de simulação.
 _Avoid_: Estado da sessão, configuração da tela
 
+**Feedback multimodal**:
+Comunicação derivada de um fato semântico do simulador e apresentada por um ou mais meios, como texto visual, semântica acessível, leitura falada ou som da máquina, sem tornar um meio específico a fonte do significado.
+_Avoid_: Áudio, efeito sonoro, mensagem do componente
+
+**Leitura falada do aplicativo**:
+Saída de voz controlada pelo próprio simulador, por síntese de texto ou gravação humana explícita, independente da fala produzida por tecnologias assistivas.
+_Avoid_: Leitor de tela, áudio obrigatório
+
+**Leitura durante a digitação**:
+Política que define se e como o simulador fala automaticamente a produção corrente, como pontos Braille, Símbolos textuais, palavras ou linhas.
+_Avoid_: Eco de digitação, leitura do documento
+
+**Leitura do documento**:
+Exame solicitado de um trecho do Documento Braille a partir da Posição de revisão, realizado pela semântica acessível ou pela Leitura falada do aplicativo e apresentado por sua Interpretação Braille ou pela descrição detalhada das Impressões de cela.
+_Avoid_: Leitura durante a digitação, conversão do documento
+
 **Configuração de papel**:
 Definição registrada no Documento Braille que estabelece folhas finitas ou Papel contínuo virtual, quantidade de linhas e colunas, margens e, quando aplicável, formato e orientação físicos. As Preferências do simulador guardam somente a configuração inicial de novos documentos.
 _Avoid_: Tamanho da tela, preferência global do documento aberto
