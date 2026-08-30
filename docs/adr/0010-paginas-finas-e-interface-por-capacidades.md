@@ -1,0 +1,18 @@
+# Páginas finas e interface organizada por capacidades
+
+A futura interface será composta por páginas finas, cada uma responsável por um destino navegável e pela conexão entre a apresentação de uma Experiência do simulador, a apresentação compartilhada da Sessão de digitação e seus adapters. Regras, estado autoritativo e efeitos permanecem atrás das interfaces dos módulos que os controlam; essa seam permite substituir a apresentação gradualmente, por destino, sem reimplementar o comportamento do simulador.
+
+## Consequências
+
+- A estrutura comum da aplicação concentra roteamento, navegação, infraestrutura global de Feedback multimodal, recuperação de falhas e contratos comuns de foco, mas não conhece regras de experiências ou da Sessão de digitação.
+- Início, Modo livre, Modo desafio, preferências, ajuda ou sobre e destino não encontrado são destinos distintos. O Modo lição só entra na navegação quando existir como Experiência do simulador própria; a rota legada `/lessons` não continuará representando o Modo desafio.
+- Cada destino declara título, região principal, foco inicial e regra de retorno. Rotas e configuração de base ficam concentradas na aplicação, com `HashRouter` enquanto o GitHub Pages não oferecer fallback de SPA.
+- Estado do Documento Braille, posições e captura pertence à Sessão de digitação; estado e progressão de uma experiência pertencem à própria experiência; Preferências do simulador usam sua interface de persistência; estado visual efêmero permanece local ao módulo visual que o controla. Não haverá um store global sem necessidade compartilhada concreta.
+- Sair de uma experiência interrompe a captura, mas preserva documento, posições e progresso estável até abandono, reinício ou fechamento explícito. A desmontagem de uma página React não define o ciclo de vida desse estado.
+- O código será organizado primeiro por capacidades do produto, com áreas para aplicação, experiências, sessão, Braille, feedback, preferências e módulos visuais compartilhados. Um módulo visual será compartilhado quando houver reutilização real ou um contrato acessível que deva permanecer uniforme.
+- A apresentação recebe estados observáveis e envia Intenções da máquina, Comandos da sessão e Ações da experiência. Ela não interpreta eventos DOM como regras, não altera diretamente o Documento Braille e não escolhe efeitos de áudio.
+- CSS Modules manterão estilos locais; propriedades customizadas representarão tokens; uma base global pequena cuidará de normalização, fontes e estrutura do documento. Bootstrap e estilos inline serão removidos gradualmente, sem exigir uma troca total da interface.
+- O Bootswatch Sketchy atual é reconhecido como a implementação de uma identidade visual desenhada à mão. Essa característica será avaliada separadamente da dependência Bootstrap e poderá ser preservada, adaptada ou substituída pelo futuro design, sempre sujeita aos requisitos de acessibilidade.
+- A composição responsiva reorganiza regiões com ordem semântica estável, preserva alvos de acionamento e evita dimensões fixas de viewport. Regras do domínio não consultam largura de tela.
+- O suporte verificado inicial permanece em navegadores desktop. Telas estreitas, zoom e ampliação são atendidos pela composição responsiva, mas isso não promete suporte móvel; a interação touchscreen exige protótipo e validação próprios antes de entrar na matriz de suporte.
+- A migração substitui um destino navegável por vez atrás da mesma estrutura comum: páginas legadas podem permanecer isoladas temporariamente, enquanto Modo livre e depois Modo desafio adotam a nova apresentação compartilhada da Sessão de digitação. Estados de carregamento e falha serão textuais, acessíveis e recuperáveis.
