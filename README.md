@@ -1,5 +1,9 @@
 # Getting Started with Create React App
 
+> A arquitetura alvo da modernização está documentada em
+> [`docs/architecture`](docs/architecture/README.md). A estrutura atual ainda é
+> legada e será migrada de forma incremental.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
