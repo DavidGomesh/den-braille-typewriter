@@ -11,5 +11,6 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 - Baseline operacional da versão anterior à modernização, com jornadas essenciais, inventário técnico e referências recuperáveis.
 - Ambiente legado reproduzível no Node.js 24, com instalação pelo lockfile, CI e baseline verificável de vulnerabilidades.
 - Separação contínua entre falhas herdadas de lint e novas regressões, com auditoria por advisory e pacote.
+- Desenvolvimento e build Vite equivalentes ao CRA, com artifact próprio e base de publicação do projeto.
 
 [Unreleased]: https://github.com/DavidGomesh/den-braille-typewriter/compare/v1.0...HEAD

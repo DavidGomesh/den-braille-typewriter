@@ -1,10 +1,12 @@
-# Getting Started with Create React App
+# Simulador de Máquina Braille
 
 > A arquitetura alvo da modernização está documentada em
 > [`docs/architecture`](docs/architecture/README.md). A estrutura atual ainda é
 > legada e será migrada de forma incremental.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Durante a migração de plataforma, Vite e Create React App (CRA) coexistem para
+permitir a comparação dos artifacts. Vite é o novo caminho em validação; os
+comandos sem sufixo continuam apontando para a baseline CRA até o corte.
 
 ## Ambiente reproduzível
 
@@ -32,8 +34,13 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Executa o servidor de desenvolvimento legado do CRA em
+[http://localhost:3000](http://localhost:3000).
+
+### `npm run start:vite`
+
+Executa o servidor de desenvolvimento Vite. A aplicação fica disponível em
+`http://localhost:5173/den-braille-typewriter/`.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
@@ -53,8 +60,16 @@ Executa localmente todos os guardrails usados pela integração contínua.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Produz o artifact legado do CRA no diretório `build/`.
+
+### `npm run build:vite`
+
+Produz o novo artifact Vite no diretório `dist/`, configurado para ser servido
+sob `/den-braille-typewriter/`.
+
+### `npm run preview:vite`
+
+Serve localmente o conteúdo de `dist/` sob a mesma base de publicação.
 
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
