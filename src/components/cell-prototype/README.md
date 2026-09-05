@@ -1,5 +1,13 @@
 # Protótipo de Impressões de cela
 
+## Iteração atual: estilos de apresentação
+
+O mantenedor propôs famílias visuais, semelhantes à escolha de fontes, mantendo renderização HTML/CSS. O laboratório compara **Essencial**, preservando a apresentação sem contorno aprovada, e **Moldura suave**, um experimento com borda de 2 px, raio de 16 px, retângulo de 78 × 112 px, centros internos separados por 32 px e pontos grandes de 20 px. Valores são multiplicados pela ampliação. A geometria da Moldura suave é experimental, não uma afirmação de proporção normativa.
+
+Apresentação didática e estilo são escolhas independentes. Espaçamento horizontal e vertical também é independente: controles de 0–200% multiplicam os intervalos iniciais de 22,8 e 44,7 px, sem alterar os pontos. A amostra tem duas linhas de oito celas. Trocar estilo ou espaçamento preserva o estado da impressão experimental. O nome definitivo do conceito e o desenho com moldura ainda aguardam validação; não se trata de arquivo de fonte.
+
+As notas abaixo registram a evolução anterior do protótipo.
+
 Executar na raiz: `npm run prototype`. Abrir http://localhost:3001/den-braille-typewriter/free?variant=B.
 
 Artefato descartável de discussão, independente do build da aplicação. HTML/CSS nas apresentações comum (B) e didática (C), conforme orientação do mantenedor. A troca mantém o experimento em memória. Sem gravação de documentos.
