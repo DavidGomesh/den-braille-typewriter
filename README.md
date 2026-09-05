@@ -15,14 +15,14 @@ O projeto legado usa Node.js 24.20.0, fixado em `.nvmrc`, e mantém npm com o
 nvm install
 nvm use
 npm ci
-npm run test:ci
-npm run build
-npm run audit:baseline
+npm run ci
 ```
 
-`npm run audit:baseline` aceita as vulnerabilidades herdadas registradas para
-esta etapa, mas falha se a quantidade de vulnerabilidades críticas ou altas de
-produção ultrapassar a baseline. Os avisos conhecidos do ambiente legado e as
+`npm run ci` executa a mesma interface operacional usada pelo GitHub Actions:
+lint contra a baseline herdada, testes, build e auditoria. A auditoria aceita
+somente as ocorrências críticas ou altas já registradas por advisory e pacote;
+o lint rejeita qualquer aviso que não esteja na fotografia versionada. Os
+avisos conhecidos do ambiente legado e as
 jornadas verificadas estão documentados em
 [`docs/architecture/node-24-baseline.md`](docs/architecture/node-24-baseline.md).
 
@@ -46,6 +46,10 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 ### `npm run test:ci`
 
 Executa uma vez a suíte legada, sem ativar o modo interativo.
+
+### `npm run ci`
+
+Executa localmente todos os guardrails usados pela integração contínua.
 
 ### `npm run build`
 

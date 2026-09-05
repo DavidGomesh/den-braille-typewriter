@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-09-05",
+  "failures": [
+    "src/components/Typewriter.tsx:react-hooks/exhaustive-deps:React Hook useEffect has missing dependencies: 'isOutputMuted', 'noKeyPressedCurrently', 'outputReference', 'playCellAudio', 'pressedKeys', and 'typedCells'. Either include them or remove the dependency array. You can also do a functional update 'setPressedKeys(p => ...)' if you only need 'pressedKeys' in the 'setPressedKeys' call.",
+    "src/tests/Journeys.test.tsx:testing-library/no-container:Avoid using container methods. Prefer using the methods from Testing Library, such as \"getByRole()\"",
+    "src/tests/Journeys.test.tsx:testing-library/no-container:Avoid using container methods. Prefer using the methods from Testing Library, such as \"getByRole()\"",
+    "src/tests/Journeys.test.tsx:testing-library/no-node-access:Avoid direct Node access. Prefer using the methods from Testing Library.",
+    "src/tests/Journeys.test.tsx:testing-library/no-node-access:Avoid direct Node access. Prefer using the methods from Testing Library.",
+    "src/tests/Journeys.test.tsx:testing-library/no-node-access:Avoid direct Node access. Prefer using the methods from Testing Library.",
+    "src/tests/Journeys.test.tsx:testing-library/no-node-access:Avoid direct Node access. Prefer using the methods from Testing Library.",
+    "src/tests/Journeys.test.tsx:testing-library/no-wait-for-multiple-assertions:Avoid using multiple assertions within `waitFor` callback",
+    "src/tests/Journeys.test.tsx:testing-library/no-wait-for-multiple-assertions:Avoid using multiple assertions within `waitFor` callback",
+    "src/views/Home.tsx:@typescript-eslint/no-unused-vars:'handleBtnAboutFocused' is defined but never used.",
+    "src/views/Home.tsx:react-hooks/exhaustive-deps:React Hook useEffect has a missing dependency: 'playMainMenuAudio'. Either include it or remove the dependency array.",
+    "src/views/modes/Challenge.tsx:react-hooks/exhaustive-deps:React Hook useEffect has missing dependencies: 'playHowToAccessInstructionsAudio' and 'playRandomWordAudio'. Either include them or remove the dependency array.",
+    "src/views/modes/Free.tsx:react-hooks/exhaustive-deps:React Hook useEffect has a missing dependency: 'playHowToAccessInstructionsAudio'. Either include it or remove the dependency array."
+  ]
+}

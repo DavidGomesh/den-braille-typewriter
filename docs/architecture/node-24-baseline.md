@@ -10,20 +10,25 @@ dependências que serão removidas nos próximos cortes.
   `engines` do manifesto;
 - npm, com instalação determinada pelo `package-lock.json` versão 3;
 - `npm ci` para a instalação limpa;
+- `npm run ci` como interface operacional única, usada localmente e na CI;
+- `npm run lint:baseline` para separar os avisos herdados de novas
+  regressões;
 - `npm run test:ci` para a execução não interativa dos testes;
 - `npm run build` para o artifact CRA em `build/`;
 - `npm run audit:baseline` para impedir o aumento de vulnerabilidades críticas
   ou altas de produção sobre a fotografia registrada.
 
-A CI executa esses comandos no mesmo Node.js em pull requests e em mudanças de
-`develop`, `main` e `release/**`.
+A CI executa `npm ci` e `npm run ci` no mesmo Node.js em pull requests e em
+mudanças de `develop`, `main` e `release/**`.
 
 O GitHub Actions define `CI=true`, e o CRA legado transforma os avisos de lint
-abaixo em erros de build nesse modo. O passo de build neutraliza somente essa
-variável (`CI=false`), mantendo testes e demais passos em modo CI. A exceção é
-de responsabilidade da manutenção do projeto e deve ser removida na Fase 2,
-junto com o CRA; até lá, os avisos permanecem visíveis no log e registrados
-nesta baseline.
+abaixo em erros de build nesse modo. O comando de build neutraliza somente essa
+variável (`CI=false`) de forma idêntica em qualquer ambiente. Antes do build,
+`npm run lint:baseline` compara cada ocorrência atual com
+`config/lint-baseline.json`: avisos herdados permanecem visíveis e qualquer
+ocorrência nova falha. Uma ocorrência resolvida também exige reduzir a baseline,
+impedindo que sua reintrodução futura seja aceita como herança. A exceção do CRA
+é de responsabilidade da manutenção do projeto e deve ser removida na Fase 2.
 
 ## Resultado de referência
 
@@ -90,9 +95,11 @@ Em 5 de setembro de 2026, `npm audit --omit=dev --json` registrou:
 | Baixa | 15 |
 | Total | 72 |
 
-As contagens e os IDs GHSA herdados também estão em
-`config/audit-baseline.json`. A verificação aceita reduções, mas bloqueia tanto
-qualquer ID crítico ou alto novo quanto o aumento das contagens nessas
-severidades. Como o CRA classifica ferramentas no conjunto de produção, esta fotografia inclui
+As contagens e as ocorrências herdadas, identificadas por ID GHSA e pacote,
+também estão em `config/audit-baseline.json`. A verificação aceita reduções, mas
+bloqueia qualquer ocorrência crítica ou alta nova e o aumento das contagens
+nessas severidades. Ocorrências resolvidas exigem a redução da baseline antes
+que a CI volte a passar, para que não possam ser reintroduzidas silenciosamente.
+Como o CRA classifica ferramentas no conjunto de produção, esta fotografia inclui
 vulnerabilidades de build e desenvolvimento; a classificação será corrigida
 quando essas dependências forem substituídas ou removidas.
