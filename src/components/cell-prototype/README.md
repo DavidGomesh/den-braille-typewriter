@@ -10,4 +10,6 @@ Este laboratório usa a URL do Modo livre, servido por um servidor próprio sem 
 
 ## Ajuste para comparação visual
 
+A fonte proporcional foi escolhida pelo mantenedor por parecer mais natural no conjunto. O seletor monoespaçado permanece apenas como comparação no laboratório. O contorno experimental foi aproximado para 70,2 × 105,3 px, sem alterar os centros dos pontos. A nova linha demonstrativa usa passo horizontal de 93 px (6,2 unidades), independente do contorno. O contorno definitivo ainda está em avaliação.
+
 Pontos apagados e inativos usam cinza claro `#ccc`, mantendo elevados em `#111`. A apresentação didática permite comparar fonte proporcional e monoespaçada apenas nos números. Contorno das celas opcional, inicialmente desligado; seleção e foco continuam visíveis. As opções não alteram a geometria ou o conteúdo. A paleta clara ainda precisa de avaliação de acessibilidade antes da implementação definitiva; não constitui aprovação de contraste.
