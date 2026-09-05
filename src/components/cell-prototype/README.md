@@ -2,6 +2,12 @@
 
 ## Iteração atual: estilos de apresentação
 
+### Padrões aprovados e experimento seguinte
+
+Padrão aprovado pelo mantenedor: Essencial sem contorno, números proporcionais e ampliação de 100%. O espaçamento anterior de 50% horizontal e 30% vertical foi renomeado para 100% do novo padrão: intervalos de 11,4 px entre celas e 13,41 px entre linhas, à escala 1. A mudança é de referência percentual, preservando as distâncias escolhidas. Restaurar espaçamento retorna a esses valores. A preferência positiva por monoespaçada na Moldura suave não altera a fonte padrão global.
+
+Distâncias internas horizontal e vertical dos pontos agora podem ser experimentadas separadamente entre 80% e 150% do estilo. Não alteram diâmetro, pontos elevados ou vestígios; a área da cela acompanha a matriz para evitar sobreposição. Restaurar pontos retorna a 100% nos dois eixos. Valores assimétricos não preservam a geometria-base; esta configuração ainda está em avaliação, não é promessa de fidelidade física.
+
 O mantenedor propôs famílias visuais, semelhantes à escolha de fontes, mantendo renderização HTML/CSS. O laboratório compara **Essencial**, preservando a apresentação sem contorno aprovada, e **Moldura suave**, um experimento com borda de 2 px, raio de 16 px, retângulo de 78 × 112 px, centros internos separados por 32 px e pontos grandes de 20 px. Valores são multiplicados pela ampliação. A geometria da Moldura suave é experimental, não uma afirmação de proporção normativa.
 
 Apresentação didática e estilo são escolhas independentes. Espaçamento horizontal e vertical também é independente: controles de 0–200% multiplicam os intervalos iniciais de 22,8 e 44,7 px, sem alterar os pontos. A amostra tem duas linhas de oito celas. Trocar estilo ou espaçamento preserva o estado da impressão experimental. O nome definitivo do conceito e o desenho com moldura ainda aguardam validação; não se trata de arquivo de fonte.
