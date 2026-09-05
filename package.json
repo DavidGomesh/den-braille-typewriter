@@ -27,10 +27,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "node scripts/build-legacy.mjs",
     "test": "react-scripts test",
     "test:ci": "react-scripts test --watchAll=false && node --test scripts/*.test.mjs",
+    "lint:baseline": "node scripts/check-lint-baseline.mjs",
     "audit:baseline": "node scripts/check-audit-baseline.mjs",
+    "ci": "npm run lint:baseline && npm run test:ci && npm run build && npm run audit:baseline",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"

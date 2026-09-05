@@ -37,7 +37,18 @@ console.log(
     `${current.high} altas, ${current.moderate} moderadas e ${current.low} baixas.`
 )
 
-const { regressions, newAdvisories } = evaluateAudit(report, limits)
+const { regressions, newOccurrences, resolvedOccurrences } = evaluateAudit(
+    report,
+    limits
+)
+
+if (resolvedOccurrences.length > 0) {
+    console.error('Ocorrências herdadas resolvidas; reduza config/audit-baseline.json:')
+    for (const occurrence of resolvedOccurrences) {
+        console.error(`- ${occurrence}`)
+    }
+    process.exit(1)
+}
 
 if (regressions.length > 0) {
     for (const severity of regressions) {
@@ -48,10 +59,10 @@ if (regressions.length > 0) {
     process.exit(1)
 }
 
-if (newAdvisories.length > 0) {
-    console.error('Novos advisories críticos ou altos:')
-    for (const advisoryId of newAdvisories) {
-        console.error(`- ${advisoryId}`)
+if (newOccurrences.length > 0) {
+    console.error('Novas ocorrências críticas ou altas por advisory e pacote:')
+    for (const occurrence of newOccurrences) {
+        console.error(`- ${occurrence}`)
     }
     process.exit(1)
 }

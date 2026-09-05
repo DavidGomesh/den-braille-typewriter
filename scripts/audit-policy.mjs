@@ -4,25 +4,29 @@ export function evaluateAudit(report, baseline) {
         severity => current[severity] > baseline[severity]
     )
 
-    const allowedAdvisories = new Set(
-        baseline.allowedCriticalAndHighAdvisories
+    const allowedOccurrences = new Set(
+        baseline.allowedCriticalAndHighOccurrences
     )
-    const currentAdvisories = new Set()
+    const currentOccurrences = new Set()
 
-    for (const vulnerability of Object.values(report.vulnerabilities)) {
+    for (const [dependency, vulnerability] of Object.entries(report.vulnerabilities)) {
         for (const advisory of vulnerability.via) {
             if (
                 typeof advisory === 'object' &&
                 ['critical', 'high'].includes(advisory.severity)
             ) {
-                currentAdvisories.add(advisory.url.split('/').at(-1))
+                const advisoryId = advisory.url.split('/').at(-1)
+                currentOccurrences.add(`${advisoryId}:${dependency}`)
             }
         }
     }
 
-    const newAdvisories = [...currentAdvisories]
-        .filter(advisoryId => !allowedAdvisories.has(advisoryId))
+    const newOccurrences = [...currentOccurrences]
+        .filter(occurrence => !allowedOccurrences.has(occurrence))
+        .sort()
+    const resolvedOccurrences = [...allowedOccurrences]
+        .filter(occurrence => !currentOccurrences.has(occurrence))
         .sort()
 
-    return { regressions, newAdvisories }
+    return { regressions, newOccurrences, resolvedOccurrences }
 }
