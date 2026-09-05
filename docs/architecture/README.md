@@ -8,6 +8,7 @@ Esta área descreve a arquitetura alvo da modernização. Ela é a fonte canôni
 - [Módulos e dependências](modules.md): responsabilidades, interfaces, adapters e dependências permitidas.
 - [Fluxos em execução](runtime-flows.md): sequências principais da entrada ao feedback e das Experiências do simulador.
 - [Estrutura de diretórios](directory-structure.md): árvore alvo e regras para localizar código e testes.
+- [Plano de migração](migration-plan.md): fases, pré-requisitos, versões, auditorias e rollback.
 
 ## Documentação relacionada
 
@@ -23,6 +24,7 @@ Esta área descreve a arquitetura alvo da modernização. Ela é a fonte canôni
 | Pessoa implementando uma capacidade | [Estrutura de diretórios](directory-structure.md) e README local da capacidade |
 | Pessoa revisando arquitetura | [Módulos e dependências](modules.md) e ADRs relacionadas |
 | Pessoa preparando uma apresentação | Diagramas de [Visão geral](overview.md) e [Fluxos em execução](runtime-flows.md) |
+| Pessoa planejando uma entrega | [Plano de migração](migration-plan.md) e [`CHANGELOG.md`](../../CHANGELOG.md) |
 | Agente de IA | `CONTEXT.md`, ADRs relevantes e estes documentos antes de explorar ou alterar a área |
 
 ## Manutenção
