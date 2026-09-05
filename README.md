@@ -6,6 +6,26 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Ambiente reproduzível
+
+O projeto legado usa Node.js 24.20.0, fixado em `.nvmrc`, e mantém npm com o
+`package-lock.json` versionado. Com `nvm`, prepare uma instalação limpa assim:
+
+```sh
+nvm install
+nvm use
+npm ci
+npm run test:ci
+npm run build
+npm run audit:baseline
+```
+
+`npm run audit:baseline` aceita as vulnerabilidades herdadas registradas para
+esta etapa, mas falha se a quantidade de vulnerabilidades críticas ou altas de
+produção ultrapassar a baseline. Os avisos conhecidos do ambiente legado e as
+jornadas verificadas estão documentados em
+[`docs/architecture/node-24-baseline.md`](docs/architecture/node-24-baseline.md).
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -22,6 +42,10 @@ You may also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run test:ci`
+
+Executa uma vez a suíte legada, sem ativar o modo interativo.
 
 ### `npm run build`
 

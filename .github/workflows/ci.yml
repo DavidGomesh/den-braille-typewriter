@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - main
+      - "release/**"
+
+permissions:
+  contents: read
+
+jobs:
+  legacy-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar pelo lockfile
+        run: npm ci
+
+      - name: Executar testes
+        run: npm run test:ci
+
+      - name: Produzir build
+        run: npm run build
+
+      - name: Verificar baseline de vulnerabilidades
+        run: npm run audit:baseline
