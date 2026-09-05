@@ -3,17 +3,15 @@
   "node": "24.20.0",
   "production": {
     "critical": 3,
-    "high": 38,
-    "moderate": 16,
+    "high": 37,
+    "moderate": 15,
     "low": 15,
-    "total": 72,
+    "total": 70,
     "allowedCriticalAndHighOccurrences": [
       "GHSA-2328-f5f3-gj25:node-forge",
       "GHSA-23c5-xmqv-rm74:minimatch",
       "GHSA-25h7-pfq9-p65f:flatted",
-      "GHSA-28wg-ghj8-5hjv:nanoid",
       "GHSA-2p49-hgcm-8545:svgo",
-      "GHSA-2v37-7h3g-55p8:nanoid",
       "GHSA-2w69-qvjg-hvjx:@remix-run/router",
       "GHSA-37ch-88jc-xwx2:path-to-regexp",
       "GHSA-395f-4hp3-45gv:shell-quote",
@@ -60,8 +58,7 @@
       "GHSA-wr3j-pwj9-hqq6:webpack-dev-middleware",
       "GHSA-xpqw-6gx7-v673:svgo",
       "GHSA-xv26-6w52-cph6:websocket-driver",
-      "GHSA-xvcm-6775-5m9r:immutable",
-      "GHSA-xwg4-73v4-xw9w:nanoid"
+      "GHSA-xvcm-6775-5m9r:immutable"
     ]
   }
 }

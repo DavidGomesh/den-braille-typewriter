@@ -10,6 +10,7 @@ Esta área descreve a arquitetura alvo da modernização. Ela é a fonte canôni
 - [Estrutura de diretórios](directory-structure.md): árvore alvo e regras para localizar código e testes.
 - [Plano de migração](migration-plan.md): fases, pré-requisitos, versões, auditorias e rollback.
 - [Baseline operacional](modernization-baseline.md): marcos recuperáveis, jornadas essenciais, inventário legado e estratégia de rollback.
+- [Baseline do build Vite](vite-build-baseline.md): comandos, artifacts, coexistência temporária com CRA e rollback do primeiro corte de plataforma.
 
 ## Documentação relacionada
 
