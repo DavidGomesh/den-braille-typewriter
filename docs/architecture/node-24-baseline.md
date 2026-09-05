@@ -18,6 +18,13 @@ dependências que serão removidas nos próximos cortes.
 A CI executa esses comandos no mesmo Node.js em pull requests e em mudanças de
 `develop`, `main` e `release/**`.
 
+O GitHub Actions define `CI=true`, e o CRA legado transforma os avisos de lint
+abaixo em erros de build nesse modo. O passo de build neutraliza somente essa
+variável (`CI=false`), mantendo testes e demais passos em modo CI. A exceção é
+de responsabilidade da manutenção do projeto e deve ser removida na Fase 2,
+junto com o CRA; até lá, os avisos permanecem visíveis no log e registrados
+nesta baseline.
+
 ## Resultado de referência
 
 Em 5 de setembro de 2026, uma instalação limpa registrou 1.620 pacotes
