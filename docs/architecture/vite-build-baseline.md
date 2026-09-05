@@ -19,17 +19,23 @@ para que os dois bundlers consumam a mesma composição sem duplicá-la. Os asse
 públicos mantêm nomes estáveis; fontes importadas por CSS entram no grafo do
 Vite com hash.
 
-`vite.config.mjs` concentra a base `/den-braille-typewriter/`. O artifact
+O campo `homepage` de `package.json` permanece como fonte única da base durante
+a coexistência. O CRA já o consome, enquanto `vite.config.mjs` deriva dele a
+base do bundler e `process.env.PUBLIC_URL`, usado pelo React Router. O artifact
 resultante referencia scripts, folhas de estilo, manifesto, ícones e fontes sob
-esse caminho. As URLs relativas de áudio continuam resolvendo a partir das
-rotas existentes, preservando o comportamento observado na baseline legada.
+`/den-braille-typewriter/`. As URLs relativas de áudio continuam resolvendo a
+partir das rotas existentes, preservando o comportamento observado na baseline
+legada.
 
 ## Coexistência e rollback
 
 O CRA traz peers antigos de Babel que conflitam com a resolução moderna do
 plugin React do Vite. Enquanto as duas cadeias coexistem, `.npmrc` mantém a
 política `legacy-peer-deps` de forma explícita e reproduzível para `npm ci`.
-Essa exceção deve sair junto com as dependências do CRA no ticket #30.
+Ela desativa a rejeição de conflitos de peers para toda a árvore; portanto,
+incompatibilidades passam a ser detectadas pelos testes e pelos dois builds, em
+vez de interromperem a instalação. `@DavidGomesh` é responsável por remover a
+exceção até a conclusão do ticket #30, junto com as dependências do CRA.
 
 O rollback deste corte consiste em usar os comandos sem sufixo e o artifact
 `build/`. Nenhum comportamento de React, rota ou apresentação foi redesenhado.
@@ -41,6 +47,7 @@ Em 5 de setembro de 2026, com Node.js 24.20.0:
 - `npm ci` instalou 1.623 pacotes a partir do lockfile;
 - os builds CRA e Vite foram produzidos, respectivamente, em `build/` e
   `dist/`;
+- ambos os builds passaram a integrar `npm run ci` e o workflow de pull request;
 - as três jornadas provisórias passaram com os mesmos 23 testes da baseline;
 - o servidor Vite carregou Início, Modo livre e Modo desafio sob a base do
   projeto; no Modo livre, o acorde da tecla `F` produziu a cela `a`;

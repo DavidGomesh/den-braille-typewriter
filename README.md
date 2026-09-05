@@ -21,10 +21,10 @@ npm run ci
 ```
 
 `npm run ci` executa a mesma interface operacional usada pelo GitHub Actions:
-lint contra a baseline herdada, testes, build e auditoria. A auditoria aceita
-somente as ocorrências críticas ou altas já registradas por advisory e pacote;
-o lint rejeita qualquer aviso que não esteja na fotografia versionada. Os
-avisos conhecidos do ambiente legado e as
+lint contra a baseline herdada, testes, builds CRA e Vite e auditoria. A
+auditoria aceita somente as ocorrências críticas ou altas já registradas por
+advisory e pacote; o lint rejeita qualquer aviso que não esteja na fotografia
+versionada. Os avisos conhecidos do ambiente legado e as
 jornadas verificadas estão documentados em
 [`docs/architecture/node-24-baseline.md`](docs/architecture/node-24-baseline.md).
 
