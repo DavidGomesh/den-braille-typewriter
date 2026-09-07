@@ -29,6 +29,12 @@ jobs:
       pages: write
 
     steps:
+      - name: Restringir publicação estável à main
+        if: inputs.source_run_id == '' && github.ref != 'refs/heads/main'
+        run: |
+          echo "A publicação estável só aceita a branch main." >&2
+          exit 1
+
       - name: Checkout
         if: inputs.source_run_id == ''
         uses: actions/checkout@v4
@@ -78,6 +84,14 @@ jobs:
               repo: context.repo.repo,
               run_id: Number('${{ inputs.source_run_id }}'),
             })
+            if (sourceRun.head_branch !== 'main') {
+              core.setFailed('A execução de origem não pertence à branch main.')
+              return
+            }
+            if (sourceRun.conclusion !== 'success') {
+              core.setFailed('A execução de origem não terminou com sucesso.')
+              return
+            }
             core.setOutput('head_sha', sourceRun.head_sha)
             core.setOutput('url', sourceRun.html_url)
 
