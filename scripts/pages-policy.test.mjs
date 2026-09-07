@@ -2,6 +2,8 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
+import { createNotFoundPage } from './prepare-pages.mjs'
+
 const readProjectFile = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8')
 
 test('usa rotas por hash na composição publicada', async () => {
@@ -13,12 +15,17 @@ test('usa rotas por hash na composição publicada', async () => {
 })
 
 test('oferece fallback 404 estático e acessível', async () => {
-    const fallback = await readProjectFile('public/404.html')
+    const template = await readProjectFile('pages/404.html')
+    const notFoundPage = createNotFoundPage(
+        template,
+        'https://example.test/outro-projeto'
+    )
 
-    assert.match(fallback, /<html lang="pt-BR">/)
-    assert.match(fallback, /<title>Página não encontrada/)
-    assert.match(fallback, /<h1[^>]*>Página não encontrada<\/h1>/)
-    assert.match(fallback, /href="\/den-braille-typewriter\/"/)
+    assert.match(notFoundPage, /<html lang="pt-BR">/)
+    assert.match(notFoundPage, /<title>Página não encontrada/)
+    assert.match(notFoundPage, /<h1[^>]*>Página não encontrada<\/h1>/)
+    assert.match(notFoundPage, /href="\/outro-projeto\/"/)
+    assert.doesNotMatch(template, /den-braille-typewriter/)
 })
 
 test('publica o artifact Vite e permite republicar uma execução conhecida', async () => {
@@ -27,10 +34,13 @@ test('publica o artifact Vite e permite republicar uma execução conhecida', as
     assert.match(workflow, /push:\s*\n\s*branches:\s*\[main\]/)
     assert.match(workflow, /workflow_dispatch:/)
     assert.match(workflow, /source_run_id:/)
-    assert.match(workflow, /run: npm run build:vite/)
+    assert.match(workflow, /run: npm run ci/)
     assert.match(workflow, /name: vite-pages-dist/)
     assert.match(workflow, /path: dist/)
     assert.match(workflow, /run-id:.*source_run_id/)
+    assert.match(workflow, /getWorkflowRun/)
+    assert.match(workflow, /head_sha/)
+    assert.match(workflow, /retention-days: 90/)
     assert.match(workflow, /uses: actions\/upload-pages-artifact@v3/)
     assert.match(workflow, /uses: actions\/deploy-pages@v4/)
 })

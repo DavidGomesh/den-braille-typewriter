@@ -44,9 +44,9 @@ jobs:
         if: inputs.source_run_id == ''
         run: npm ci
 
-      - name: Produzir artifact Vite
+      - name: Executar baseline operacional
         if: inputs.source_run_id == ''
-        run: npm run build:vite
+        run: npm run ci
 
       - name: Guardar artifact para rollback
         if: inputs.source_run_id == ''
@@ -55,7 +55,7 @@ jobs:
           name: vite-pages-dist
           path: dist
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90
 
       - name: Recuperar artifact estável conhecido
         if: inputs.source_run_id != ''
@@ -67,6 +67,20 @@ jobs:
           repository: ${{ github.repository }}
           run-id: ${{ inputs.source_run_id }}
 
+      - name: Identificar commit da execução de origem
+        if: inputs.source_run_id != ''
+        id: rollback-origin
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: sourceRun } = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: Number('${{ inputs.source_run_id }}'),
+            })
+            core.setOutput('head_sha', sourceRun.head_sha)
+            core.setOutput('url', sourceRun.html_url)
+
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
 
@@ -77,11 +91,13 @@ jobs:
 
       - name: Registrar origem do deploy
         env:
+          SOURCE_COMMIT: ${{ steps.rollback-origin.outputs.head_sha || github.sha }}
           SOURCE_RUN_ID: ${{ inputs.source_run_id || github.run_id }}
+          SOURCE_RUN_URL: ${{ steps.rollback-origin.outputs.url || format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
         run: |
           echo "### Artifact pronto para publicação" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Commit solicitado: \`${GITHUB_SHA}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Execução de origem: \`${SOURCE_RUN_ID}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit de origem: \`${SOURCE_COMMIT}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Execução de origem: [\`${SOURCE_RUN_ID}\`](${SOURCE_RUN_URL})" >> "$GITHUB_STEP_SUMMARY"
           echo "- Artifact do Pages: \`github-pages\`" >> "$GITHUB_STEP_SUMMARY"
 
   deploy:
