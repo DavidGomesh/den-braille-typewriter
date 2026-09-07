@@ -13,4 +13,9 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 - Separação contínua entre falhas herdadas de lint e novas regressões, com auditoria por advisory e pacote.
 - Desenvolvimento e build Vite equivalentes ao CRA, com artifact próprio e base de publicação do projeto.
 
+### Changed
+
+- Vite passa a ser o único caminho de desenvolvimento, build e publicação; o
+  caminho concorrente do Create React App foi removido.
+
 [Unreleased]: https://github.com/DavidGomesh/den-braille-typewriter/compare/v1.0...HEAD
