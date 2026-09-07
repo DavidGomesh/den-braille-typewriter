@@ -1,17 +1,14 @@
-# Build Vite equivalente
+# Corte do build Vite
 
-Esta evidência registra o primeiro corte da migração de plataforma, referente ao
-ticket #28. Ele introduz Vite 8.2 e `@vitejs/plugin-react` 6.1 sem atualizar
-React, substituir Jest ou remover o caminho Create React App (CRA).
+Este documento registra a introdução do Vite pelo ticket #28 e a conclusão do
+corte de plataforma pelo ticket #30. Vite 8.2 e `@vitejs/plugin-react` 6.1
+permanecem ativos sem atualizar React nem antecipar a migração para Vitest.
 
 ## Comandos e artifacts
 
-- `npm run start:vite` inicia o desenvolvimento Vite em
-  `/den-braille-typewriter/`;
-- `npm run build:vite` produz o artifact Vite em `dist/`;
-- `npm run preview:vite` serve esse artifact sob a base configurada;
-- `npm start` e `npm run build` preservam temporariamente o servidor e o
-  artifact CRA em `build/` para comparação.
+- `npm start` inicia o desenvolvimento Vite em `/den-braille-typewriter/`;
+- `npm run build` produz o artifact Vite em `dist/` e prepara o Pages;
+- `npm run preview` serve esse artifact sob a base configurada.
 
 O HTML de entrada do Vite fica na raiz do projeto e referencia o mesmo ponto de
 entrada React usado pelo CRA. O bootstrap JSX foi separado de `src/index.js`
@@ -19,30 +16,28 @@ para que os dois bundlers consumam a mesma composição sem duplicá-la. Os asse
 públicos mantêm nomes estáveis; fontes importadas por CSS entram no grafo do
 Vite com hash.
 
-O campo `homepage` de `package.json` permanece como fonte única da base durante
-a coexistência. O CRA já o consome, enquanto `vite.config.mjs` deriva dele a
-base do bundler e `process.env.PUBLIC_URL`, usado pelo React Router. O artifact
+O campo `homepage` de `package.json` permanece como fonte única da base.
+`vite.config.mjs` deriva dele a base do bundler e `process.env.PUBLIC_URL`,
+usado pelo React Router. O artifact
 resultante referencia scripts, folhas de estilo, manifesto, ícones e fontes sob
 `/den-braille-typewriter/`. As URLs relativas de áudio continuam resolvendo a
 partir das rotas existentes, preservando o comportamento observado na baseline
 legada.
 
-## Coexistência e rollback
+## Corte e rollback
 
-O CRA traz peers antigos de Babel que conflitam com a resolução moderna do
-plugin React do Vite. Enquanto as duas cadeias coexistem, `.npmrc` mantém a
-política `legacy-peer-deps` de forma explícita e reproduzível para `npm ci`.
-Ela desativa a rejeição de conflitos de peers para toda a árvore; portanto,
-incompatibilidades passam a ser detectadas pelos testes e pelos dois builds, em
-vez de interromperem a instalação. `@DavidGomesh` é responsável por remover a
-exceção até a conclusão do ticket #30, junto com as dependências do CRA.
+Durante a comparação curta, CRA e Vite coexistiram e `legacy-peer-deps` isolou
+os conflitos dos peers antigos. O ticket #30 removeu essa exceção, as
+dependências, os scripts e a configuração do CRA. O caminho anterior agora é
+recuperável somente pelos commits anteriores ao corte.
 
-O rollback deste corte consiste em usar os comandos sem sufixo e o artifact
-`build/`. Nenhum comportamento de React, rota ou apresentação foi redesenhado.
+O rollback consiste em reverter o corte completo ou republicar um artifact
+Vite estável conhecido pelo workflow de Pages. Nenhum comportamento de React,
+rota ou apresentação foi redesenhado.
 
 ## Evidências
 
-Em 5 de setembro de 2026, com Node.js 24.20.0:
+Na comparação encerrada em 5 de setembro de 2026, com Node.js 24.20.0:
 
 - `npm ci` instalou 1.623 pacotes a partir do lockfile;
 - os builds CRA e Vite foram produzidos, respectivamente, em `build/` e
