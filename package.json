@@ -29,7 +29,7 @@
     "start": "react-scripts start",
     "start:vite": "vite",
     "build": "node scripts/build-legacy.mjs",
-    "build:vite": "vite build",
+    "build:vite": "vite build && node scripts/prepare-pages.mjs",
     "preview:vite": "vite preview",
     "test": "react-scripts test",
     "test:ci": "react-scripts test --watchAll=false && node --test scripts/*.test.mjs",

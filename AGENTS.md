@@ -28,3 +28,9 @@ Exemplos:
 - `fix(keyboard): corrige repetição ao manter uma tecla pressionada`
 - `docs(agents): documenta convenções de commit`
 - `chore(deps): atualiza dependências de desenvolvimento`
+
+## Branches
+
+Use prefixos funcionais, como `feature/`, `fix/`, `docs/`, `refactor/` ou
+`chore/`, de acordo com a natureza principal da mudança. Nunca use como prefixo
+`codex`, `claude`, `gemini` nem o nome de qualquer agente.

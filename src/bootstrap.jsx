@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { HashRouter, Route, Routes } from 'react-router-dom'
 
 import './styles/index.css'
 import './vendors/bootstrap/css/bootstrap.min.css'
@@ -15,13 +15,13 @@ import Challenge from './views/modes/Challenge.tsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
     <>
         <AudioProvider>
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <HashRouter>
                 <Routes>
                     <Route path='/' Component={Home} />
                     <Route path='/free' Component={Free} />
                     <Route path='/lessons' Component={Challenge} />
                 </Routes>
-            </BrowserRouter>
+            </HashRouter>
         </AudioProvider>
     </>
 )
