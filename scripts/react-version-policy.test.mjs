@@ -5,7 +5,7 @@ import test from 'node:test'
 const readProjectFile = (path) =>
     readFile(new URL(`../${path}`, import.meta.url), 'utf8')
 
-test('mantém React e renderer na baseline 19.2 aprovada', async () => {
+test('keeps React and the renderer on the approved 19.2 baseline', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
     const packageLock = JSON.parse(await readProjectFile('package-lock.json'))
 
@@ -27,7 +27,7 @@ test('mantém React e renderer na baseline 19.2 aprovada', async () => {
     )
 })
 
-test('usa a API de raiz concorrente compatível com a próxima versão', async () => {
+test('uses the concurrent root interface compatible with the next version', async () => {
     const bootstrap = await readProjectFile('src/bootstrap.jsx')
 
     assert.match(bootstrap, /from 'react-dom\/client'/)

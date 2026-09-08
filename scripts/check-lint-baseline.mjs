@@ -31,7 +31,7 @@ const eslint = spawnSync(
 )
 
 if (eslint.error) {
-    console.error(`Não foi possível executar o ESLint: ${eslint.error.message}`)
+    console.error(`Could not run ESLint: ${eslint.error.message}`)
     process.exit(1)
 }
 
@@ -40,7 +40,7 @@ try {
     report = JSON.parse(eslint.stdout)
 } catch {
     console.error(
-        eslint.stderr || eslint.stdout || 'ESLint não produziu JSON válido.',
+        eslint.stderr || eslint.stdout || 'ESLint did not produce valid JSON.',
     )
     process.exit(1)
 }
@@ -53,18 +53,18 @@ const { newFailures, resolvedFailures } = evaluateLint(
 
 if (resolvedFailures.length > 0) {
     console.error(
-        'Falhas herdadas resolvidas; reduza config/lint-baseline.json:',
+        'Inherited failures resolved; reduce config/lint-baseline.json:',
     )
     for (const failure of resolvedFailures) console.error(`- ${failure}`)
     process.exit(1)
 }
 
 if (newFailures.length > 0) {
-    console.error('Novas falhas de lint fora da baseline:')
+    console.error('New lint failures outside the baseline:')
     for (const failure of newFailures) console.error(`- ${failure}`)
     process.exit(1)
 }
 
 console.log(
-    `${baseline.failures.length} falhas herdadas de lint permanecem isoladas.`,
+    `${baseline.failures.length} inherited lint failures remain isolated.`,
 )

@@ -118,14 +118,14 @@ export const findArchitectureViolations = async (projectRoot) => {
 
                 if (!allowedDependencies.has(importedCapability)) {
                     violations.push(
-                        `${importerPath}: ${importerCapability} não pode depender de ${importedCapability}`,
+                        `${importerPath}: ${importerCapability} cannot depend on ${importedCapability}`,
                     )
                 }
             }
 
             if (!/^public(?:\.[cm]?[jt]sx?)?$/.test(internalPath.join('/'))) {
                 violations.push(
-                    `${importerPath} importa detalhe interno de ${importedCapability}: ${moduleSpecifier}`,
+                    `${importerPath} imports an internal detail of ${importedCapability}: ${moduleSpecifier}`,
                 )
             }
         }
@@ -157,7 +157,7 @@ export const findArchitectureViolations = async (projectRoot) => {
     for (const capability of [...dependencies.keys()].sort()) {
         const cycle = findCycle(capability)
         if (cycle) {
-            violations.push(`Ciclo entre capacidades: ${cycle.join(' -> ')}`)
+            violations.push(`Capability cycle: ${cycle.join(' -> ')}`)
             break
         }
     }
@@ -170,9 +170,9 @@ const violations = await findArchitectureViolations(projectRoot)
 
 if (violations.length > 0) {
     process.stderr.write(
-        `Fronteiras arquiteturais violadas:\n- ${violations.join('\n- ')}\n`,
+        `Architecture boundaries violated:\n- ${violations.join('\n- ')}\n`,
     )
     process.exitCode = 1
 } else {
-    process.stdout.write('Fronteiras arquiteturais preservadas.\n')
+    process.stdout.write('Architecture boundaries preserved.\n')
 }

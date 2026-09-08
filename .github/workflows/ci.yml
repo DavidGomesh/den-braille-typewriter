@@ -20,14 +20,14 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Configurar Node.js
+            - name: Set up Node.js
               uses: actions/setup-node@v4
               with:
                   node-version-file: .nvmrc
                   cache: npm
 
-            - name: Instalar pelo lockfile
+            - name: Install from lockfile
               run: npm ci
 
-            - name: Executar baseline operacional
+            - name: Run operational baseline
               run: npm run ci

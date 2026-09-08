@@ -23,11 +23,11 @@ Este é um repositório single-context:
 └── src/
 ```
 
-O `CONTEXT.md` e o conteúdo das ADRs devem ser escritos em português. Nomes de arquivos, identificadores técnicos e títulos estruturais podem permanecer em inglês.
+O `CONTEXT.md` e o conteúdo das ADRs devem ser escritos em português. Nomes de arquivos, identificadores técnicos e títulos estruturais permanecem em inglês conforme `docs/agents/code-language.md`.
 
 ## Vocabulário do domínio
 
-Ao nomear conceitos do domínio em issues, propostas, hipóteses ou testes, use os termos definidos no `CONTEXT.md`. Não substitua esses termos por sinônimos que o glossário desaconselhe.
+Ao nomear conceitos do domínio em issues, propostas, hipóteses ou documentação, use os termos definidos no `CONTEXT.md`. Não substitua esses termos por sinônimos que o glossário desaconselhe. No código e nos testes, represente esses conceitos com equivalentes idiomáticos em inglês e documente a correspondência quando ela não for evidente.
 
 Quando um conceito necessário ainda não estiver no glossário, verifique se ele representa uma lacuna real antes de introduzir um novo termo.
 

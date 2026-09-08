@@ -8,7 +8,7 @@ import { publicBasePathFromHomepage } from '../config/public-base.mjs'
 const readProjectFile = (path) =>
     readFile(new URL(`../${path}`, import.meta.url), 'utf8')
 
-test('usa rotas por hash na composição publicada', async () => {
+test('uses hash routes in the published composition', async () => {
     const bootstrap = await readProjectFile('src/bootstrap.jsx')
 
     assert.match(bootstrap, /import \{ HashRouter, Route, Routes \}/)
@@ -16,7 +16,7 @@ test('usa rotas por hash na composição publicada', async () => {
     assert.doesNotMatch(bootstrap, /<BrowserRouter/)
 })
 
-test('oferece fallback 404 estático e acessível', async () => {
+test('provides a static accessible 404 fallback', async () => {
     const template = await readProjectFile('pages/404.html')
     const notFoundPage = createNotFoundPage(
         template,
@@ -30,14 +30,14 @@ test('oferece fallback 404 estático e acessível', async () => {
     assert.doesNotMatch(template, /den-braille-typewriter/)
 })
 
-test('deriva uma única base pública para build e fallback', () => {
+test('derives a single public base for the build and fallback', () => {
     assert.equal(
         publicBasePathFromHomepage('https://example.test/outro-projeto/'),
         '/outro-projeto',
     )
 })
 
-test('publica o artifact Vite e permite republicar uma execução conhecida', async () => {
+test('publishes the Vite artifact and can redeploy a known run', async () => {
     const [workflow, artifactPreparation] = await Promise.all([
         readProjectFile('.github/workflows/pages.yml'),
         readProjectFile('scripts/prepare-pages.mjs'),

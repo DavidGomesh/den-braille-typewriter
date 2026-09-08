@@ -12,6 +12,10 @@ As cinco funções canônicas de triagem usam labels técnicas em inglês. Consu
 
 O repositório usa documentação de domínio single-context, escrita em português. Consulte `docs/agents/domain.md`.
 
+### Code language
+
+Código, testes e automações técnicas são escritos em inglês; documentação e comunicação dirigida a pessoas são escritas em português. Consulte `docs/agents/code-language.md`.
+
 ## Commits
 
 Quando houver autorização para criar um commit, use Conventional Commits no formato `tipo(escopo): descrição`.

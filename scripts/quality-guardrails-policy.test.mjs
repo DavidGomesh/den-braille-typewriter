@@ -15,7 +15,7 @@ const verificationCommands = [
     'audit',
 ]
 
-test('expõe comandos estáveis que apenas verificam o projeto', async () => {
+test('exposes stable commands that only verify the project', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
 
     for (const command of verificationCommands) {
@@ -24,7 +24,7 @@ test('expõe comandos estáveis que apenas verificam o projeto', async () => {
     }
 })
 
-test('CI executa cada guardrail aprovado uma única vez', async () => {
+test('CI runs every approved guardrail exactly once', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
     const workflow = await readProjectFile('.github/workflows/ci.yml')
 
@@ -50,11 +50,11 @@ function assertGovernedException(exception, source) {
     assert.match(exception.trackingIssue, /^#\d+$/)
     assert.ok(
         Date.parse(`${exception.expiresOn}T23:59:59Z`) >= Date.now(),
-        `${source} possui uma exceção expirada`,
+        `${source} has an expired exception`,
     )
 }
 
-test('exceções registram governança e permanecem dentro do prazo', async () => {
+test('exceptions record governance and remain within their deadline', async () => {
     for (const path of [
         'config/lint-baseline.json',
         'config/audit-baseline.json',
@@ -75,6 +75,6 @@ test('exceções registram governança e permanecem dentro do prazo', async () =
         ignoredPatterns,
     )
     for (const exclusion of formatBaseline.exclusions) {
-        assertGovernedException(exclusion, `formatação:${exclusion.pattern}`)
+        assertGovernedException(exclusion, `formatting:${exclusion.pattern}`)
     }
 })

@@ -1,215 +1,205 @@
-import { criarCelaBraille, type CelaBraille, type PontoBraille } from './values'
+import { createBrailleCell, type BrailleCell, type BrailleDot } from './values'
 
-export type TipoOperacaoDireta =
-    'espaco' | 'retrocesso' | 'espacamento-linha' | 'retorno-carro'
+export type DirectOperationType =
+    'space' | 'backspace' | 'line-feed' | 'carriage-return'
 
-export type ControleMaquina =
+export type MachineControl =
     | Readonly<{
-          tipo: 'ponto'
-          ponto: PontoBraille
+          type: 'dot'
+          dot: BrailleDot
       }>
-    | Readonly<{ tipo: TipoOperacaoDireta }>
+    | Readonly<{ type: DirectOperationType }>
 
-export type IntencaoMaquina =
-    | Readonly<{ tipo: 'pressionar'; controle: ControleMaquina }>
-    | Readonly<{ tipo: 'liberar'; controle: ControleMaquina }>
-    | Readonly<{ tipo: 'cancelar-entrada' }>
+export type MachineIntent =
+    | Readonly<{ type: 'press'; control: MachineControl }>
+    | Readonly<{ type: 'release'; control: MachineControl }>
+    | Readonly<{ type: 'cancel-input' }>
     | Readonly<{
-          tipo: 'interromper-captura'
-          politica: 'descartar' | 'confirmar'
-      }>
-
-export type OperacaoMaquina =
-    | Readonly<{
-          tipo: 'confirmar-cela'
-          cela: CelaBraille
-      }>
-    | Readonly<{ tipo: TipoOperacaoDireta }>
-
-export type EventoMotor =
-    | Readonly<{
-          tipo: 'operacao-produzida'
-          operacao: OperacaoMaquina
-      }>
-    | Readonly<{
-          tipo: 'entrada-rejeitada'
-          motivo: 'controle-ja-pressionado' | 'controle-nao-pressionado'
-      }>
-    | Readonly<{
-          tipo: 'acorde-descartado'
-          causa: 'cancelamento' | 'interrupcao'
-          cela: CelaBraille
+          type: 'interrupt-capture'
+          policy: 'discard' | 'confirm'
       }>
 
-export type EstadoMotor = Readonly<{
-    pontosAcumulados: readonly PontoBraille[]
-    pontosPressionados: readonly PontoBraille[]
-    controlesPressionados: readonly TipoOperacaoDireta[]
+export type MachineOperation =
+    | Readonly<{
+          type: 'confirm-cell'
+          cell: BrailleCell
+      }>
+    | Readonly<{ type: DirectOperationType }>
+
+export type EngineEvent =
+    | Readonly<{
+          type: 'operation-produced'
+          operation: MachineOperation
+      }>
+    | Readonly<{
+          type: 'input-rejected'
+          reason: 'control-already-pressed' | 'control-not-pressed'
+      }>
+    | Readonly<{
+          type: 'chord-discarded'
+          cause: 'cancellation' | 'interruption'
+          cell: BrailleCell
+      }>
+
+export type EngineState = Readonly<{
+    accumulatedDots: readonly BrailleDot[]
+    pressedDots: readonly BrailleDot[]
+    pressedControls: readonly DirectOperationType[]
 }>
 
-export type SnapshotMotor = Readonly<{
-    acorde: Readonly<{
-        pontosAcumulados: readonly PontoBraille[]
-        pontosPressionados: readonly PontoBraille[]
+export type EngineSnapshot = Readonly<{
+    chord: Readonly<{
+        accumulatedDots: readonly BrailleDot[]
+        pressedDots: readonly BrailleDot[]
     }>
-    controlesPressionados: readonly TipoOperacaoDireta[]
+    pressedControls: readonly DirectOperationType[]
 }>
 
-export type ResultadoMotor = Readonly<{
-    estado: EstadoMotor
-    snapshot: SnapshotMotor
-    eventos: readonly EventoMotor[]
+export type EngineResult = Readonly<{
+    state: EngineState
+    snapshot: EngineSnapshot
+    events: readonly EngineEvent[]
 }>
 
-const criarEstado = (
-    pontosPressionados: readonly PontoBraille[],
-    pontosAcumulados: readonly PontoBraille[],
-    controlesPressionados: readonly TipoOperacaoDireta[] = [],
-): EstadoMotor =>
+const createState = (
+    pressedDots: readonly BrailleDot[],
+    accumulatedDots: readonly BrailleDot[],
+    pressedControls: readonly DirectOperationType[] = [],
+): EngineState =>
     Object.freeze({
-        pontosPressionados: Object.freeze([...pontosPressionados].sort()),
-        pontosAcumulados: Object.freeze([...pontosAcumulados].sort()),
-        controlesPressionados: Object.freeze([...controlesPressionados].sort()),
+        pressedDots: Object.freeze([...pressedDots].sort()),
+        accumulatedDots: Object.freeze([...accumulatedDots].sort()),
+        pressedControls: Object.freeze([...pressedControls].sort()),
     })
 
-export const criarEstadoMotor = (): EstadoMotor => criarEstado([], [])
+export const createEngineState = (): EngineState => createState([], [])
 
-const criarResultado = (
-    estado: EstadoMotor,
-    eventos: readonly EventoMotor[] = [],
-): ResultadoMotor =>
+const createResult = (
+    state: EngineState,
+    events: readonly EngineEvent[] = [],
+): EngineResult =>
     Object.freeze({
-        estado,
+        state,
         snapshot: Object.freeze({
-            acorde: Object.freeze({
-                pontosAcumulados: estado.pontosAcumulados,
-                pontosPressionados: estado.pontosPressionados,
+            chord: Object.freeze({
+                accumulatedDots: state.accumulatedDots,
+                pressedDots: state.pressedDots,
             }),
-            controlesPressionados: estado.controlesPressionados,
+            pressedControls: state.pressedControls,
         }),
-        eventos: Object.freeze([...eventos]),
+        events: Object.freeze([...events]),
     })
 
-export const aplicarIntencao = (
-    estado: EstadoMotor,
-    intencao: IntencaoMaquina,
-): ResultadoMotor => {
-    const rejeitar = (
-        motivo: 'controle-ja-pressionado' | 'controle-nao-pressionado',
+export const applyIntent = (
+    state: EngineState,
+    intent: MachineIntent,
+): EngineResult => {
+    const reject = (
+        reason: 'control-already-pressed' | 'control-not-pressed',
     ) =>
-        criarResultado(estado, [
-            Object.freeze({ tipo: 'entrada-rejeitada', motivo }),
-        ])
+        createResult(state, [Object.freeze({ type: 'input-rejected', reason })])
 
-    if (intencao.tipo === 'cancelar-entrada') {
-        return criarResultado(
-            criarEstado([], [], estado.controlesPressionados),
-            [
-                Object.freeze({
-                    tipo: 'acorde-descartado',
-                    causa: 'cancelamento',
-                    cela: criarCelaBraille(estado.pontosAcumulados),
-                }),
-            ],
-        )
+    if (intent.type === 'cancel-input') {
+        return createResult(createState([], [], state.pressedControls), [
+            Object.freeze({
+                type: 'chord-discarded',
+                cause: 'cancellation',
+                cell: createBrailleCell(state.accumulatedDots),
+            }),
+        ])
     }
 
-    if (intencao.tipo === 'interromper-captura') {
-        if (estado.pontosAcumulados.length === 0) {
-            return criarResultado(criarEstadoMotor())
+    if (intent.type === 'interrupt-capture') {
+        if (state.accumulatedDots.length === 0) {
+            return createResult(createEngineState())
         }
 
-        const cela = criarCelaBraille(estado.pontosAcumulados)
-        if (intencao.politica === 'confirmar') {
-            return criarResultado(criarEstadoMotor(), [
+        const cell = createBrailleCell(state.accumulatedDots)
+        if (intent.policy === 'confirm') {
+            return createResult(createEngineState(), [
                 Object.freeze({
-                    tipo: 'operacao-produzida',
-                    operacao: Object.freeze({ tipo: 'confirmar-cela', cela }),
+                    type: 'operation-produced',
+                    operation: Object.freeze({ type: 'confirm-cell', cell }),
                 }),
             ])
         }
 
-        return criarResultado(criarEstadoMotor(), [
+        return createResult(createEngineState(), [
             Object.freeze({
-                tipo: 'acorde-descartado',
-                causa: 'interrupcao',
-                cela,
+                type: 'chord-discarded',
+                cause: 'interruption',
+                cell,
             }),
         ])
     }
 
-    if (intencao.controle.tipo !== 'ponto') {
-        const controle = intencao.controle.tipo
-        const estaPressionado = estado.controlesPressionados.includes(controle)
+    if (intent.control.type !== 'dot') {
+        const control = intent.control.type
+        const isPressed = state.pressedControls.includes(control)
 
-        if (intencao.tipo === 'pressionar') {
-            if (estaPressionado) return rejeitar('controle-ja-pressionado')
+        if (intent.type === 'press') {
+            if (isPressed) return reject('control-already-pressed')
 
-            return criarResultado(
-                criarEstado(
-                    estado.pontosPressionados,
-                    estado.pontosAcumulados,
-                    [...estado.controlesPressionados, controle],
-                ),
+            return createResult(
+                createState(state.pressedDots, state.accumulatedDots, [
+                    ...state.pressedControls,
+                    control,
+                ]),
             )
         }
 
-        if (!estaPressionado) return rejeitar('controle-nao-pressionado')
+        if (!isPressed) return reject('control-not-pressed')
 
-        return criarResultado(
-            criarEstado(
-                estado.pontosPressionados,
-                estado.pontosAcumulados,
-                estado.controlesPressionados.filter(
-                    (pressionado) => pressionado !== controle,
-                ),
+        return createResult(
+            createState(
+                state.pressedDots,
+                state.accumulatedDots,
+                state.pressedControls.filter((pressed) => pressed !== control),
             ),
             [
                 Object.freeze({
-                    tipo: 'operacao-produzida',
-                    operacao: Object.freeze({ tipo: controle }),
+                    type: 'operation-produced',
+                    operation: Object.freeze({ type: control }),
                 }),
             ],
         )
     }
 
-    const ponto = intencao.controle.ponto
-    const estaPressionado = estado.pontosPressionados.includes(ponto)
+    const dot = intent.control.dot
+    const isPressed = state.pressedDots.includes(dot)
 
-    if (intencao.tipo === 'pressionar') {
-        if (estaPressionado) return rejeitar('controle-ja-pressionado')
+    if (intent.type === 'press') {
+        if (isPressed) return reject('control-already-pressed')
 
-        return criarResultado(
-            criarEstado(
-                [...estado.pontosPressionados, ponto],
-                estado.pontosAcumulados.includes(ponto)
-                    ? estado.pontosAcumulados
-                    : [...estado.pontosAcumulados, ponto],
-                estado.controlesPressionados,
+        return createResult(
+            createState(
+                [...state.pressedDots, dot],
+                state.accumulatedDots.includes(dot)
+                    ? state.accumulatedDots
+                    : [...state.accumulatedDots, dot],
+                state.pressedControls,
             ),
         )
     }
 
-    if (!estaPressionado) return rejeitar('controle-nao-pressionado')
+    if (!isPressed) return reject('control-not-pressed')
 
-    const pontosPressionados = estado.pontosPressionados.filter(
-        (pressionado) => pressionado !== ponto,
-    )
-    if (pontosPressionados.length > 0) {
-        return criarResultado(
-            criarEstado(
-                pontosPressionados,
-                estado.pontosAcumulados,
-                estado.controlesPressionados,
+    const pressedDots = state.pressedDots.filter((pressed) => pressed !== dot)
+    if (pressedDots.length > 0) {
+        return createResult(
+            createState(
+                pressedDots,
+                state.accumulatedDots,
+                state.pressedControls,
             ),
         )
     }
 
-    const cela = criarCelaBraille(estado.pontosAcumulados)
-    return criarResultado(criarEstado([], [], estado.controlesPressionados), [
+    const cell = createBrailleCell(state.accumulatedDots)
+    return createResult(createState([], [], state.pressedControls), [
         Object.freeze({
-            tipo: 'operacao-produzida',
-            operacao: Object.freeze({ tipo: 'confirmar-cela', cela }),
+            type: 'operation-produced',
+            operation: Object.freeze({ type: 'confirm-cell', cell }),
         }),
     ])
 }

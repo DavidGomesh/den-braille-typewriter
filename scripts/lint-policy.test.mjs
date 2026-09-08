@@ -11,7 +11,7 @@ function report(filePath, messages) {
     return [{ filePath, messages }]
 }
 
-test('aceita somente os avisos herdados registrados', () => {
+test('accepts only registered inherited warnings', () => {
     const result = evaluateLint(
         report('/workspace/src/legacy.ts', [
             {
@@ -28,7 +28,7 @@ test('aceita somente os avisos herdados registrados', () => {
     assert.deepEqual(result, { newFailures: [], resolvedFailures: [] })
 })
 
-test('separa uma nova falha da baseline herdada', () => {
+test('separates a new failure from the inherited baseline', () => {
     const result = evaluateLint(
         report('/workspace/src/legacy.ts', [
             {
@@ -53,7 +53,7 @@ test('separa uma nova falha da baseline herdada', () => {
     })
 })
 
-test('informa quando uma falha herdada foi resolvida', () => {
+test('reports when an inherited failure has been resolved', () => {
     const result = evaluateLint([], baseline, '/workspace')
 
     assert.deepEqual(result, {
@@ -62,7 +62,7 @@ test('informa quando uma falha herdada foi resolvida', () => {
     })
 })
 
-test('rejeita uma nova ocorrência idêntica no mesmo arquivo', () => {
+test('rejects a new identical occurrence in the same file', () => {
     const inheritedMessage = {
         severity: 1,
         ruleId: 'react-hooks/exhaustive-deps',

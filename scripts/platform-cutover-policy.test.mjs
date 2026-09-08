@@ -5,7 +5,7 @@ import test from 'node:test'
 const readProjectFile = (path) =>
     readFile(new URL(`../${path}`, import.meta.url), 'utf8')
 
-test('expõe somente os comandos canônicos do Vite', async () => {
+test('exposes only the canonical Vite commands', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
 
     assert.equal(packageJson.scripts.start, 'vite')
@@ -20,7 +20,7 @@ test('expõe somente os comandos canônicos do Vite', async () => {
     assert.equal(packageJson.scripts['preview:vite'], undefined)
 })
 
-test('não mantém dependências, scripts ou configurações do CRA', async () => {
+test('does not retain CRA dependencies, scripts or configuration', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
     const manifest = JSON.stringify(packageJson)
 
@@ -37,7 +37,7 @@ test('não mantém dependências, scripts ou configurações do CRA', async () =
     await assert.rejects(access(new URL('../.npmrc', import.meta.url)))
 })
 
-test('CI exercita o build canônico uma única vez', async () => {
+test('CI exercises the canonical build exactly once', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
     const ciWorkflow = await readProjectFile('.github/workflows/ci.yml')
 
