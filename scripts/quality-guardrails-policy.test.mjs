@@ -9,6 +9,7 @@ const verificationCommands = [
     'format',
     'lint',
     'typecheck',
+    'architecture',
     'test:ci',
     'build',
     'audit',
