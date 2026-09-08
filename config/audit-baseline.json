@@ -5,7 +5,9 @@
         "reason": "Dependências de produção legadas ainda aguardam substituição nas fases planejadas.",
         "risk": "As vulnerabilidades registradas podem afetar a aplicação publicada até a remoção das dependências.",
         "owner": "@DavidGomesh",
-        "expiresOn": "2026-12-31"
+        "expiresOn": "2026-12-31",
+        "approvedBy": "@DavidGomesh",
+        "trackingIssue": "#49"
     },
     "production": {
         "critical": 0,

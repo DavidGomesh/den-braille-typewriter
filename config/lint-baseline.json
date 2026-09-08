@@ -4,7 +4,9 @@
         "reason": "Falhas preexistentes na apresentação e nas jornadas legadas.",
         "risk": "Avisos herdados podem ocultar defeitos enquanto os módulos antigos permanecerem ativos.",
         "owner": "@DavidGomesh",
-        "expiresOn": "2026-12-31"
+        "expiresOn": "2026-12-31",
+        "approvedBy": "@DavidGomesh",
+        "trackingIssue": "#49"
     },
     "failures": [
         "src/components/Typewriter.tsx:react-hooks/exhaustive-deps:React Hook useEffect has missing dependencies: 'isOutputMuted', 'noKeyPressedCurrently', 'outputReference', 'playCellAudio', 'pressedKeys', and 'typedCells'. Either include them or remove the dependency array. You can also do a functional update 'setPressedKeys(p => ...)' if you only need 'pressedKeys' in the 'setPressedKeys' call.",

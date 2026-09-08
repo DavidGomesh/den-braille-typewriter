@@ -40,21 +40,40 @@ test('CI executa cada guardrail aprovado uma única vez', async () => {
     assert.match(workflow, /run: npm run ci/)
 })
 
-test('exceções registram motivo, risco, responsável e prazo', async () => {
+function assertGovernedException(exception, source) {
+    assert.match(exception.reason, /\S/)
+    assert.match(exception.risk, /\S/)
+    assert.match(exception.owner, /^@\S+/)
+    assert.match(exception.expiresOn, /^\d{4}-\d{2}-\d{2}$/)
+    assert.match(exception.approvedBy, /^@\S+/)
+    assert.match(exception.trackingIssue, /^#\d+$/)
+    assert.ok(
+        Date.parse(`${exception.expiresOn}T23:59:59Z`) >= Date.now(),
+        `${source} possui uma exceção expirada`,
+    )
+}
+
+test('exceções registram governança e permanecem dentro do prazo', async () => {
     for (const path of [
         'config/lint-baseline.json',
         'config/audit-baseline.json',
     ]) {
         const baseline = JSON.parse(await readProjectFile(path))
+        assertGovernedException(baseline.exception, path)
+    }
 
-        assert.match(baseline.exception.reason, /\S/)
-        assert.match(baseline.exception.risk, /\S/)
-        assert.match(baseline.exception.owner, /^@\S+/)
-        assert.match(baseline.exception.expiresOn, /^\d{4}-\d{2}-\d{2}$/)
-        assert.ok(
-            Date.parse(`${baseline.exception.expiresOn}T23:59:59Z`) >=
-                Date.now(),
-            `${path} possui uma exceção expirada`,
-        )
+    const formatBaseline = JSON.parse(
+        await readProjectFile('config/format-baseline.json'),
+    )
+    const ignoredPatterns = (await readProjectFile('.prettierignore'))
+        .split('\n')
+        .filter((line) => line && !line.startsWith('#'))
+
+    assert.deepEqual(
+        formatBaseline.exclusions.map(({ pattern }) => pattern),
+        ignoredPatterns,
+    )
+    for (const exclusion of formatBaseline.exclusions) {
+        assertGovernedException(exclusion, `formatação:${exclusion.pattern}`)
     }
 })

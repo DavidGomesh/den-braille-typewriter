@@ -27,10 +27,9 @@ auditoria aceita somente as ocorrências críticas ou altas registradas por
 advisory e pacote; o lint rejeita qualquer aviso que não esteja na fotografia
 versionada.
 
-As exceções herdadas ficam em `config/lint-baseline.json` e
-`config/audit-baseline.json`. Cada baseline registra motivo, risco, responsável
-e prazo; reduções ou prorrogações precisam ser feitas explicitamente nesses
-arquivos.
+As exceções herdadas ficam nas baselines de `config/`. Cada exceção registra
+motivo, risco, responsável, prazo, aprovação humana e issue de correção;
+reduções ou prorrogações precisam ser feitas explicitamente nesses arquivos.
 
 ## Comandos
 
