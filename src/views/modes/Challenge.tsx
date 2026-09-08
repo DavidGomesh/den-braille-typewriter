@@ -22,7 +22,7 @@ export default function Challenge() {
         playWrongAnswer,
     } = useAudioContext()
 
-    const output = useRef<HTMLTextAreaElement>()
+    const output = useRef<HTMLTextAreaElement>(null)
     const [randomWord, setRandomWord] = useState<RandomWord>()
 
     function getNextRandomWord() {
