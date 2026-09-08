@@ -29,10 +29,11 @@
         "format": "prettier --check .",
         "lint": "node scripts/check-lint-baseline.mjs",
         "typecheck": "tsc --noEmit",
+        "architecture": "node scripts/check-architecture.mjs",
         "test": "vitest",
         "test:ci": "vitest run && node --test scripts/*.test.mjs",
         "audit": "node scripts/check-audit-baseline.mjs",
-        "ci": "npm run format && npm run lint && npm run typecheck && npm run test:ci && npm run build && npm run audit"
+        "ci": "npm run format && npm run lint && npm run typecheck && npm run architecture && npm run test:ci && npm run build && npm run audit"
     },
     "devDependencies": {
         "@testing-library/dom": "^10.4.1",
