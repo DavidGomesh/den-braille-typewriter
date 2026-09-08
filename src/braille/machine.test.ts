@@ -1,207 +1,191 @@
 import { describe, expect, test } from 'vitest'
 
 import {
-    aplicarIntencao,
-    criarCelaBraille,
-    criarEstadoMotor,
-    criarPontoBraille,
+    applyIntent,
+    createBrailleCell,
+    createBrailleDot,
+    createEngineState,
 } from './public'
 
-describe('valores fundamentais do Motor', () => {
-    test('aceita somente as seis posições de Ponto Braille', () => {
-        expect([1, 2, 3, 4, 5, 6].map(criarPontoBraille)).toEqual([
+describe('fundamental engine values', () => {
+    test('accepts only the six Braille dot positions', () => {
+        expect([1, 2, 3, 4, 5, 6].map(createBrailleDot)).toEqual([
             1, 2, 3, 4, 5, 6,
         ])
-        expect(() => criarPontoBraille(0)).toThrowError(RangeError)
-        expect(() => criarPontoBraille(7)).toThrowError(RangeError)
-        expect(() => criarPontoBraille(1.5)).toThrowError(RangeError)
+        expect(() => createBrailleDot(0)).toThrowError(RangeError)
+        expect(() => createBrailleDot(7)).toThrowError(RangeError)
+        expect(() => createBrailleDot(1.5)).toThrowError(RangeError)
     })
 
-    test('cria uma Cela Braille canônica e imutável', () => {
-        const cela = criarCelaBraille([6, 1, 1, 3])
-
-        expect(cela).toEqual({ pontos: [1, 3, 6] })
-        expect(criarCelaBraille()).toEqual({ pontos: [] })
-        expect(Object.isFrozen(cela)).toBe(true)
-        expect(Object.isFrozen(cela.pontos)).toBe(true)
-        expect(() => criarCelaBraille([8])).toThrowError(RangeError)
+    test('creates a canonical immutable Braille cell', () => {
+        const cell = createBrailleCell([6, 1, 1, 3])
+        expect(cell).toEqual({ dots: [1, 3, 6] })
+        expect(createBrailleCell()).toEqual({ dots: [] })
+        expect(Object.isFrozen(cell)).toBe(true)
+        expect(Object.isFrozen(cell.dots)).toBe(true)
+        expect(() => createBrailleCell([8])).toThrowError(RangeError)
     })
 })
 
-describe('Acorde Braille', () => {
-    test('confirma os pontos sobrepostos somente após liberar todos', () => {
-        const ponto1 = criarPontoBraille(1)
-        const ponto4 = criarPontoBraille(4)
-        const pressionou1 = aplicarIntencao(criarEstadoMotor(), {
-            tipo: 'pressionar',
-            controle: { tipo: 'ponto', ponto: ponto1 },
+describe('Braille chord', () => {
+    test('confirms overlapping dots only after all are released', () => {
+        const dot1 = createBrailleDot(1)
+        const dot4 = createBrailleDot(4)
+        const pressed1 = applyIntent(createEngineState(), {
+            type: 'press',
+            control: { type: 'dot', dot: dot1 },
         })
-        const pressionou4 = aplicarIntencao(pressionou1.estado, {
-            tipo: 'pressionar',
-            controle: { tipo: 'ponto', ponto: ponto4 },
+        const pressed4 = applyIntent(pressed1.state, {
+            type: 'press',
+            control: { type: 'dot', dot: dot4 },
         })
-        const liberou1 = aplicarIntencao(pressionou4.estado, {
-            tipo: 'liberar',
-            controle: { tipo: 'ponto', ponto: ponto1 },
-        })
-
-        expect(liberou1.eventos).toEqual([])
-        expect(liberou1.snapshot.acorde).toEqual({
-            pontosAcumulados: [1, 4],
-            pontosPressionados: [4],
+        const released1 = applyIntent(pressed4.state, {
+            type: 'release',
+            control: { type: 'dot', dot: dot1 },
         })
 
-        const liberou4 = aplicarIntencao(liberou1.estado, {
-            tipo: 'liberar',
-            controle: { tipo: 'ponto', ponto: ponto4 },
+        expect(released1.events).toEqual([])
+        expect(released1.snapshot.chord).toEqual({
+            accumulatedDots: [1, 4],
+            pressedDots: [4],
         })
 
-        expect(liberou4.eventos).toEqual([
+        const released4 = applyIntent(released1.state, {
+            type: 'release',
+            control: { type: 'dot', dot: dot4 },
+        })
+
+        expect(released4.events).toEqual([
             {
-                tipo: 'operacao-produzida',
-                operacao: {
-                    tipo: 'confirmar-cela',
-                    cela: { pontos: [1, 4] },
+                type: 'operation-produced',
+                operation: {
+                    type: 'confirm-cell',
+                    cell: { dots: [1, 4] },
                 },
             },
         ])
-        expect(liberou4.snapshot.acorde).toEqual({
-            pontosAcumulados: [],
-            pontosPressionados: [],
+        expect(released4.snapshot.chord).toEqual({
+            accumulatedDots: [],
+            pressedDots: [],
         })
     })
 })
 
-describe('Operações da máquina', () => {
-    test.each([
-        'espaco',
-        'retrocesso',
-        'espacamento-linha',
-        'retorno-carro',
-    ] as const)(
-        '%s produz uma operação por ciclo de pressão e liberação',
-        (tipo) => {
-            const pressionou = aplicarIntencao(criarEstadoMotor(), {
-                tipo: 'pressionar',
-                controle: { tipo },
+describe('machine operations', () => {
+    test.each(['space', 'backspace', 'line-feed', 'carriage-return'] as const)(
+        '%s produces one operation per press and release cycle',
+        (type) => {
+            const pressed = applyIntent(createEngineState(), {
+                type: 'press',
+                control: { type },
             })
+            expect(pressed.events).toEqual([])
 
-            expect(pressionou.eventos).toEqual([])
-
-            const liberou = aplicarIntencao(pressionou.estado, {
-                tipo: 'liberar',
-                controle: { tipo },
+            const released = applyIntent(pressed.state, {
+                type: 'release',
+                control: { type },
             })
-
-            expect(liberou.eventos).toEqual([
-                { tipo: 'operacao-produzida', operacao: { tipo } },
+            expect(released.events).toEqual([
+                { type: 'operation-produced', operation: { type } },
             ])
         },
     )
 
-    test('rejeita repetição enquanto um controle permanece pressionado', () => {
-        const intencao = {
-            tipo: 'pressionar',
-            controle: { tipo: 'espaco' },
+    test('rejects repetition while a control remains pressed', () => {
+        const intent = {
+            type: 'press',
+            control: { type: 'space' },
         } as const
-        const primeiraPressao = aplicarIntencao(criarEstadoMotor(), intencao)
-        const repeticao = aplicarIntencao(primeiraPressao.estado, intencao)
+        const firstPress = applyIntent(createEngineState(), intent)
+        const repetition = applyIntent(firstPress.state, intent)
 
-        expect(repeticao.estado).toBe(primeiraPressao.estado)
-        expect(repeticao.eventos).toEqual([
-            {
-                tipo: 'entrada-rejeitada',
-                motivo: 'controle-ja-pressionado',
-            },
+        expect(repetition.state).toBe(firstPress.state)
+        expect(repetition.events).toEqual([
+            { type: 'input-rejected', reason: 'control-already-pressed' },
         ])
     })
 
-    test('rejeita a liberação de um controle inativo sem alterar o estado', () => {
-        const estado = criarEstadoMotor()
-        const resultado = aplicarIntencao(estado, {
-            tipo: 'liberar',
-            controle: { tipo: 'retrocesso' },
+    test('rejects releasing an inactive control without changing state', () => {
+        const state = createEngineState()
+        const result = applyIntent(state, {
+            type: 'release',
+            control: { type: 'backspace' },
         })
 
-        expect(resultado.estado).toBe(estado)
-        expect(resultado.eventos).toEqual([
-            {
-                tipo: 'entrada-rejeitada',
-                motivo: 'controle-nao-pressionado',
-            },
+        expect(result.state).toBe(state)
+        expect(result.events).toEqual([
+            { type: 'input-rejected', reason: 'control-not-pressed' },
         ])
     })
 })
 
-describe('término não confirmatório da captura', () => {
-    const estadoComAcorde = () => {
-        const pressionou1 = aplicarIntencao(criarEstadoMotor(), {
-            tipo: 'pressionar',
-            controle: { tipo: 'ponto', ponto: criarPontoBraille(1) },
+describe('non-confirming capture termination', () => {
+    const stateWithChord = () => {
+        const pressed1 = applyIntent(createEngineState(), {
+            type: 'press',
+            control: { type: 'dot', dot: createBrailleDot(1) },
         })
-        return aplicarIntencao(pressionou1.estado, {
-            tipo: 'pressionar',
-            controle: { tipo: 'ponto', ponto: criarPontoBraille(5) },
-        }).estado
+        return applyIntent(pressed1.state, {
+            type: 'press',
+            control: { type: 'dot', dot: createBrailleDot(5) },
+        }).state
     }
 
-    test('Cancelamento da entrada sempre descarta o acorde', () => {
-        const resultado = aplicarIntencao(estadoComAcorde(), {
-            tipo: 'cancelar-entrada',
-        })
+    test('input cancellation always discards the chord', () => {
+        const result = applyIntent(stateWithChord(), { type: 'cancel-input' })
 
-        expect(resultado.snapshot.acorde).toEqual({
-            pontosAcumulados: [],
-            pontosPressionados: [],
+        expect(result.snapshot.chord).toEqual({
+            accumulatedDots: [],
+            pressedDots: [],
         })
-        expect(resultado.eventos).toEqual([
+        expect(result.events).toEqual([
             {
-                tipo: 'acorde-descartado',
-                causa: 'cancelamento',
-                cela: { pontos: [1, 5] },
+                type: 'chord-discarded',
+                cause: 'cancellation',
+                cell: { dots: [1, 5] },
             },
         ])
     })
 
-    test('Interrupção da captura descarta o acorde quando essa é a política', () => {
-        const controleDiretoAtivo = aplicarIntencao(estadoComAcorde(), {
-            tipo: 'pressionar',
-            controle: { tipo: 'espaco' },
+    test('capture interruption discards the chord under that policy', () => {
+        const activeDirectControl = applyIntent(stateWithChord(), {
+            type: 'press',
+            control: { type: 'space' },
         })
-        const resultado = aplicarIntencao(controleDiretoAtivo.estado, {
-            tipo: 'interromper-captura',
-            politica: 'descartar',
+        const result = applyIntent(activeDirectControl.state, {
+            type: 'interrupt-capture',
+            policy: 'discard',
         })
 
-        expect(resultado.snapshot).toEqual({
-            acorde: { pontosAcumulados: [], pontosPressionados: [] },
-            controlesPressionados: [],
+        expect(result.snapshot).toEqual({
+            chord: { accumulatedDots: [], pressedDots: [] },
+            pressedControls: [],
         })
-        expect(resultado.eventos).toEqual([
+        expect(result.events).toEqual([
             {
-                tipo: 'acorde-descartado',
-                causa: 'interrupcao',
-                cela: { pontos: [1, 5] },
+                type: 'chord-discarded',
+                cause: 'interruption',
+                cell: { dots: [1, 5] },
             },
         ])
     })
 
-    test('Interrupção da captura confirma o acorde quando essa é a política', () => {
-        const resultado = aplicarIntencao(estadoComAcorde(), {
-            tipo: 'interromper-captura',
-            politica: 'confirmar',
+    test('capture interruption confirms the chord under that policy', () => {
+        const result = applyIntent(stateWithChord(), {
+            type: 'interrupt-capture',
+            policy: 'confirm',
         })
 
-        expect(resultado.snapshot.acorde).toEqual({
-            pontosAcumulados: [],
-            pontosPressionados: [],
+        expect(result.snapshot.chord).toEqual({
+            accumulatedDots: [],
+            pressedDots: [],
         })
-        expect(resultado.eventos).toEqual([
+        expect(result.events).toEqual([
             {
-                tipo: 'operacao-produzida',
-                operacao: {
-                    tipo: 'confirmar-cela',
-                    cela: { pontos: [1, 5] },
+                type: 'operation-produced',
+                operation: {
+                    type: 'confirm-cell',
+                    cell: { dots: [1, 5] },
                 },
             },
         ])

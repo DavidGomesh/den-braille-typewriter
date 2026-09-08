@@ -19,7 +19,7 @@ function report(via, vulnerabilities = { critical: 1, high: 1 }) {
     }
 }
 
-test('aceita advisories herdados e ignora referências via por nome', () => {
+test('accepts inherited advisories and ignores via references by name', () => {
     const result = evaluateAudit(
         report([
             'transitive-dependency',
@@ -42,7 +42,7 @@ test('aceita advisories herdados e ignora referências via por nome', () => {
     })
 })
 
-test('rejeita advisory crítico ou alto que não pertence à baseline', () => {
+test('rejects critical or high advisories outside the baseline', () => {
     const result = evaluateAudit(
         report([
             {
@@ -56,7 +56,7 @@ test('rejeita advisory crítico ou alto que não pertence à baseline', () => {
     assert.deepEqual(result.newOccurrences, ['GHSA-new-risk:dependency'])
 })
 
-test('rejeita advisory herdado quando passa a afetar outro pacote', () => {
+test('rejects inherited advisories when they affect another package', () => {
     const auditReport = report([])
     auditReport.vulnerabilities.newDependency = {
         via: [
@@ -72,13 +72,13 @@ test('rejeita advisory herdado quando passa a afetar outro pacote', () => {
     assert.deepEqual(result.newOccurrences, ['GHSA-known-high:newDependency'])
 })
 
-test('rejeita aumento da contagem mesmo quando os IDs são conhecidos', () => {
+test('rejects count increases even when advisory IDs are known', () => {
     const result = evaluateAudit(report([], { critical: 1, high: 2 }), baseline)
 
     assert.deepEqual(result.regressions, ['high'])
 })
 
-test('informa quando uma ocorrência herdada foi resolvida', () => {
+test('reports when an inherited occurrence has been resolved', () => {
     const result = evaluateAudit(report([]), baseline)
 
     assert.deepEqual(result.resolvedOccurrences, [

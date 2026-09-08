@@ -20,26 +20,26 @@ try {
     report = JSON.parse(audit.stdout)
 } catch {
     console.error(
-        audit.stderr || audit.stdout || 'npm audit não produziu JSON válido.',
+        audit.stderr || audit.stdout || 'npm audit did not produce valid JSON.',
     )
     process.exit(1)
 }
 
 if (report.error) {
-    console.error(`npm audit falhou: ${report.error.summary}`)
+    console.error(`npm audit failed: ${report.error.summary}`)
     process.exit(1)
 }
 
 const current = report.metadata?.vulnerabilities
 if (!current) {
-    console.error('npm audit não informou a contagem de vulnerabilidades.')
+    console.error('npm audit did not report vulnerability counts.')
     process.exit(1)
 }
 
 const limits = baseline.production
 console.log(
-    `Vulnerabilidades de produção: ${current.critical} críticas, ` +
-        `${current.high} altas, ${current.moderate} moderadas e ${current.low} baixas.`,
+    `Production vulnerabilities: ${current.critical} critical, ` +
+        `${current.high} high, ${current.moderate} moderate and ${current.low} low.`,
 )
 
 const { regressions, newOccurrences, resolvedOccurrences } = evaluateAudit(
@@ -49,7 +49,7 @@ const { regressions, newOccurrences, resolvedOccurrences } = evaluateAudit(
 
 if (resolvedOccurrences.length > 0) {
     console.error(
-        'Ocorrências herdadas resolvidas; reduza config/audit-baseline.json:',
+        'Inherited occurrences resolved; reduce config/audit-baseline.json:',
     )
     for (const occurrence of resolvedOccurrences) {
         console.error(`- ${occurrence}`)
@@ -60,14 +60,14 @@ if (resolvedOccurrences.length > 0) {
 if (regressions.length > 0) {
     for (const severity of regressions) {
         console.error(
-            `Regressão ${severity}: baseline ${limits[severity]}, atual ${current[severity]}.`,
+            `${severity} regression: baseline ${limits[severity]}, current ${current[severity]}.`,
         )
     }
     process.exit(1)
 }
 
 if (newOccurrences.length > 0) {
-    console.error('Novas ocorrências críticas ou altas por advisory e pacote:')
+    console.error('New critical or high occurrences by advisory and package:')
     for (const occurrence of newOccurrences) {
         console.error(`- ${occurrence}`)
     }

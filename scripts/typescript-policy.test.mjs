@@ -5,7 +5,7 @@ import test from 'node:test'
 const readProjectFile = (path) =>
     readFile(new URL(`../${path}`, import.meta.url), 'utf8')
 
-test('mantém somente TypeScript 6 na árvore instalada', async () => {
+test('keeps only TypeScript 6 in the installed tree', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
     const packageLock = JSON.parse(await readProjectFile('package-lock.json'))
     const installedTypeScript = Object.entries(packageLock.packages)
@@ -16,7 +16,7 @@ test('mantém somente TypeScript 6 na árvore instalada', async () => {
     assert.deepEqual(installedTypeScript, ['6.0.3'])
 })
 
-test('executa o typecheck estrito sem emitir arquivos', async () => {
+test('runs strict type checking without emitting files', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
     const tsconfig = JSON.parse(await readProjectFile('tsconfig.json'))
 
@@ -25,7 +25,7 @@ test('executa o typecheck estrito sem emitir arquivos', async () => {
     assert.equal(tsconfig.compilerOptions.noEmit, true)
 })
 
-test('exige justificativa localizada para supressões TypeScript', async () => {
+test('requires a local justification for TypeScript suppressions', async () => {
     const eslintConfig = await readProjectFile('.eslintrc.cjs')
 
     assert.match(eslintConfig, /'@typescript-eslint\/ban-ts-comment'/)

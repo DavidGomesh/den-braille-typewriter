@@ -1,23 +1,23 @@
-export type PontoBraille = 1 | 2 | 3 | 4 | 5 | 6
+export type BrailleDot = 1 | 2 | 3 | 4 | 5 | 6
 
-export type CelaBraille = Readonly<{
-    pontos: readonly PontoBraille[]
+export type BrailleCell = Readonly<{
+    dots: readonly BrailleDot[]
 }>
 
-export const criarPontoBraille = (posicao: number): PontoBraille => {
-    if (!Number.isInteger(posicao) || posicao < 1 || posicao > 6) {
-        throw new RangeError(`Posição Braille inválida: ${posicao}`)
+export const createBrailleDot = (position: number): BrailleDot => {
+    if (!Number.isInteger(position) || position < 1 || position > 6) {
+        throw new RangeError(`Invalid Braille dot position: ${position}`)
     }
 
-    return posicao as PontoBraille
+    return position as BrailleDot
 }
 
-export const criarCelaBraille = (
-    posicoes: readonly number[] = [],
-): CelaBraille => {
-    const pontos = [...new Set(posicoes.map(criarPontoBraille))].sort(
+export const createBrailleCell = (
+    positions: readonly number[] = [],
+): BrailleCell => {
+    const dots = [...new Set(positions.map(createBrailleDot))].sort(
         (a, b) => a - b,
     )
 
-    return Object.freeze({ pontos: Object.freeze(pontos) })
+    return Object.freeze({ dots: Object.freeze(dots) })
 }

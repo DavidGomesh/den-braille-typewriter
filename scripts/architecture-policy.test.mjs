@@ -25,7 +25,7 @@ const runArchitectureCheck = (root) =>
         encoding: 'utf8',
     })
 
-test('rejeita import externo de detalhe interno de uma capacidade', async () => {
+test('rejects external imports of capability internals', async () => {
     const root = await createProject({
         'braille/internal/cell.ts': 'export const cell = 1',
         'session/public.ts':
@@ -37,11 +37,11 @@ test('rejeita import externo de detalhe interno de uma capacidade', async () => 
     assert.equal(result.status, 1)
     assert.match(
         result.stderr,
-        /session\/public\.ts importa detalhe interno de braille/,
+        /session\/public\.ts imports an internal detail of braille/,
     )
 })
 
-test('aceita interfaces públicas como entrada dos consumidores', async () => {
+test('accepts public interfaces as consumer entry points', async () => {
     const root = await createProject({
         'braille/public.js': 'export const cell = 1',
         'session/public.ts':
@@ -51,10 +51,10 @@ test('aceita interfaces públicas como entrada dos consumidores', async () => {
     const result = runArchitectureCheck(root)
 
     assert.equal(result.status, 0)
-    assert.match(result.stdout, /Fronteiras arquiteturais preservadas/)
+    assert.match(result.stdout, /Architecture boundaries preserved/)
 })
 
-test('rejeita import dinâmico de detalhe interno', async () => {
+test('rejects dynamic imports of internal details', async () => {
     const root = await createProject({
         'feedback/internal/catalog.ts': 'export const catalog = {}',
         'ui/public.ts':
@@ -66,11 +66,11 @@ test('rejeita import dinâmico de detalhe interno', async () => {
     assert.equal(result.status, 1)
     assert.match(
         result.stderr,
-        /ui\/public\.ts importa detalhe interno de feedback/,
+        /ui\/public\.ts imports an internal detail of feedback/,
     )
 })
 
-test('rejeita detalhe interno consumido pelo código legado', async () => {
+test('rejects internal details consumed by legacy code', async () => {
     const root = await createProject({
         'braille/machine/state.ts': 'export const state = {}',
         'components/Legacy.tsx':
@@ -82,11 +82,11 @@ test('rejeita detalhe interno consumido pelo código legado', async () => {
     assert.equal(result.status, 1)
     assert.match(
         result.stderr,
-        /components\/Legacy\.tsx importa detalhe interno de braille/,
+        /components\/Legacy\.tsx imports an internal detail of braille/,
     )
 })
 
-test('rejeita ciclo entre capacidades por suas interfaces públicas', async () => {
+test('rejects cycles between capabilities through public interfaces', async () => {
     const root = await createProject({
         'braille/public.ts': "export { session } from '../session/public'",
         'session/public.ts': "export { braille } from '../braille/public'",
@@ -97,11 +97,11 @@ test('rejeita ciclo entre capacidades por suas interfaces públicas', async () =
     assert.equal(result.status, 1)
     assert.match(
         result.stderr,
-        /Ciclo entre capacidades: braille -> session -> braille/,
+        /Capability cycle: braille -> session -> braille/,
     )
 })
 
-test('rejeita dependência contrária à direção documentada', async () => {
+test('rejects dependencies contrary to the documented direction', async () => {
     const root = await createProject({
         'braille/public.ts': "export { session } from '../session/public'",
         'session/public.ts': 'export const session = {}',
@@ -110,5 +110,5 @@ test('rejeita dependência contrária à direção documentada', async () => {
     const result = runArchitectureCheck(root)
 
     assert.equal(result.status, 1)
-    assert.match(result.stderr, /braille não pode depender de session/)
+    assert.match(result.stderr, /braille cannot depend on session/)
 })

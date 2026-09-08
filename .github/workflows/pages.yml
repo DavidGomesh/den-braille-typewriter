@@ -6,7 +6,7 @@ on:
     workflow_dispatch:
         inputs:
             source_run_id:
-                description: ID da execução que produziu o artifact estável a republicar
+                description: ID of the run that produced the stable artifact to redeploy
                 required: false
                 type: string
 
@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
     prepare:
-        name: Preparar artifact
+        name: Prepare artifact
         runs-on: ubuntu-latest
         timeout-minutes: 15
         permissions:
@@ -29,32 +29,32 @@ jobs:
             pages: write
 
         steps:
-            - name: Restringir publicação estável à main
+            - name: Restrict stable deployments to main
               if: inputs.source_run_id == '' && github.ref != 'refs/heads/main'
               run: |
-                  echo "A publicação estável só aceita a branch main." >&2
+                  echo "Stable deployments only accept the main branch." >&2
                   exit 1
 
             - name: Checkout
               if: inputs.source_run_id == ''
               uses: actions/checkout@v4
 
-            - name: Configurar Node.js
+            - name: Set up Node.js
               if: inputs.source_run_id == ''
               uses: actions/setup-node@v4
               with:
                   node-version-file: .nvmrc
                   cache: npm
 
-            - name: Instalar pelo lockfile
+            - name: Install from lockfile
               if: inputs.source_run_id == ''
               run: npm ci
 
-            - name: Executar baseline operacional
+            - name: Run operational baseline
               if: inputs.source_run_id == ''
               run: npm run ci
 
-            - name: Guardar artifact para rollback
+            - name: Store artifact for rollback
               if: inputs.source_run_id == ''
               uses: actions/upload-artifact@v4
               with:
@@ -63,7 +63,7 @@ jobs:
                   if-no-files-found: error
                   retention-days: 90
 
-            - name: Recuperar artifact estável conhecido
+            - name: Retrieve known stable artifact
               if: inputs.source_run_id != ''
               uses: actions/download-artifact@v4
               with:
@@ -73,7 +73,7 @@ jobs:
                   repository: ${{ github.repository }}
                   run-id: ${{ inputs.source_run_id }}
 
-            - name: Identificar commit da execução de origem
+            - name: Identify source run commit
               if: inputs.source_run_id != ''
               id: rollback-origin
               uses: actions/github-script@v7
@@ -85,37 +85,37 @@ jobs:
                         run_id: Number('${{ inputs.source_run_id }}'),
                       })
                       if (sourceRun.head_branch !== 'main') {
-                        core.setFailed('A execução de origem não pertence à branch main.')
+                        core.setFailed('The source run does not belong to the main branch.')
                         return
                       }
                       if (sourceRun.conclusion !== 'success') {
-                        core.setFailed('A execução de origem não terminou com sucesso.')
+                        core.setFailed('The source run did not complete successfully.')
                         return
                       }
                       core.setOutput('head_sha', sourceRun.head_sha)
                       core.setOutput('url', sourceRun.html_url)
 
-            - name: Configurar GitHub Pages
+            - name: Configure GitHub Pages
               uses: actions/configure-pages@v5
 
-            - name: Empacotar artifact do Pages
+            - name: Package Pages artifact
               uses: actions/upload-pages-artifact@v3
               with:
                   path: dist
 
-            - name: Registrar origem do deploy
+            - name: Record deployment provenance
               env:
                   SOURCE_COMMIT: ${{ steps.rollback-origin.outputs.head_sha || github.sha }}
                   SOURCE_RUN_ID: ${{ inputs.source_run_id || github.run_id }}
                   SOURCE_RUN_URL: ${{ steps.rollback-origin.outputs.url || format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
               run: |
-                  echo "### Artifact pronto para publicação" >> "$GITHUB_STEP_SUMMARY"
-                  echo "- Commit de origem: \`${SOURCE_COMMIT}\`" >> "$GITHUB_STEP_SUMMARY"
-                  echo "- Execução de origem: [\`${SOURCE_RUN_ID}\`](${SOURCE_RUN_URL})" >> "$GITHUB_STEP_SUMMARY"
-                  echo "- Artifact do Pages: \`github-pages\`" >> "$GITHUB_STEP_SUMMARY"
+                  echo "### Artifact ready for deployment" >> "$GITHUB_STEP_SUMMARY"
+                  echo "- Source commit: \`${SOURCE_COMMIT}\`" >> "$GITHUB_STEP_SUMMARY"
+                  echo "- Source run: [\`${SOURCE_RUN_ID}\`](${SOURCE_RUN_URL})" >> "$GITHUB_STEP_SUMMARY"
+                  echo "- Pages artifact: \`github-pages\`" >> "$GITHUB_STEP_SUMMARY"
 
     deploy:
-        name: Publicar
+        name: Deploy
         needs: prepare
         runs-on: ubuntu-latest
         timeout-minutes: 10
@@ -127,6 +127,6 @@ jobs:
             url: ${{ steps.deployment.outputs.page_url }}
 
         steps:
-            - name: Publicar no GitHub Pages
+            - name: Deploy to GitHub Pages
               id: deployment
               uses: actions/deploy-pages@v4

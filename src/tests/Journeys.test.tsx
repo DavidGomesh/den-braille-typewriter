@@ -1,4 +1,4 @@
-// Testes provisórios das jornadas legadas; remover com a implementação antiga.
+// Temporary legacy journey tests; remove them with the legacy implementation.
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
@@ -84,7 +84,7 @@ afterEach(() => {
     vi.restoreAllMocks()
 })
 
-test('início oferece Modo livre e Modo desafio por links focáveis com áudio', async () => {
+test('home offers free and challenge modes through focusable links with audio', async () => {
     renderWithAudio(<Home />)
 
     const freeMode = screen.getByRole('link', { name: 'Modo livre' })
@@ -102,7 +102,7 @@ test('início oferece Modo livre e Modo desafio por links focáveis com áudio',
     })
 })
 
-test('Modo livre produz conteúdo e mantém a saída ao alternar apresentação e áudio', async () => {
+test('free mode produces content and preserves output across presentation and audio changes', async () => {
     const { container } = renderWithAudio(<Free />)
     const typewriter = container.querySelector('#typewriter') as HTMLElement
     const output = screen.getByRole('textbox') as HTMLTextAreaElement
@@ -124,7 +124,7 @@ test('Modo livre produz conteúdo e mantém a saída ao alternar apresentação 
     })
 })
 
-test('Modo desafio informa erro e avança após resposta correta por acordes', async () => {
+test('challenge mode reports errors and advances after a correct chord response', async () => {
     const random = vi.spyOn(Math, 'random').mockReturnValue(0)
 
     const { container } = renderWithAudio(<Challenge />)
