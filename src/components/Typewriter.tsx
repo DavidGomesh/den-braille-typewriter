@@ -126,7 +126,7 @@ export default function Typewriter({
         console.info(`Arrow Key Pressed: ${event.code}(${key})`)
     }
 
-    const controlKeyHandlerFunctions = {
+    const controlKeyHandlerFunctions: Partial<Record<Key, () => void>> = {
         [Key.CONFIRM]: handleConfirmKeyPressed,
         [Key.TOOGLE_VIEW_MODE]: handleToogleViewModeKeyPressed,
         [Key.INSTRUCTIONS]: handleInstructionsKeyPressed,
@@ -142,7 +142,9 @@ export default function Typewriter({
         console.info(`Control Key Pressed ${event.code}(${key})`)
 
         event.preventDefault()
-        controlKeyHandlerFunctions[key]()
+        const handler = controlKeyHandlerFunctions[key]
+        if (!handler) throw new Error(`No control handler for key ${key}`)
+        handler()
     }
 
     function handleConfirmKeyPressed() {
@@ -231,7 +233,9 @@ export default function Typewriter({
         }
     }
 
-    const blankKeyHandlerFunctions = {
+    const blankKeyHandlerFunctions: Partial<
+        Record<Key, (event: KeyboardEvent<HTMLElement>) => void>
+    > = {
         [Key.SPACE]: handleSpaceKeyPressed,
         [Key.ENTER]: handleEnterKeyPressed,
         [Key.BACKSPACE]: handleBackspaceKeyPressed,
@@ -248,7 +252,9 @@ export default function Typewriter({
             setPressedKeys(pressedKeys.add(key))
 
             updatePressedKeyStatus(key)
-            blankKeyHandlerFunctions[key](event)
+            const handler = blankKeyHandlerFunctions[key]
+            if (!handler) throw new Error(`No blank handler for key ${key}`)
+            handler(event)
 
             if (!isKeyboardMuted() && !keyAlreadyPressed(key)) {
                 playKeyPress()
@@ -327,7 +333,7 @@ export default function Typewriter({
         }
     }
 
-    const blankKeyReleasedHandlerFunctions = {
+    const blankKeyReleasedHandlerFunctions: Partial<Record<Key, () => void>> = {
         [Key.SPACE]: handleSpaceKeyReleased,
         [Key.ENTER]: handleEnterKeyReleased,
         [Key.BACKSPACE]: handleBackspaceKeyReleased,
@@ -335,7 +341,9 @@ export default function Typewriter({
 
     function handleBlankKeyReleased(key: Key) {
         console.info(`Blank Key Released ${key}`)
-        blankKeyReleasedHandlerFunctions[key]()
+        const handler = blankKeyReleasedHandlerFunctions[key]
+        if (!handler) throw new Error(`No release handler for key ${key}`)
+        handler()
     }
 
     function handleSpaceKeyReleased() {

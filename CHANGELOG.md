@@ -15,6 +15,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 ### Changed
 
+- TypeScript passa para 6.0.3 em modo estrito, com typecheck sem emissão e
+  política para supressões justificadas e locais.
 - React e React DOM chegam à baseline 19.2.8 após a versão de transição,
   com adapters de teste e ícones compatíveis e inicialização por `createRoot`.
 - Vite passa a ser o único caminho de desenvolvimento, build e publicação; o

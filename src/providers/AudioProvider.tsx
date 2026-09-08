@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react'
+import type { PropsWithChildren } from 'react'
 import { Cell } from '../domain/Cell'
 
 const AudioContext = createContext({
@@ -34,7 +35,7 @@ export function useAudioContext() {
     return useContext(AudioContext)
 }
 
-export default function AudioProvider({ children }) {
+export default function AudioProvider({ children }: PropsWithChildren) {
     const [currentPlaying, setCurrentPlaying] =
         useState<HTMLAudioElement | null>(null)
 
