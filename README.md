@@ -34,11 +34,12 @@ Executa o servidor de desenvolvimento Vite. A aplicação fica disponível em
 
 ### `npm test`
 
-Executa a suíte Jest em modo interativo.
+Executa a suíte Vitest em modo interativo.
 
 ### `npm run test:ci`
 
-Executa uma vez as suítes Jest e Node, sem ativar o modo interativo.
+Executa uma vez a suíte da aplicação com Vitest e as políticas de automação
+com o runner nativo do Node.js, sem ativar o modo interativo.
 
 ### `npm run ci`
 

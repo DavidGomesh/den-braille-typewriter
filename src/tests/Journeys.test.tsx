@@ -1,8 +1,8 @@
-import '@testing-library/jest-dom'
-
+// Testes provisórios das jornadas legadas; remover com a implementação antiga.
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
+import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
 import AudioProvider from '../providers/AudioProvider.tsx'
 import Home from '../views/Home.tsx'
@@ -14,8 +14,8 @@ class AudioStub {
 
     currentTime = 0
     onended: null | (() => void) = null
-    pause = jest.fn()
-    play = jest.fn().mockResolvedValue(undefined)
+    pause = vi.fn()
+    play = vi.fn().mockResolvedValue(undefined)
 
     constructor(public src: string) {
         AudioStub.instances.push(this)
@@ -71,7 +71,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
 })
 
 test('início oferece Modo livre e Modo desafio por links focáveis com áudio', async () => {
@@ -113,7 +113,7 @@ test('Modo livre produz conteúdo e mantém a saída ao alternar apresentação 
 })
 
 test('Modo desafio informa erro e avança após resposta correta por acordes', async () => {
-    const random = jest.spyOn(Math, 'random').mockReturnValue(0)
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0)
 
     const { container } = renderWithAudio(<Challenge />)
     const typewriter = container.querySelector('#typewriter') as HTMLElement
