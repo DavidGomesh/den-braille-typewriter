@@ -3,14 +3,12 @@
   "node": "24.20.0",
   "production": {
     "critical": 0,
-    "high": 6,
-    "moderate": 2,
+    "high": 4,
+    "moderate": 1,
     "low": 0,
-    "total": 9,
+    "total": 5,
     "allowedCriticalAndHighOccurrences": [
       "GHSA-2w69-qvjg-hvjx:@remix-run/router",
-      "GHSA-grv7-fg5c-xmjg:braces",
-      "GHSA-r5fr-rjxr-66jc:lodash",
       "GHSA-v56q-mh7h-f735:immutable",
       "GHSA-xvcm-6775-5m9r:immutable"
     ]

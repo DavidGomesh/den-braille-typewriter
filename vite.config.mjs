@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import packageJson from './package.json' with { type: 'json' }
 import { publicBasePathFromHomepage } from './config/public-base.mjs'
 
@@ -11,4 +11,9 @@ export default defineConfig({
         'process.env.PUBLIC_URL': JSON.stringify(publicBasePath),
     },
     plugins: [react()],
+    test: {
+        environment: 'jsdom',
+        include: ['src/**/*.test.{ts,tsx}'],
+        setupFiles: ['./src/tests/setup.ts'],
+    },
 })
