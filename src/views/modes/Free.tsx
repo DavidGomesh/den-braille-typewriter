@@ -6,7 +6,7 @@ import Typewriter from '../../components/Typewriter'
 import { useAudioContext } from '../../providers/AudioProvider'
 
 export default function Free() {
-    const output = useRef<HTMLTextAreaElement>()
+    const output = useRef<HTMLTextAreaElement>(null)
     const { playHowToAccessInstructionsAudio, playFreeModeInstructionsAudio } =
         useAudioContext()
 

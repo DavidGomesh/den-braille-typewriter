@@ -1,10 +1,5 @@
 import { List, Set } from 'immutable'
-import React, {
-    KeyboardEvent,
-    MutableRefObject,
-    useEffect,
-    useState,
-} from 'react'
+import React, { KeyboardEvent, RefObject, useEffect, useState } from 'react'
 import { Cell, cellToString, findCell } from '../domain/Cell'
 import {
     canConvertKeysToCell,
@@ -24,7 +19,7 @@ import Output, { addTextToTextArea, getPreviousCharacter } from './Output'
 interface TypewriterProps {
     challengeMode: boolean
     randomWord: RandomWord | undefined
-    outputReference: MutableRefObject<HTMLTextAreaElement | undefined>
+    outputReference: RefObject<HTMLTextAreaElement | null>
     onEnterPressed: (outputValue: string) => void | undefined
     onInstructionsKeyPressed: () => void
     onRepeatWordKeyPressed: () => void

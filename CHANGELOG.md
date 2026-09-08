@@ -15,8 +15,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 ### Changed
 
-- React e React DOM passam para a versão de transição 18.3.1, mantendo a API
-  de raiz compatível com a próxima atualização principal.
+- React e React DOM chegam à baseline 19.2.8 após a versão de transição,
+  com adapters de teste e ícones compatíveis e inicialização por `createRoot`.
 - Vite passa a ser o único caminho de desenvolvimento, build e publicação; o
   caminho concorrente do Create React App foi removido.
 
