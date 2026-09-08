@@ -15,6 +15,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 ### Changed
 
+- React e React DOM passam para a versão de transição 18.3.1, mantendo a API
+  de raiz compatível com a próxima atualização principal.
 - Vite passa a ser o único caminho de desenvolvimento, build e publicação; o
   caminho concorrente do Create React App foi removido.
 
