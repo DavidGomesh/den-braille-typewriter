@@ -1,33 +1,33 @@
 name: CI
 
 on:
-  pull_request:
-  push:
-    branches:
-      - develop
-      - main
-      - "release/**"
+    pull_request:
+    push:
+        branches:
+            - develop
+            - main
+            - 'release/**'
 
 permissions:
-  contents: read
+    contents: read
 
 jobs:
-  baseline:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    baseline:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
 
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
+            - name: Configurar Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
 
-      - name: Instalar pelo lockfile
-        run: npm ci
+            - name: Instalar pelo lockfile
+              run: npm ci
 
-      - name: Executar baseline operacional
-        run: npm run ci
+            - name: Executar baseline operacional
+              run: npm run ci

@@ -1,19 +1,10 @@
-
-
 @font-face {
     font-family: 'Braille ASCII';
-    src: 
-        local('Braille ASCII'), 
-        url(../fonts/braille/braille_v1_by_xchristaox.ttf) format('truetype')
-    ;
+    src:
+        local('Braille ASCII'),
+        url(../fonts/braille/braille_v1_by_xchristaox.ttf) format('truetype');
 }
 
 .braille {
     font-family: 'Braille ASCII';
 }
-
-
-
-
-
-

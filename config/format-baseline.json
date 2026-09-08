@@ -1,0 +1,23 @@
+{
+    "recordedAt": "2026-09-08",
+    "exclusions": [
+        {
+            "pattern": "docs/",
+            "reason": "A documentação existente preserva formatos editoriais e históricos ainda não avaliados para normalização automática.",
+            "risk": "Documentos mantidos podem acumular inconsistências de estilo fora do guardrail automático.",
+            "owner": "@DavidGomesh",
+            "expiresOn": "2026-12-31",
+            "approvedBy": "@DavidGomesh",
+            "trackingIssue": "#2"
+        },
+        {
+            "pattern": "src/vendors/",
+            "reason": "O diretório contém código de terceiros minificado que não deve ser reformatado localmente.",
+            "risk": "O conteúdo de terceiros permanece fora da verificação de formato até ser removido com o legado.",
+            "owner": "@DavidGomesh",
+            "expiresOn": "2026-12-31",
+            "approvedBy": "@DavidGomesh",
+            "trackingIssue": "#49"
+        }
+    ]
+}

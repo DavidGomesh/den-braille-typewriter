@@ -5,7 +5,8 @@ import test from 'node:test'
 import { createNotFoundPage } from './prepare-pages.mjs'
 import { publicBasePathFromHomepage } from '../config/public-base.mjs'
 
-const readProjectFile = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8')
+const readProjectFile = (path) =>
+    readFile(new URL(`../${path}`, import.meta.url), 'utf8')
 
 test('usa rotas por hash na composição publicada', async () => {
     const bootstrap = await readProjectFile('src/bootstrap.jsx')
@@ -19,7 +20,7 @@ test('oferece fallback 404 estático e acessível', async () => {
     const template = await readProjectFile('pages/404.html')
     const notFoundPage = createNotFoundPage(
         template,
-        'https://example.test/outro-projeto'
+        'https://example.test/outro-projeto',
     )
 
     assert.match(notFoundPage, /<html lang="pt-BR">/)
@@ -32,7 +33,7 @@ test('oferece fallback 404 estático e acessível', async () => {
 test('deriva uma única base pública para build e fallback', () => {
     assert.equal(
         publicBasePathFromHomepage('https://example.test/outro-projeto/'),
-        '/outro-projeto'
+        '/outro-projeto',
     )
 })
 

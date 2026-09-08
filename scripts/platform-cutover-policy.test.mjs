@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { access, readFile } from 'node:fs/promises'
 import test from 'node:test'
 
-const readProjectFile = path =>
+const readProjectFile = (path) =>
     readFile(new URL(`../${path}`, import.meta.url), 'utf8')
 
 test('expõe somente os comandos canônicos do Vite', async () => {
@@ -11,7 +11,7 @@ test('expõe somente os comandos canônicos do Vite', async () => {
     assert.equal(packageJson.scripts.start, 'vite')
     assert.equal(
         packageJson.scripts.build,
-        'vite build && node scripts/prepare-pages.mjs'
+        'vite build && node scripts/prepare-pages.mjs',
     )
     assert.equal(packageJson.scripts.preview, 'vite preview')
     assert.equal(packageJson.scripts.ci.includes('build:vite'), false)
@@ -30,10 +30,10 @@ test('não mantém dependências, scripts ou configurações do CRA', async () =
     assert.equal(packageJson.scripts.predeploy, undefined)
     assert.equal(packageJson.eslintConfig, undefined)
 
-    await assert.rejects(access(new URL('../public/index.html', import.meta.url)))
     await assert.rejects(
-        access(new URL('./build-legacy.mjs', import.meta.url))
+        access(new URL('../public/index.html', import.meta.url)),
     )
+    await assert.rejects(access(new URL('./build-legacy.mjs', import.meta.url)))
     await assert.rejects(access(new URL('../.npmrc', import.meta.url)))
 })
 
@@ -41,7 +41,10 @@ test('CI exercita o build canônico uma única vez', async () => {
     const packageJson = JSON.parse(await readProjectFile('package.json'))
     const ciWorkflow = await readProjectFile('.github/workflows/ci.yml')
 
-    assert.equal((packageJson.scripts.ci.match(/npm run build/g) ?? []).length, 1)
+    assert.equal(
+        (packageJson.scripts.ci.match(/npm run build/g) ?? []).length,
+        1,
+    )
     assert.doesNotMatch(packageJson.scripts.ci, /build:vite|legacy/)
     assert.doesNotMatch(ciWorkflow, /legacy/i)
 })

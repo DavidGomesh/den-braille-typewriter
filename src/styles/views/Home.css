@@ -1,3 +1,6 @@
-html, body, div#root, main {
+html,
+body,
+div#root,
+main {
     height: 100vh;
 }

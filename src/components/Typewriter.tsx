@@ -1,14 +1,28 @@
 import { List, Set } from 'immutable'
-import React, { KeyboardEvent, MutableRefObject, useEffect, useState } from 'react'
-import { Cell, cellToString, findCell } from '../domain/Cell.ts'
-import { canConvertKeysToCell, codeToKey, isActionKey, isArrowKey, isDotKey, isMappedKey, Key, keysToCell } from '../domain/Key.ts'
-import { useAudioContext } from '../providers/AudioProvider.tsx'
-import { RandomWord } from '../views/modes/Challenge.tsx'
-import Keyboard from './Keyboard.tsx'
-import Output, { addTextToTextArea, getPreviousCharacter } from './Output.tsx'
+import React, {
+    KeyboardEvent,
+    MutableRefObject,
+    useEffect,
+    useState,
+} from 'react'
+import { Cell, cellToString, findCell } from '../domain/Cell'
+import {
+    canConvertKeysToCell,
+    codeToKey,
+    isActionKey,
+    isArrowKey,
+    isDotKey,
+    isMappedKey,
+    Key,
+    keysToCell,
+} from '../domain/Key'
+import { useAudioContext } from '../providers/AudioProvider'
+import { RandomWord } from '../views/modes/Challenge'
+import Keyboard from './Keyboard'
+import Output, { addTextToTextArea, getPreviousCharacter } from './Output'
 
 interface TypewriterProps {
-    challengeMode: boolean,
+    challengeMode: boolean
     randomWord: RandomWord | undefined
     outputReference: MutableRefObject<HTMLTextAreaElement | undefined>
     onEnterPressed: (outputValue: string) => void | undefined
@@ -16,14 +30,14 @@ interface TypewriterProps {
     onRepeatWordKeyPressed: () => void
 }
 
-export default function Typewriter({challengeMode = false, 
-        randomWord = undefined, 
-        outputReference, 
-        onEnterPressed, 
-        onInstructionsKeyPressed, 
-        onRepeatWordKeyPressed 
-    }: TypewriterProps) {
-
+export default function Typewriter({
+    challengeMode = false,
+    randomWord = undefined,
+    outputReference,
+    onEnterPressed,
+    onInstructionsKeyPressed,
+    onRepeatWordKeyPressed,
+}: TypewriterProps) {
     const [keyboardMuted, setKeyboardMuted] = useState(false)
     const [outputMuted, setOutputMuted] = useState(false)
 
@@ -52,8 +66,15 @@ export default function Typewriter({challengeMode = false,
     }
 
     const {
-        playKeyPress, playKeyboardMuted, playKeyboardUnmuted,
-        playCellAudio, playOutputMuted, playOutputUnmuted, playEnterAudio, playBrailleViewAudio, playInkViewAudio
+        playKeyPress,
+        playKeyboardMuted,
+        playKeyboardUnmuted,
+        playCellAudio,
+        playOutputMuted,
+        playOutputUnmuted,
+        playEnterAudio,
+        playBrailleViewAudio,
+        playInkViewAudio,
     } = useAudioContext()
 
     // const output = useRef<HTMLTextAreaElement>()
@@ -90,7 +111,10 @@ export default function Typewriter({challengeMode = false,
         }
     }
 
-    function handleActionKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+    function handleActionKeyPressed(
+        key: Key,
+        event: KeyboardEvent<HTMLElement>,
+    ) {
         console.info(`Action Key Pressed: ${event.code}(${key})`)
 
         if (isArrowKey(key)) {
@@ -100,7 +124,10 @@ export default function Typewriter({challengeMode = false,
         }
     }
 
-    function handleArrowKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+    function handleArrowKeyPressed(
+        key: Key,
+        event: KeyboardEvent<HTMLElement>,
+    ) {
         console.info(`Arrow Key Pressed: ${event.code}(${key})`)
     }
 
@@ -113,7 +140,10 @@ export default function Typewriter({challengeMode = false,
         [Key.MUTE_KEYBOARD_SOUNDS]: handleMuteKeyboardSoundsKeyPressed,
     }
 
-    function handleControlKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+    function handleControlKeyPressed(
+        key: Key,
+        event: KeyboardEvent<HTMLElement>,
+    ) {
         console.info(`Control Key Pressed ${event.code}(${key})`)
 
         event.preventDefault()
@@ -132,13 +162,11 @@ export default function Typewriter({challengeMode = false,
             console.info('View mode changed to Ink Mode')
             setShowBraille(false)
             playInkViewAudio()
-
         } else {
             console.info('View mode changed to Braille Mode')
             setShowBraille(true)
             playBrailleViewAudio()
         }
-
     }
 
     function handleInstructionsKeyPressed() {
@@ -151,7 +179,6 @@ export default function Typewriter({challengeMode = false,
         onRepeatWordKeyPressed()
     }
 
-
     function handleMuteOutputSoundsKeyPressed() {
         console.info('Mute Output Sounds Key Pressed')
 
@@ -159,7 +186,6 @@ export default function Typewriter({challengeMode = false,
             unmuteOutput()
             playOutputUnmuted()
             console.info('Output muted')
-
         } else {
             muteOutput()
             playOutputMuted()
@@ -174,7 +200,6 @@ export default function Typewriter({challengeMode = false,
             unmuteKeyboard()
             playKeyboardUnmuted()
             console.info('Keyboard muted')
-
         } else {
             muteKeyboard()
             playKeyboardMuted()
@@ -182,7 +207,10 @@ export default function Typewriter({challengeMode = false,
         }
     }
 
-    function handleTypewriterKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+    function handleTypewriterKeyPressed(
+        key: Key,
+        event: KeyboardEvent<HTMLElement>,
+    ) {
         console.info(`Typewriter Key Pressed ${event.code}(${key})`)
 
         if (isDotKey(key)) {
@@ -214,7 +242,10 @@ export default function Typewriter({challengeMode = false,
         [Key.BACKSPACE]: handleBackspaceKeyPressed,
     }
 
-    function handleBlankKeyPressed(key: Key, event: KeyboardEvent<HTMLElement>) {
+    function handleBlankKeyPressed(
+        key: Key,
+        event: KeyboardEvent<HTMLElement>,
+    ) {
         console.info(`Blank Key Pressed ${key}`)
 
         if (noKeysPressed() || !pressedKeysContainsDots()) {
@@ -224,7 +255,7 @@ export default function Typewriter({challengeMode = false,
             updatePressedKeyStatus(key)
             blankKeyHandlerFunctions[key](event)
 
-            if (!isKeyboardMuted()  && !keyAlreadyPressed(key)) {
+            if (!isKeyboardMuted() && !keyAlreadyPressed(key)) {
                 playKeyPress()
             }
         } else {
@@ -255,8 +286,6 @@ export default function Typewriter({challengeMode = false,
         console.info(`Unmapped Key Pressed: ${event.code}`)
         event.preventDefault()
     }
-
-
 
     function handleKeyReleased(event: KeyboardEvent<HTMLElement>) {
         console.info('Key Released: ' + event.code)
@@ -351,7 +380,7 @@ export default function Typewriter({challengeMode = false,
         [Key.DOT6]: false,
         [Key.SPACE]: false,
         [Key.ENTER]: false,
-        [Key.BACKSPACE]: false
+        [Key.BACKSPACE]: false,
     }
 
     const [keyStatus, setKeyStatus] = useState(initialKeyStatus)
@@ -360,7 +389,7 @@ export default function Typewriter({challengeMode = false,
         console.info('Key status updated to pressed')
         setKeyStatus({
             ...keyStatus,
-            [key]: true
+            [key]: true,
         })
     }
 
@@ -368,12 +397,14 @@ export default function Typewriter({challengeMode = false,
         console.info('Key status updated released')
         setKeyStatus({
             ...keyStatus,
-            [key]: false
+            [key]: false,
         })
     }
 
     function playPreviousCharacterAudio() {
-        const previousCharacter = getPreviousCharacter(outputReference.current as HTMLTextAreaElement)
+        const previousCharacter = getPreviousCharacter(
+            outputReference.current as HTMLTextAreaElement,
+        )
         console.info('Previous character: ' + previousCharacter)
 
         if (previousCharacter) {
@@ -399,7 +430,10 @@ export default function Typewriter({challengeMode = false,
 
                 const char = cellToString(cell)
                 console.info('Cell converted to string: ' + char)
-                addTextToTextArea(char, outputReference.current as HTMLTextAreaElement)
+                addTextToTextArea(
+                    char,
+                    outputReference.current as HTMLTextAreaElement,
+                )
 
                 console.info('Cell included in typed cell: ' + cell)
                 setTypedCells(typedCells?.concat(cell))
@@ -428,40 +462,59 @@ export default function Typewriter({challengeMode = false,
     }
 
     function showListenWordTip() {
-        return challengeMode ? <div><strong>(r)</strong> Ouvir a palavra</div> : <div></div>
+        return challengeMode ? (
+            <div>
+                <strong>(r)</strong> Ouvir a palavra
+            </div>
+        ) : (
+            <div></div>
+        )
     }
 
     function showConfirmTip() {
-        return challengeMode ? <div><strong>(enter)</strong> Verificar palavra</div> : <div></div>
+        return challengeMode ? (
+            <div>
+                <strong>(enter)</strong> Verificar palavra
+            </div>
+        ) : (
+            <div></div>
+        )
     }
 
-    return (<>
-        <div
-            id='typewriter'
-            className='container d-flex flex-column justify-content-center align-items-center'
-            onKeyDown={ handleKeyPressed } onKeyUp={ handleKeyReleased }
-            autoFocus
+    return (
+        <>
+            <div
+                id="typewriter"
+                className="container d-flex flex-column justify-content-center align-items-center"
+                onKeyDown={handleKeyPressed}
+                onKeyUp={handleKeyReleased}
+                autoFocus
             >
+                <div>
+                    <div className="fs-1">{getTitle()}</div>
+                </div>
+                <div className="fs-3 mb-3">{showRandomWord()}</div>
 
-            <div>
-                <div className='fs-1'>{ getTitle() }</div>
+                <div className="d-flex justify-content-center w-100 fs-5 gap-3 mb-3">
+                    <div>
+                        <strong>(i)</strong> Instruções
+                    </div>
+                    {showListenWordTip()}
+                    <div>
+                        <strong>(t)</strong> Ver texto a tinta ou em Braille
+                    </div>
+                    <div>
+                        <strong>(o)</strong> Liga/desliga áudio do conversor
+                    </div>
+                    <div>
+                        <strong>(m)</strong> Liga/desliga áudio do teclado
+                    </div>
+                    {showConfirmTip()}
+                </div>
+
+                <Output reference={outputReference} showBraille={showBraille} />
+                <Keyboard keyStatus={keyStatus} />
             </div>
-            <div className='fs-3 mb-3'>{ showRandomWord() }</div>
-
-            <div className='d-flex justify-content-center w-100 fs-5 gap-3 mb-3'>
-                
-                <div><strong>(i)</strong> Instruções</div>
-                { showListenWordTip() }
-                <div><strong>(t)</strong> Ver texto a tinta ou em Braille</div>
-                <div><strong>(o)</strong> Liga/desliga áudio do conversor</div>
-                <div><strong>(m)</strong> Liga/desliga áudio do teclado</div>
-                { showConfirmTip() }
-
-            </div>
-
-            <Output reference={outputReference} showBraille={showBraille} />
-            <Keyboard keyStatus={keyStatus} />
-
-        </div>
-    </>)
+        </>
+    )
 }
