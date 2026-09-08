@@ -115,6 +115,22 @@ describe('Operações da máquina', () => {
             },
         ])
     })
+
+    test('rejeita a liberação de um controle inativo sem alterar o estado', () => {
+        const estado = criarEstadoMotor()
+        const resultado = aplicarIntencao(estado, {
+            tipo: 'liberar',
+            controle: { tipo: 'retrocesso' },
+        })
+
+        expect(resultado.estado).toBe(estado)
+        expect(resultado.eventos).toEqual([
+            {
+                tipo: 'entrada-rejeitada',
+                motivo: 'controle-nao-pressionado',
+            },
+        ])
+    })
 })
 
 describe('término não confirmatório da captura', () => {
@@ -148,7 +164,11 @@ describe('término não confirmatório da captura', () => {
     })
 
     test('Interrupção da captura descarta o acorde quando essa é a política', () => {
-        const resultado = aplicarIntencao(estadoComAcorde(), {
+        const controleDiretoAtivo = aplicarIntencao(estadoComAcorde(), {
+            tipo: 'pressionar',
+            controle: { tipo: 'espaco' },
+        })
+        const resultado = aplicarIntencao(controleDiretoAtivo.estado, {
             tipo: 'interromper-captura',
             politica: 'descartar',
         })
