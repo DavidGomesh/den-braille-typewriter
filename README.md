@@ -54,7 +54,7 @@ Executa o ESLint e rejeita qualquer falha que não esteja na baseline herdada.
 
 ### `npm run typecheck`
 
-Executa o TypeScript sobre `src` sem emitir arquivos.
+Executa o TypeScript 6 em modo estrito sobre `src`, sem emitir arquivos.
 
 ### `npm run test:ci`
 

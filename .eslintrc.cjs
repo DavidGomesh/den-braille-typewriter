@@ -20,6 +20,16 @@ module.exports = {
             parser: '@typescript-eslint/parser',
             plugins: ['@typescript-eslint'],
             rules: {
+                '@typescript-eslint/ban-ts-comment': [
+                    'error',
+                    {
+                        'ts-check': false,
+                        'ts-expect-error': 'allow-with-description',
+                        'ts-ignore': true,
+                        'ts-nocheck': true,
+                        minimumDescriptionLength: 10,
+                    },
+                ],
                 '@typescript-eslint/no-unused-vars': ['warn', { args: 'none' }],
             },
         },

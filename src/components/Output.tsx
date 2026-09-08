@@ -1,6 +1,17 @@
 import React from 'react'
+import type { Ref } from 'react'
 
-export default function NOutput({ reference, text = '', showBraille = true }) {
+interface OutputProps {
+    reference: Ref<HTMLTextAreaElement>
+    text?: string
+    showBraille?: boolean
+}
+
+export default function NOutput({
+    reference,
+    text = '',
+    showBraille = true,
+}: OutputProps) {
     const bootstrapClasses = 'form-control p-5 mb-3'
     const brailleClass = showBraille ? 'braille' : ''
 

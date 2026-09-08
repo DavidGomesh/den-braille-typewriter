@@ -7,9 +7,10 @@
         "jsx": "react-jsx",
         "lib": ["DOM", "ES2022"],
         "module": "ESNext",
-        "moduleResolution": "Node",
+        "moduleResolution": "Bundler",
         "noEmit": true,
         "skipLibCheck": true,
+        "strict": true,
         "target": "ES2022"
     },
     "include": ["src"]
