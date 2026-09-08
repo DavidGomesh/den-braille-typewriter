@@ -3,15 +3,6 @@ import { dirname, extname, relative, resolve, sep } from 'node:path'
 import process from 'node:process'
 import ts from 'typescript'
 
-const CAPABILITIES = new Set([
-    'app',
-    'braille',
-    'experiences',
-    'feedback',
-    'preferences',
-    'session',
-    'ui',
-])
 const SOURCE_EXTENSIONS = new Set(['.js', '.jsx', '.mjs', '.ts', '.tsx'])
 const ALLOWED_DEPENDENCIES = new Map([
     [
@@ -111,23 +102,21 @@ export const findArchitectureViolations = async (projectRoot) => {
                 importedPath.split('/')
 
             if (
-                !CAPABILITIES.has(importedCapability) ||
+                !ALLOWED_DEPENDENCIES.has(importedCapability) ||
                 importedCapability === importerCapability
             ) {
                 continue
             }
 
-            if (CAPABILITIES.has(importerCapability)) {
+            const allowedDependencies =
+                ALLOWED_DEPENDENCIES.get(importerCapability)
+            if (allowedDependencies) {
                 const capabilityDependencies =
                     dependencies.get(importerCapability) ?? new Set()
                 capabilityDependencies.add(importedCapability)
                 dependencies.set(importerCapability, capabilityDependencies)
 
-                if (
-                    !ALLOWED_DEPENDENCIES.get(importerCapability).has(
-                        importedCapability,
-                    )
-                ) {
+                if (!allowedDependencies.has(importedCapability)) {
                     violations.push(
                         `${importerPath}: ${importerCapability} não pode depender de ${importedCapability}`,
                     )
