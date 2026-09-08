@@ -27,7 +27,7 @@ async function preparePagesArtifact() {
         }
         await writeFile(
             new URL('../dist/deployment-provenance.json', import.meta.url),
-            `${JSON.stringify(provenance, null, 2)}\n`
+            `${JSON.stringify(provenance, null, 2)}\n`,
         )
     }
 }

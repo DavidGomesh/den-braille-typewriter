@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react'
 
 import { Link } from 'react-router-dom'
-import { useAudioContext } from '../providers/AudioProvider.tsx'
+import { useAudioContext } from '../providers/AudioProvider'
 
 import '../styles/views/Home.css'
 
 export default function Home() {
-
-    const { playMainMenuAudio, playFreeModeAudio, playChallengeModeAudio, playAboutModeAudio } = useAudioContext()
+    const {
+        playMainMenuAudio,
+        playFreeModeAudio,
+        playChallengeModeAudio,
+        playAboutModeAudio,
+    } = useAudioContext()
 
     function handleBtnFreeModeFocused() {
         playFreeModeAudio()
@@ -25,38 +29,40 @@ export default function Home() {
         playMainMenuAudio()
     }, [])
 
-    return (<>
-        <main className='container d-flex justify-content-center align-items-center'>
-            <div className='text-center'>
+    return (
+        <>
+            <main className="container d-flex justify-content-center align-items-center">
+                <div className="text-center">
+                    <h1 style={{ fontSize: '5rem' }}>Máquina Den Braille</h1>
 
-                <h1 style={{fontSize: '5rem'}}>Máquina Den Braille</h1>
-
-                <div className='d-flex flex-column align-items-center'>
-
-                    <Link 
-                        onFocus={handleBtnFreeModeFocused} 
-                        to={'/free'} 
-                        className='btn btn-outline-primary btn-lg fw-bold mb-2' 
-                        style={{width: '300px'}}>
+                    <div className="d-flex flex-column align-items-center">
+                        <Link
+                            onFocus={handleBtnFreeModeFocused}
+                            to={'/free'}
+                            className="btn btn-outline-primary btn-lg fw-bold mb-2"
+                            style={{ width: '300px' }}
+                        >
                             Modo livre
-                    </Link>
+                        </Link>
 
-                    <Link 
-                        onFocus={handleBtnChallengeModeFocused} 
-                        to='/lessons' 
-                        className='btn btn-outline-primary btn-lg fw-bold mb-2' 
-                        style={{width: '300px'}}>
+                        <Link
+                            onFocus={handleBtnChallengeModeFocused}
+                            to="/lessons"
+                            className="btn btn-outline-primary btn-lg fw-bold mb-2"
+                            style={{ width: '300px' }}
+                        >
                             Modo desafio
-                    </Link>
+                        </Link>
 
-                    {/* <button 
-                        onFocus={handleBtnAboutFocused} 
-                        className='btn btn-outline-primary btn-lg fw-bold mb-2' 
+                        {/* <button
+                        onFocus={handleBtnAboutFocused}
+                        className='btn btn-outline-primary btn-lg fw-bold mb-2'
                         style={{width: '300px'}}>
                             Sobre
                     </button> */}
+                    </div>
                 </div>
-            </div>
-        </main>
-    </>)
+            </main>
+        </>
+    )
 }

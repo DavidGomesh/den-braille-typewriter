@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": false,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "jsx": "react-jsx",
+        "lib": ["DOM", "ES2022"],
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "noEmit": true,
+        "skipLibCheck": true,
+        "target": "ES2022"
+    },
+    "include": ["src"]
+}

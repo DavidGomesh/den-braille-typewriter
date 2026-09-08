@@ -4,7 +4,10 @@ import { readFileSync } from 'node:fs'
 import { evaluateAudit } from './audit-policy.mjs'
 
 const baseline = JSON.parse(
-    readFileSync(new URL('../config/audit-baseline.json', import.meta.url), 'utf8')
+    readFileSync(
+        new URL('../config/audit-baseline.json', import.meta.url),
+        'utf8',
+    ),
 )
 
 const audit = spawnSync('npm', ['audit', '--omit=dev', '--json'], {
@@ -16,7 +19,9 @@ let report
 try {
     report = JSON.parse(audit.stdout)
 } catch {
-    console.error(audit.stderr || audit.stdout || 'npm audit não produziu JSON válido.')
+    console.error(
+        audit.stderr || audit.stdout || 'npm audit não produziu JSON válido.',
+    )
     process.exit(1)
 }
 
@@ -34,16 +39,18 @@ if (!current) {
 const limits = baseline.production
 console.log(
     `Vulnerabilidades de produção: ${current.critical} críticas, ` +
-    `${current.high} altas, ${current.moderate} moderadas e ${current.low} baixas.`
+        `${current.high} altas, ${current.moderate} moderadas e ${current.low} baixas.`,
 )
 
 const { regressions, newOccurrences, resolvedOccurrences } = evaluateAudit(
     report,
-    limits
+    limits,
 )
 
 if (resolvedOccurrences.length > 0) {
-    console.error('Ocorrências herdadas resolvidas; reduza config/audit-baseline.json:')
+    console.error(
+        'Ocorrências herdadas resolvidas; reduza config/audit-baseline.json:',
+    )
     for (const occurrence of resolvedOccurrences) {
         console.error(`- ${occurrence}`)
     }
@@ -53,7 +60,7 @@ if (resolvedOccurrences.length > 0) {
 if (regressions.length > 0) {
     for (const severity of regressions) {
         console.error(
-            `Regressão ${severity}: baseline ${limits[severity]}, atual ${current[severity]}.`
+            `Regressão ${severity}: baseline ${limits[severity]}, atual ${current[severity]}.`,
         )
     }
     process.exit(1)

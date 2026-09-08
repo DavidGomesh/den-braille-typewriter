@@ -17,11 +17,12 @@ test('aceita somente os avisos herdados registrados', () => {
             {
                 severity: 1,
                 ruleId: 'react-hooks/exhaustive-deps',
-                message: 'React Hook useEffect has a missing dependency: dependency.',
+                message:
+                    'React Hook useEffect has a missing dependency: dependency.',
             },
         ]),
         baseline,
-        '/workspace'
+        '/workspace',
     )
 
     assert.deepEqual(result, { newFailures: [], resolvedFailures: [] })
@@ -33,7 +34,8 @@ test('separa uma nova falha da baseline herdada', () => {
             {
                 severity: 1,
                 ruleId: 'react-hooks/exhaustive-deps',
-                message: 'React Hook useEffect has a missing dependency: dependency.',
+                message:
+                    'React Hook useEffect has a missing dependency: dependency.',
             },
             {
                 severity: 2,
@@ -42,7 +44,7 @@ test('separa uma nova falha da baseline herdada', () => {
             },
         ]),
         baseline,
-        '/workspace'
+        '/workspace',
     )
 
     assert.deepEqual(result, {
@@ -67,9 +69,12 @@ test('rejeita uma nova ocorrência idêntica no mesmo arquivo', () => {
         message: 'React Hook useEffect has a missing dependency: dependency.',
     }
     const result = evaluateLint(
-        report('/workspace/src/legacy.ts', [inheritedMessage, inheritedMessage]),
+        report('/workspace/src/legacy.ts', [
+            inheritedMessage,
+            inheritedMessage,
+        ]),
         baseline,
-        '/workspace'
+        '/workspace',
     )
 
     assert.deepEqual(result, {

@@ -4,10 +4,10 @@ import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
-import AudioProvider from '../providers/AudioProvider.tsx'
-import Home from '../views/Home.tsx'
-import Challenge from '../views/modes/Challenge.tsx'
-import Free from '../views/modes/Free.tsx'
+import AudioProvider from '../providers/AudioProvider'
+import Home from '../views/Home'
+import Challenge from '../views/modes/Challenge'
+import Free from '../views/modes/Free'
 
 class AudioStub {
     static instances: AudioStub[] = []
@@ -26,7 +26,7 @@ function renderWithAudio(component: React.ReactElement) {
     return render(
         <AudioProvider>
             <MemoryRouter>{component}</MemoryRouter>
-        </AudioProvider>
+        </AudioProvider>,
     )
 }
 
@@ -41,17 +41,27 @@ function chord(target: Element, codes: string[]) {
 }
 
 const letterChords = {
-    a: ['KeyF'], b: ['KeyF', 'KeyD'], c: ['KeyF', 'KeyJ'],
-    d: ['KeyF', 'KeyJ', 'KeyK'], e: ['KeyF', 'KeyK'],
-    f: ['KeyF', 'KeyD', 'KeyJ'], g: ['KeyF', 'KeyD', 'KeyJ', 'KeyK'],
-    h: ['KeyF', 'KeyD', 'KeyK'], i: ['KeyD', 'KeyJ'],
-    j: ['KeyD', 'KeyJ', 'KeyK'], k: ['KeyF', 'KeyS'],
-    l: ['KeyF', 'KeyD', 'KeyS'], m: ['KeyF', 'KeyS', 'KeyJ'],
-    n: ['KeyF', 'KeyS', 'KeyJ', 'KeyK'], o: ['KeyF', 'KeyS', 'KeyK'],
+    a: ['KeyF'],
+    b: ['KeyF', 'KeyD'],
+    c: ['KeyF', 'KeyJ'],
+    d: ['KeyF', 'KeyJ', 'KeyK'],
+    e: ['KeyF', 'KeyK'],
+    f: ['KeyF', 'KeyD', 'KeyJ'],
+    g: ['KeyF', 'KeyD', 'KeyJ', 'KeyK'],
+    h: ['KeyF', 'KeyD', 'KeyK'],
+    i: ['KeyD', 'KeyJ'],
+    j: ['KeyD', 'KeyJ', 'KeyK'],
+    k: ['KeyF', 'KeyS'],
+    l: ['KeyF', 'KeyD', 'KeyS'],
+    m: ['KeyF', 'KeyS', 'KeyJ'],
+    n: ['KeyF', 'KeyS', 'KeyJ', 'KeyK'],
+    o: ['KeyF', 'KeyS', 'KeyK'],
     p: ['KeyF', 'KeyD', 'KeyS', 'KeyJ'],
     q: ['KeyF', 'KeyD', 'KeyS', 'KeyJ', 'KeyK'],
-    r: ['KeyF', 'KeyD', 'KeyS', 'KeyK'], s: ['KeyD', 'KeyS', 'KeyJ'],
-    t: ['KeyD', 'KeyS', 'KeyJ', 'KeyK'], u: ['KeyF', 'KeyS', 'KeyL'],
+    r: ['KeyF', 'KeyD', 'KeyS', 'KeyK'],
+    s: ['KeyD', 'KeyS', 'KeyJ'],
+    t: ['KeyD', 'KeyS', 'KeyJ', 'KeyK'],
+    u: ['KeyF', 'KeyS', 'KeyL'],
     v: ['KeyF', 'KeyD', 'KeyS', 'KeyL'],
     x: ['KeyF', 'KeyS', 'KeyJ', 'KeyL'],
     y: ['KeyF', 'KeyS', 'KeyJ', 'KeyK', 'KeyL'],
@@ -62,12 +72,12 @@ const letterChords = {
 }
 
 function audioEndingWith(path: string) {
-    return AudioStub.instances.find(audio => audio.src.endsWith(path))
+    return AudioStub.instances.find((audio) => audio.src.endsWith(path))
 }
 
 beforeEach(() => {
     AudioStub.instances = []
-    global.Audio = AudioStub as unknown as typeof Audio
+    globalThis.Audio = AudioStub as unknown as typeof Audio
 })
 
 afterEach(() => {
@@ -108,7 +118,9 @@ test('Modo livre produz conteúdo e mantém a saída ao alternar apresentação 
     expect(output).toHaveValue('a_\n')
     expect(output).not.toHaveClass('braille')
     await waitFor(() => {
-        expect(audioEndingWith('instrucoes-modo-livre.mp3')?.play).toHaveBeenCalled()
+        expect(
+            audioEndingWith('instrucoes-modo-livre.mp3')?.play,
+        ).toHaveBeenCalled()
     })
 })
 
@@ -119,15 +131,21 @@ test('Modo desafio informa erro e avança após resposta correta por acordes', a
     const typewriter = container.querySelector('#typewriter') as HTMLElement
 
     const wordLabel = await screen.findByText(/^Palavra: /)
-    const word = wordLabel.textContent?.replace('Palavra: ', '') as keyof typeof letterChords
+    const word = wordLabel.textContent?.replace(
+        'Palavra: ',
+        '',
+    ) as keyof typeof letterChords
     press(typewriter, 'KeyR')
     press(typewriter, 'KeyI')
     press(typewriter, 'Enter')
 
     await waitFor(() => {
         expect(audioEndingWith('resposta-errada.mp3')?.play).toHaveBeenCalled()
-        expect(audioEndingWith(`words/${word.replace('é', 'e').replace('ã', 'a')}.mp3`)?.play)
-            .toHaveBeenCalled()
+        expect(
+            audioEndingWith(
+                `words/${word.replace('é', 'e').replace('ã', 'a')}.mp3`,
+            )?.play,
+        ).toHaveBeenCalled()
     })
 
     for (const letter of word) {
@@ -145,7 +163,11 @@ test('Modo desafio informa erro e avança após resposta correta por acordes', a
     random.mockReturnValue(0.1)
     await act(async () => successAudio.onended?.())
 
-    await waitFor(() => expect(random.mock.calls.length).toBeGreaterThan(selectionsBeforeSuccess))
+    await waitFor(() =>
+        expect(random.mock.calls.length).toBeGreaterThan(
+            selectionsBeforeSuccess,
+        ),
+    )
     expect(screen.getByText(/^Palavra: /)).toBeInTheDocument()
     expect(screen.getByRole('textbox')).toHaveValue('')
 })
