@@ -100,3 +100,15 @@ test('rejeita ciclo entre capacidades por suas interfaces públicas', async () =
         /Ciclo entre capacidades: braille -> session -> braille/,
     )
 })
+
+test('rejeita dependência contrária à direção documentada', async () => {
+    const root = await createProject({
+        'braille/public.ts': "export { session } from '../session/public'",
+        'session/public.ts': 'export const session = {}',
+    })
+
+    const result = runArchitectureCheck(root)
+
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /braille não pode depender de session/)
+})

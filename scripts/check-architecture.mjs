@@ -13,6 +13,34 @@ const CAPABILITIES = new Set([
     'ui',
 ])
 const SOURCE_EXTENSIONS = new Set(['.js', '.jsx', '.mjs', '.ts', '.tsx'])
+const ALLOWED_DEPENDENCIES = new Map([
+    [
+        'app',
+        new Set([
+            'braille',
+            'experiences',
+            'feedback',
+            'preferences',
+            'session',
+            'ui',
+        ]),
+    ],
+    ['braille', new Set()],
+    ['experiences', new Set(['braille', 'preferences', 'session'])],
+    ['feedback', new Set(['braille', 'experiences', 'preferences', 'session'])],
+    ['preferences', new Set()],
+    ['session', new Set(['braille', 'preferences'])],
+    [
+        'ui',
+        new Set([
+            'braille',
+            'experiences',
+            'feedback',
+            'preferences',
+            'session',
+        ]),
+    ],
+])
 
 const listSourceFiles = async (directory) => {
     const entries = await readdir(directory, { withFileTypes: true })
@@ -94,6 +122,16 @@ export const findArchitectureViolations = async (projectRoot) => {
                     dependencies.get(importerCapability) ?? new Set()
                 capabilityDependencies.add(importedCapability)
                 dependencies.set(importerCapability, capabilityDependencies)
+
+                if (
+                    !ALLOWED_DEPENDENCIES.get(importerCapability).has(
+                        importedCapability,
+                    )
+                ) {
+                    violations.push(
+                        `${importerPath}: ${importerCapability} não pode depender de ${importedCapability}`,
+                    )
+                }
             }
 
             if (!/^public(?:\.[cm]?[jt]sx?)?$/.test(internalPath.join('/'))) {
