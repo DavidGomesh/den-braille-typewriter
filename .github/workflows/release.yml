@@ -1,0 +1,49 @@
+name: Versioned release
+
+on:
+    push:
+        tags:
+            - 'v*.*.*-*'
+
+permissions:
+    contents: write
+
+jobs:
+    publish:
+        name: Publish prerelease
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout tagged commit
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - name: Require versioned changelog entry
+              env:
+                  RELEASE_TAG: ${{ github.ref_name }}
+              run: |
+                  node --input-type=module <<'NODE'
+                  import { readFile } from 'node:fs/promises'
+
+                  const tag = process.env.RELEASE_TAG
+                  const changelog = await readFile('CHANGELOG.md', 'utf8')
+                  const header = `## [${tag}] - `
+
+                  if (!changelog.includes(header)) {
+                    throw new Error(
+                      `CHANGELOG.md must contain a dated heading beginning with "${header}" before tagging.`,
+                    )
+                  }
+                  NODE
+
+            - name: Publish GitHub prerelease
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  RELEASE_TAG: ${{ github.ref_name }}
+              run: |
+                  gh release create "$RELEASE_TAG" \
+                    --prerelease \
+                    --title "$RELEASE_TAG" \
+                    --generate-notes
