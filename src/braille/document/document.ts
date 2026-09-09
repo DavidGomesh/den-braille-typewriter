@@ -10,18 +10,18 @@ export type PositionedCellImpression = Readonly<{
     impression: CellImpression
 }>
 
-export type BrailleDocument = Readonly<{
+export type BrailleGrid = Readonly<{
     impressions: readonly PositionedCellImpression[]
 }>
 
-export type DocumentResult =
+export type GridResult =
     | Readonly<{
           status: 'recorded'
-          document: BrailleDocument
+          grid: BrailleGrid
       }>
     | Readonly<{
           status: 'rejected'
-          document: BrailleDocument
+          grid: BrailleGrid
           error: Readonly<{
               type: 'position-already-used'
               position: GridPosition
@@ -43,29 +43,29 @@ export const createGridPosition = (
     return Object.freeze({ row, column })
 }
 
-export const createBrailleDocument = (): BrailleDocument =>
+export const createBrailleGrid = (): BrailleGrid =>
     Object.freeze({ impressions: Object.freeze([]) })
 
 const positionsAreEqual = (left: GridPosition, right: GridPosition) =>
     left.row === right.row && left.column === right.column
 
 export const getCellImpression = (
-    document: BrailleDocument,
+    grid: BrailleGrid,
     position: GridPosition,
 ): CellImpression | undefined =>
-    document.impressions.find((entry) =>
+    grid.impressions.find((entry) =>
         positionsAreEqual(entry.position, position),
     )?.impression
 
 export const recordCellImpression = (
-    document: BrailleDocument,
+    grid: BrailleGrid,
     position: GridPosition,
     impression: CellImpression,
-): DocumentResult => {
-    if (getCellImpression(document, position) !== undefined) {
+): GridResult => {
+    if (getCellImpression(grid, position) !== undefined) {
         return Object.freeze({
             status: 'rejected',
-            document,
+            grid,
             error: Object.freeze({
                 type: 'position-already-used',
                 position,
@@ -76,8 +76,8 @@ export const recordCellImpression = (
     const entry = Object.freeze({ position, impression })
     return Object.freeze({
         status: 'recorded',
-        document: Object.freeze({
-            impressions: Object.freeze([...document.impressions, entry]),
+        grid: Object.freeze({
+            impressions: Object.freeze([...grid.impressions, entry]),
         }),
     })
 }

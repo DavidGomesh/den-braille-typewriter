@@ -4,7 +4,7 @@ import {
     applyIntent,
     createBrailleCell,
     createBrailleDot,
-    createBrailleDocument,
+    createBrailleGrid,
     createCellImpression,
     createEngineState,
     createGridPosition,
@@ -38,7 +38,7 @@ describe('cell impression', () => {
     })
 })
 
-describe('Braille document', () => {
+describe('Braille document grid', () => {
     test('records a cell confirmed by the engine without textual conversion', () => {
         const dot = createBrailleDot(1)
         const pressed = applyIntent(createEngineState(), {
@@ -58,14 +58,14 @@ describe('Braille document', () => {
         }
 
         const result = recordCellImpression(
-            createBrailleDocument(),
+            createBrailleGrid(),
             createGridPosition(0, 0),
             createCellImpression(event.operation.cell),
         )
 
         expect(result).toMatchObject({
             status: 'recorded',
-            document: {
+            grid: {
                 impressions: [
                     {
                         impression: {
@@ -80,21 +80,17 @@ describe('Braille document', () => {
 
     test('records a confirmed cell at an explicit grid position', () => {
         const position = createGridPosition(2, 3)
-        const unusedDocument = createBrailleDocument()
+        const unusedGrid = createBrailleGrid()
         const impression = createCellImpression(createBrailleCell([1, 4]))
 
-        expect(getCellImpression(unusedDocument, position)).toBeUndefined()
+        expect(getCellImpression(unusedGrid, position)).toBeUndefined()
 
-        const result = recordCellImpression(
-            unusedDocument,
-            position,
-            impression,
-        )
+        const result = recordCellImpression(unusedGrid, position, impression)
 
         expect(result).toMatchObject({ status: 'recorded' })
         if (result.status !== 'recorded') throw new Error('Expected recording')
-        expect(getCellImpression(result.document, position)).toEqual(impression)
-        expect(getCellImpression(unusedDocument, position)).toBeUndefined()
+        expect(getCellImpression(result.grid, position)).toEqual(impression)
+        expect(getCellImpression(unusedGrid, position)).toBeUndefined()
     })
 
     test('preserves explicit space and erased traces as occupied positions', () => {
@@ -102,7 +98,7 @@ describe('Braille document', () => {
         const tracedPosition = createGridPosition(0, 1)
         const unusedPosition = createGridPosition(0, 2)
         const emptyResult = recordCellImpression(
-            createBrailleDocument(),
+            createBrailleGrid(),
             emptyPosition,
             createCellImpression(),
         )
@@ -110,7 +106,7 @@ describe('Braille document', () => {
             throw new Error('Expected explicit space recording')
         }
         const tracedResult = recordCellImpression(
-            emptyResult.document,
+            emptyResult.grid,
             tracedPosition,
             createCellImpression(createBrailleCell(), [createBrailleDot(3)]),
         )
@@ -118,14 +114,16 @@ describe('Braille document', () => {
             throw new Error('Expected erased trace recording')
         }
 
-        expect(getCellImpression(tracedResult.document, emptyPosition)).toEqual(
-            { cell: { dots: [] }, erasedDots: [] },
-        )
+        expect(getCellImpression(tracedResult.grid, emptyPosition)).toEqual({
+            cell: { dots: [] },
+            erasedDots: [],
+        })
+        expect(getCellImpression(tracedResult.grid, tracedPosition)).toEqual({
+            cell: { dots: [] },
+            erasedDots: [3],
+        })
         expect(
-            getCellImpression(tracedResult.document, tracedPosition),
-        ).toEqual({ cell: { dots: [] }, erasedDots: [3] })
-        expect(
-            getCellImpression(tracedResult.document, unusedPosition),
+            getCellImpression(tracedResult.grid, unusedPosition),
         ).toBeUndefined()
     })
 
@@ -133,7 +131,7 @@ describe('Braille document', () => {
         const position = createGridPosition(1, 1)
         const firstImpression = createCellImpression(createBrailleCell([1]))
         const firstResult = recordCellImpression(
-            createBrailleDocument(),
+            createBrailleGrid(),
             position,
             firstImpression,
         )
@@ -142,17 +140,17 @@ describe('Braille document', () => {
         }
 
         const rejected = recordCellImpression(
-            firstResult.document,
+            firstResult.grid,
             position,
             createCellImpression(createBrailleCell([2])),
         )
 
         expect(rejected).toEqual({
             status: 'rejected',
-            document: firstResult.document,
+            grid: firstResult.grid,
             error: { type: 'position-already-used', position },
         })
-        expect(getCellImpression(firstResult.document, position)).toEqual(
+        expect(getCellImpression(firstResult.grid, position)).toEqual(
             firstImpression,
         )
     })
@@ -166,18 +164,18 @@ describe('Braille document', () => {
         )
     })
 
-    test('keeps document state immutable and serializable', () => {
+    test('keeps grid state immutable and serializable', () => {
         const result = recordCellImpression(
-            createBrailleDocument(),
+            createBrailleGrid(),
             createGridPosition(0, 0),
             createCellImpression(createBrailleCell([1, 2])),
         )
         if (result.status !== 'recorded') throw new Error('Expected recording')
 
         expect(Object.isFrozen(result)).toBe(true)
-        expect(Object.isFrozen(result.document)).toBe(true)
-        expect(Object.isFrozen(result.document.impressions)).toBe(true)
-        expect(JSON.parse(JSON.stringify(result.document))).toEqual({
+        expect(Object.isFrozen(result.grid)).toBe(true)
+        expect(Object.isFrozen(result.grid.impressions)).toBe(true)
+        expect(JSON.parse(JSON.stringify(result.grid))).toEqual({
             impressions: [
                 {
                     position: { row: 0, column: 0 },

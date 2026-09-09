@@ -5,9 +5,10 @@
 Esta capacidade concentra regras Braille independentes de experiência,
 dispositivo e apresentação. O módulo `machine` implementa o Motor da máquina
 Braille: recebe `MachineIntent` (Intenção da máquina) e produz estado, snapshot e
-eventos semânticos por uma transição pura. O módulo `document` preserva
-`CellImpression` (Impressão de cela) em posições explícitas de uma Grade Braille
-esparsa, sem atribuir texto às celas.
+eventos semânticos por uma transição pura. O módulo `document` inicia a fundação
+do Documento Braille ao preservar `CellImpression` (Impressão de cela) em
+posições explícitas de uma `BrailleGrid` (Grade Braille) esparsa, sem atribuir
+texto às celas.
 
 Não pertencem ao Motor: interpretação textual, Documento Braille, Sessão de
 digitação, origem física dos controles, React, DOM, áudio ou qualquer efeito
@@ -24,7 +25,7 @@ Consumidores e testes importam somente `braille/public.ts`. A interface oferece:
 - os tipos das intenções, operações, eventos, estado, snapshot e resultado.
 - `createCellImpression` para distinguir pontos elevados, vestígios de pontos
   apagados e espaço explícito;
-- `createGridPosition`, `createBrailleDocument`, `recordCellImpression` e
+- `createGridPosition`, `createBrailleGrid`, `recordCellImpression` e
   `getCellImpression` para registrar e consultar a produção por posição.
 
 Exemplo:
@@ -64,22 +65,27 @@ semântico em inglês, destinado ao consumo técnico e não à apresentação di
 Estado, snapshot, eventos e valores são serializáveis e não devem ser alterados
 pelo consumidor.
 
-## Documento Braille
+## Fundação do Documento Braille
 
 - `GridPosition` usa linhas e colunas inteiras, zero-based e não negativas.
-- Uma posição ausente em `BrailleDocument` nunca foi utilizada.
+- Uma posição ausente em `BrailleGrid` nunca foi utilizada.
 - Uma `CellImpression` vazia ocupa uma posição e registra um espaço explícito.
 - `erasedDots` preserva vestígios físicos separadamente dos pontos elevados em
   `cell`; o mesmo ponto não pode ocupar os dois estados.
 - `recordCellImpression` é imutável e rejeita uma posição já utilizada com
   `position-already-used`. Edição e sobrescrita pertencem ao corte posterior.
-- O documento contém somente geometria Braille. Texto, caracteres e significado
+- A grade contém somente geometria Braille. Texto, caracteres e significado
   pertencem à Interpretação Braille e não fazem parte desta interface.
+
+Este corte não publica um `BrailleDocument` parcial. A #39 comporá a Grade
+Braille com Configuração de papel, Folhas Braille ou Papel contínuo virtual,
+Posição de edição e Posição de revisão, conforme a ADR 0002. Assim, a conclusão
+do Documento não exigirá quebrar a interface da grade criada aqui.
 
 Coordenadas inválidas e sobreposição entre ponto elevado e apagado produzem
 `RangeError`. Tentativas válidas que conflitam com o estado do documento devolvem
-um `DocumentResult` (Resultado do Documento) com erro estruturado e preservam o
-estado anterior.
+um `GridResult` (Resultado da Grade) com erro estruturado e preservam o estado
+anterior.
 
 ## Dependências e adapters
 

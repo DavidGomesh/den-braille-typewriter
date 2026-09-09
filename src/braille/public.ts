@@ -21,12 +21,12 @@ export {
     type CellImpression,
 } from './document/impression'
 export {
-    createBrailleDocument,
+    createBrailleGrid,
     createGridPosition,
     getCellImpression,
     recordCellImpression,
-    type BrailleDocument,
-    type DocumentResult,
+    type BrailleGrid,
     type GridPosition,
+    type GridResult,
     type PositionedCellImpression,
 } from './document/document'
