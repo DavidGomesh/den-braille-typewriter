@@ -1,0 +1,22 @@
+export {
+    applySessionInput,
+    createTypingSession,
+    getTypingSessionSnapshot,
+    type CaptureState,
+    type EffectiveSessionConfiguration,
+    type SessionEvent,
+    type SessionInput,
+    type SessionInputSource,
+    type TypingSessionResult,
+    type TypingSessionOptions,
+    type TypingSessionSnapshot,
+    type TypingSessionState,
+} from './session'
+export {
+    mapWebKeyboardEvent,
+    createDefaultWebKeyboardBindings,
+    type WebKeyboardBindings,
+    type WebKeyboardEvent,
+    type WebKeyboardMapping,
+    type WebKeyboardCommand,
+} from './adapters/web/keyboard/keyboard'

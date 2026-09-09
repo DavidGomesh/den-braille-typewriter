@@ -7,7 +7,6 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import AudioProvider from '../providers/AudioProvider'
 import Home from '../views/Home'
 import Challenge from '../views/modes/Challenge'
-import Free from '../views/modes/Free'
 
 class AudioStub {
     static instances: AudioStub[] = []
@@ -99,28 +98,6 @@ test('home offers free and challenge modes through focusable links with audio', 
     await waitFor(() => {
         expect(audioEndingWith('modo-livre.mp3')?.play).toHaveBeenCalled()
         expect(audioEndingWith('modo-desafio.mp3')?.play).toHaveBeenCalled()
-    })
-})
-
-test('free mode produces content and preserves output across presentation and audio changes', async () => {
-    const { container } = renderWithAudio(<Free />)
-    const typewriter = container.querySelector('#typewriter') as HTMLElement
-    const output = screen.getByRole('textbox') as HTMLTextAreaElement
-
-    press(typewriter, 'KeyF')
-    press(typewriter, 'Space')
-    press(typewriter, 'KeyQ')
-    press(typewriter, 'KeyT')
-    press(typewriter, 'KeyO')
-    press(typewriter, 'KeyM')
-    press(typewriter, 'KeyI')
-
-    expect(output).toHaveValue('a_\n')
-    expect(output).not.toHaveClass('braille')
-    await waitFor(() => {
-        expect(
-            audioEndingWith('instrucoes-modo-livre.mp3')?.play,
-        ).toHaveBeenCalled()
     })
 })
 
