@@ -7,10 +7,12 @@ migra seu formato serializado e oferece uma seam pequena para carregamento e
 persistência. Ela não conhece React, Sessão de digitação, Documento Braille,
 áudio nem APIs do navegador.
 
-O schema atual, identificado por `version: 1`, preserva:
+O schema atual, identificado por `version: 2`, preserva:
 
 - visualização Braille ou a tinta;
-- áudio da saída e do teclado;
+- leitura falada explícita com localidade, preferência lógica de voz,
+  velocidade, pitch e volume;
+- sons opcionais da máquina;
 - códigos físicos associados aos controles configuráveis;
 - Modo de simulação Assistido ou Fidelidade física.
 
@@ -35,7 +37,7 @@ O carregamento sempre devolve preferências válidas e um resultado observável:
 | Status      | Significado                                                            |
 | ----------- | ---------------------------------------------------------------------- |
 | `loaded`    | O payload da versão atual foi validado.                                |
-| `migrated`  | Escolhas legadas da versão 0 foram convertidas para a versão atual.    |
+| `migrated`  | Escolhas das versões 0 ou 1 foram convertidas para a versão atual.     |
 | `defaulted` | Os padrões foram usados por ausência, invalidade ou indisponibilidade. |
 
 Payloads incompletos, códigos físicos vazios ou duplicados, versões desconhecidas
@@ -43,7 +45,8 @@ e JSON inválido não atravessam a interface. Falhas de leitura e escrita são
 convertidas em resultados; elas não interrompem nem revertem a Sessão de
 digitação corrente.
 
-Uma migração válida tenta gravar imediatamente o schema atual. Se essa gravação
+Snapshots da versão 1 recebem as novas preferências sem persistir nomes
+concretos de vozes. Uma migração válida tenta gravar imediatamente o schema atual. Se essa gravação
 falhar, as escolhas migradas continuam ativas na sessão corrente e o resultado
 expõe `migrationPersistence: 'failed'`.
 

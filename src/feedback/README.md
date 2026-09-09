@@ -40,13 +40,25 @@ coordenador. `ui/feedback/AccessibleFeedback.tsx` mostra cada plano preservado e
 atualiza uma região viva com o conteúdo equivalente sem mover o foco da área de
 digitação.
 
-Áudio e fala substituíveis serão conectados no corte seguinte da capacidade;
-esta etapa cobre o texto visual e as mensagens programáticas da issue #43.
+O adapter Web Speech recebe texto canônico, localidade BCP 47, finalidade e
+características portáveis. Ele seleciona primeiro a localidade completa, depois
+o idioma-base, sem transformar o nome bruto de uma voz em preferência.
+
+O adapter web de sons recebe identificadores semânticos e resolve assets dentro
+do catálogo. No Modo livre, leitura e sons podem ser ligados, desligados,
+repetidos ou interrompidos pelos atalhos documentados. Ausência ou falha da
+plataforma não remove o texto nem a semântica acessível.
+
+O `AudioProvider` permanece temporariamente apenas para destinos legados. O
+Modo livre não o consome, evitando feedback duplicado; ele será removido quando
+o último destino legado for substituído.
 
 ## Estratégia de testes
 
 - `feedback.test.ts` verifica decisões do planejador pela interface pública;
 - `tests/contracts/feedback-output.test.ts` verifica isolamento entre adapters;
+- `tests/contracts/web-speech-output.test.ts` verifica a Web Speech substituída;
+- `tests/contracts/web-sound-output.test.ts` verifica sons determinísticos;
 - `tests/journeys/free-mode.test.tsx` verifica equivalência de conteúdo e
   preservação de foco pelo DOM acessível.
 

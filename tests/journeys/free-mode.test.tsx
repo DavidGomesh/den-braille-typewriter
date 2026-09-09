@@ -45,13 +45,21 @@ const chord = (target: Element, codes: string[]) => {
 const audioEndingWith = (path: string) =>
     AudioStub.instances.find((audio) => audio.src.endsWith(path))
 
+const machineKeyAudio = () =>
+    AudioStub.instances.find((audio) =>
+        audio.src.includes('assets/audio/keys/key-pressed-'),
+    )
+
 beforeEach(() => {
     AudioStub.instances = []
     globalThis.Audio = AudioStub as unknown as typeof Audio
     globalThis.localStorage.clear()
 })
 
-afterEach(() => vi.restoreAllMocks())
+afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+})
 
 test('Modo livre digita pelo teclado focado sem criar outra fonte de verdade', async () => {
     renderFreeMode()
@@ -79,11 +87,6 @@ test('Modo livre digita pelo teclado focado sem criar outra fonte de verdade', a
     expect(output).toHaveValue('ab_\n^')
     expect(output).toHaveAttribute('readonly')
     expect(output).not.toHaveClass('braille')
-    await waitFor(() => {
-        expect(
-            audioEndingWith('instrucoes-modo-livre.mp3')?.play,
-        ).toHaveBeenCalled()
-    })
 })
 
 test('Modo livre interrompe acorde incompleto e permite pausar a captura', () => {
@@ -138,14 +141,10 @@ test('Free Mode preserves presentation preferences between typing sessions', asy
     fireEvent.focus(secondTypewriter)
     press(secondTypewriter, 'KeyO')
     press(secondTypewriter, 'KeyM')
+    press(secondTypewriter, 'KeyF')
 
     await waitFor(() => {
-        expect(
-            audioEndingWith('conversor-desmutado.mp3')?.play,
-        ).toHaveBeenCalled()
-        expect(
-            audioEndingWith('teclado-desmutado.mp3')?.play,
-        ).toHaveBeenCalled()
+        expect(machineKeyAudio()?.play).toHaveBeenCalled()
     })
 })
 
@@ -242,4 +241,80 @@ test('Free Mode preserves every important fact from an interrupted chord', () =>
     expect(accessibleFeedback).toHaveTextContent(
         'Captura interrompida porque a área de digitação perdeu o foco; o acorde incompleto foi descartado.',
     )
+})
+
+test('Free Mode speaks canonical feedback and lets the user repeat or stop it', () => {
+    class UtteranceStub {
+        lang = ''
+        voice: unknown
+        rate = 1
+        pitch = 1
+        volume = 1
+        onend?: () => void
+        onerror?: (event: { error?: string }) => void
+
+        constructor(public text: string) {}
+    }
+    const voice = {
+        name: 'Português local',
+        lang: 'pt-BR',
+        default: true,
+        localService: true,
+    }
+    const synthesis = {
+        getVoices: vi.fn(() => [voice]),
+        speak: vi.fn((utterance: UtteranceStub) => utterance.onend?.()),
+        cancel: vi.fn(),
+    }
+    vi.stubGlobal('SpeechSynthesisUtterance', UtteranceStub)
+    vi.stubGlobal('speechSynthesis', synthesis)
+    const defaults = createDefaultSimulatorPreferences()
+    globalThis.localStorage.setItem(
+        simulatorPreferencesStorageKey,
+        JSON.stringify({
+            ...defaults,
+            feedback: {
+                ...defaults.feedback,
+                speech: { ...defaults.feedback.speech, enabled: true },
+            },
+        }),
+    )
+    renderFreeMode()
+    const typewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    act(() => typewriter.focus())
+
+    expect(synthesis.speak).toHaveBeenCalledWith(
+        expect.objectContaining({
+            text: 'Captura de acordes ativada.',
+            lang: 'pt-BR',
+            voice,
+        }),
+    )
+    press(typewriter, 'KeyR')
+    expect(synthesis.speak).toHaveBeenCalledTimes(2)
+    press(typewriter, 'KeyP')
+    expect(synthesis.cancel).toHaveBeenCalledOnce()
+    expect(typewriter).toHaveFocus()
+})
+
+test('Free Mode remains usable when speech and sounds are unavailable', () => {
+    vi.stubGlobal('Audio', undefined)
+    renderFreeMode()
+    const typewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    act(() => typewriter.focus())
+    press(typewriter, 'KeyM')
+    press(typewriter, 'KeyO')
+    press(typewriter, 'KeyF')
+
+    expect(screen.getByRole('textbox')).toHaveValue('a')
+    expect(screen.getByRole('alert')).toHaveTextContent(
+        'A leitura falada está indisponível; o texto e as mensagens acessíveis continuam ativos.',
+    )
+    expect(typewriter).toHaveFocus()
 })

@@ -4,12 +4,16 @@ export type LegacyFreeModeAction =
     | 'view-toggled'
     | 'output-audio-toggled'
     | 'keyboard-audio-toggled'
+    | 'speech-stopped'
+    | 'speech-repeated'
 
 const actionByCode = new Map<string, LegacyFreeModeAction>([
     ['KeyI', 'instructions-requested'],
     ['KeyT', 'view-toggled'],
     ['KeyO', 'output-audio-toggled'],
     ['KeyM', 'keyboard-audio-toggled'],
+    ['KeyP', 'speech-stopped'],
+    ['KeyR', 'speech-repeated'],
 ])
 
 /** Converts a plain keyboard event into a legacy presentation action. */

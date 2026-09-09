@@ -11,6 +11,8 @@ Esta área descreve a arquitetura alvo da modernização. Ela é a fonte canôni
 - [Plano de migração](migration-plan.md): fases, pré-requisitos, versões, auditorias e rollback.
 - [Prontidão da Sessão para Alpha 1](session-alpha-1.md): portões, evidências e
   rollback do corte do Modo livre.
+- [Prontidão de Preferências e Feedback para Alpha 2](feedback-alpha-2.md):
+  portões e evidências das saídas substituíveis no Modo livre.
 - [Baseline operacional](modernization-baseline.md): marcos recuperáveis, jornadas essenciais, inventário legado e estratégia de rollback.
 - [Corte do build Vite](vite-build-baseline.md): comandos canônicos, artifact,
   evidências da coexistência encerrada e rollback do corte de plataforma.

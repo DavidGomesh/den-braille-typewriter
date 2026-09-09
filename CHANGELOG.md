@@ -10,6 +10,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
   com migração explícita, fallback seguro e adapters web e determinístico.
 - Planejador puro de Feedback multimodal com mensagens visuais e programáticas
   equivalentes no Modo livre e saídas determinísticas isoladas contra falhas.
+- Leitura falada por Web Speech e sons opcionais substituíveis no Modo livre,
+  com preferências portáveis, interrupção, repetição e fallback sem áudio.
 
 ## [3.0.0-alpha.1] - 2026-09-09
 
