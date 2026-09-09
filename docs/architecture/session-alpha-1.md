@@ -15,6 +15,7 @@ de digitação ao Modo livre. Ele não publica nem promove uma versão por si s�
   documento;
 - perda de foco e ocultação da página interrompem a captura conforme a política
   efetiva e não deixam controles ativos;
+- `Escape` pausa ou retoma intencionalmente a captura focada;
 - o `textarea` temporário é uma projeção somente leitura; o `BrailleDocument`
   mantido pela sessão é a única fonte de verdade;
 - o Modo desafio permanece no caminho legado até seu corte planejado.
@@ -32,6 +33,7 @@ Modo livre verifica também:
 5. navegação independente da Posição de revisão;
 6. preservação do conteúdo ao alternar apresentação e áudio;
 7. descarte de acorde incompleto após perda de foco.
+8. pausa e retomada explícitas da captura por teclado.
 
 Os testes de `session` e do adapter usam somente `session/public.ts`. A jornada
 React usa o DOM acessível e não inspeciona estado interno.

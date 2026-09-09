@@ -15,20 +15,20 @@ import {
     type ReviewDirection,
 } from '../braille/public'
 
-/** A stable identifier supplied by an input adapter. */
-export type SessionInputSource = string
+/** The input adapters allowed to participate in chord ownership. */
+export type SessionInputSource = 'web-keyboard' | 'assisted-composition'
 
 /** Policies in force for this session after experience requirements are applied. */
 export type EffectiveSessionConfiguration = Readonly<{
     interruptionPolicy: 'discard' | 'confirm'
 }>
 
-/** Whether an input source currently owns intentional machine capture. */
+/** Whether capture is inactive or active, optionally with a chord owner. */
 export type CaptureState =
     | Readonly<{ status: 'inactive' }>
     | Readonly<{
           status: 'active'
-          source: SessionInputSource
+          owner?: SessionInputSource
       }>
 
 /**
@@ -49,7 +49,6 @@ export type TypingSessionState = Readonly<{
 export type SessionInput =
     | Readonly<{
           type: 'activate-capture'
-          source: SessionInputSource
       }>
     | Readonly<{
           type: 'machine-intent'
@@ -70,7 +69,6 @@ export type SessionEvent =
     | EngineEvent
     | Readonly<{
           type: 'capture-activated'
-          source: SessionInputSource
       }>
     | Readonly<{
           type: 'session-input-rejected'
@@ -111,6 +109,16 @@ export type TypingSessionOptions = Readonly<{
 
 const inactiveCapture = (): CaptureState =>
     Object.freeze({ status: 'inactive' })
+
+const activeCapture = (owner?: SessionInputSource): CaptureState =>
+    owner === undefined
+        ? Object.freeze({ status: 'active' })
+        : Object.freeze({ status: 'active', owner })
+
+const engineIsIdle = (engine: EngineState) =>
+    engine.accumulatedDots.length === 0 &&
+    engine.pressedDots.length === 0 &&
+    engine.pressedControls.length === 0
 
 const freezeState = (
     engine: EngineState,
@@ -196,7 +204,8 @@ export const createTypingSession = (
  *
  * Machine operations update the Braille document before the snapshot is
  * derived. Inputs from an inactive or non-responsible source preserve state and
- * produce `session-input-rejected`. Interruption applies the effective policy,
+ * produce `session-input-rejected`. The source that starts a chord owns it
+ * until the engine becomes idle. Interruption applies the effective policy,
  * clears every active control, and deactivates capture.
  */
 export const applySessionInput = (
@@ -204,20 +213,8 @@ export const applySessionInput = (
     input: SessionInput,
 ): TypingSessionResult => {
     if (input.type === 'activate-capture') {
-        if (state.capture.status === 'active') {
-            if (state.capture.source === input.source)
-                return createResult(state)
-            return createResult(state, [
-                Object.freeze({
-                    type: 'session-input-rejected',
-                    reason: 'source-not-responsible',
-                }),
-            ])
-        }
-        const capture = Object.freeze({
-            status: 'active' as const,
-            source: input.source,
-        })
+        if (state.capture.status === 'active') return createResult(state)
+        const capture = activeCapture()
         return createResult(
             freezeState(
                 state.engine,
@@ -226,12 +223,7 @@ export const applySessionInput = (
                 state.effectiveConfiguration,
                 capture,
             ),
-            [
-                Object.freeze({
-                    type: 'capture-activated',
-                    source: input.source,
-                }),
-            ],
+            [Object.freeze({ type: 'capture-activated' })],
         )
     }
 
@@ -281,7 +273,10 @@ export const applySessionInput = (
             }),
         ])
     }
-    if (state.capture.source !== input.source) {
+    if (
+        state.capture.owner !== undefined &&
+        state.capture.owner !== input.source
+    ) {
         return createResult(state, [
             Object.freeze({
                 type: 'session-input-rejected',
@@ -290,5 +285,26 @@ export const applySessionInput = (
         ])
     }
 
-    return applyMachineTransition(state, input.intent, state.capture)
+    const owner = state.capture.owner ?? input.source
+    const engineResult = applyIntent(state.engine, input.intent)
+    const capture = engineIsIdle(engineResult.state)
+        ? activeCapture()
+        : activeCapture(owner)
+    const document = engineResult.events.reduce(
+        (current, event) =>
+            event.type === 'operation-produced'
+                ? applyDocumentOperation(current, event.operation)
+                : current,
+        state.document,
+    )
+    return createResult(
+        freezeState(
+            engineResult.state,
+            document,
+            state.profile,
+            state.effectiveConfiguration,
+            capture,
+        ),
+        engineResult.events,
+    )
 }

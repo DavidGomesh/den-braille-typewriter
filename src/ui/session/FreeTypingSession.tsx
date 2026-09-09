@@ -1,43 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FocusEvent, KeyboardEvent } from 'react'
 
-import {
-    createOrthographyProfile,
-    createPaperConfiguration,
-} from '../../braille/public'
+import type { MachineControl } from '../../braille/public'
 import Keyboard from '../../components/Keyboard'
 import { Cell, cellToString } from '../../domain/Cell'
 import { Key } from '../../domain/Key'
-import { useAudioContext } from '../../providers/AudioProvider'
 import {
-    applySessionInput,
-    createTypingSession,
-    getTypingSessionSnapshot,
     mapWebKeyboardEvent,
     type SessionInput,
-    type TypingSessionState,
+    type TypingSessionSnapshot,
 } from '../../session/public'
+import {
+    legacyFreeModeActionForKey,
+    type LegacyFreeModeAction,
+} from './legacyFreeModeKeyboard'
 
 const keyboardSource = 'web-keyboard'
-
-const createFreeSession = () =>
-    createTypingSession({
-        paper: createPaperConfiguration({
-            type: 'continuous',
-            columns: 40,
-        }),
-        profile: createOrthographyProfile('portuguese-braille-2018'),
-        effectiveConfiguration: { interruptionPolicy: 'discard' },
-    })
-
-const applyInputs = (
-    state: TypingSessionState,
-    inputs: readonly SessionInput[],
-) =>
-    inputs.reduce(
-        (current, input) => applySessionInput(current, input).state,
-        state,
-    )
 
 const initialKeyStatus = {
     [Key.DOT1]: false,
@@ -51,30 +29,26 @@ const initialKeyStatus = {
     [Key.BACKSPACE]: false,
 }
 
-const visualKeyByCode = new Map<string, keyof typeof initialKeyStatus>([
-    ['KeyF', Key.DOT1],
-    ['KeyD', Key.DOT2],
-    ['KeyS', Key.DOT3],
-    ['KeyJ', Key.DOT4],
-    ['KeyK', Key.DOT5],
-    ['KeyL', Key.DOT6],
-    ['Space', Key.SPACE],
-    ['KeyQ', Key.ENTER],
-    ['Backspace', Key.BACKSPACE],
-])
+const visualKeyForControl = (
+    control: MachineControl,
+): keyof typeof initialKeyStatus => {
+    if (control.type === 'dot') {
+        const dotKeys: ReadonlyArray<keyof typeof initialKeyStatus> = [
+            Key.DOT1,
+            Key.DOT2,
+            Key.DOT3,
+            Key.DOT4,
+            Key.DOT5,
+            Key.DOT6,
+        ]
+        return dotKeys[control.dot - 1]
+    }
+    if (control.type === 'space') return Key.SPACE
+    if (control.type === 'backspace') return Key.BACKSPACE
+    return Key.ENTER
+}
 
-const reviewDirectionByCode: ReadonlyMap<
-    string,
-    'up' | 'right' | 'down' | 'left'
-> = new Map([
-    ['ArrowUp', 'up'],
-    ['ArrowRight', 'right'],
-    ['ArrowDown', 'down'],
-    ['ArrowLeft', 'left'],
-])
-
-const legacyText = (state: TypingSessionState) => {
-    const snapshot = getTypingSessionSnapshot(state)
+const legacyText = (snapshot: TypingSessionSnapshot) => {
     const rows: string[][] = []
     const paper = snapshot.document.paper
     const absoluteRow = (sheet: number, row: number) =>
@@ -103,34 +77,24 @@ const legacyText = (state: TypingSessionState) => {
 
 /** Temporary legacy-presentation callbacks for the modern free typing session. */
 export type FreeTypingSessionProps = Readonly<{
-    onInstructionsRequested: () => void
+    snapshot: TypingSessionSnapshot
+    dispatch: (input: SessionInput) => void
+    onPresentationAction: (action: LegacyFreeModeAction) => void
+    onMachineKeyPressed: () => void
 }>
 
 export default function FreeTypingSession({
-    onInstructionsRequested,
+    snapshot,
+    dispatch,
+    onPresentationAction,
+    onMachineKeyPressed,
 }: FreeTypingSessionProps) {
-    const [session, setSession] = useState(createFreeSession)
     const [showBraille, setShowBraille] = useState(true)
     const [, setOutputMuted] = useState(false)
     const [keyboardMuted, setKeyboardMuted] = useState(false)
     const [keyStatus, setKeyStatus] = useState(initialKeyStatus)
-    const {
-        playKeyPress,
-        playKeyboardMuted,
-        playKeyboardUnmuted,
-        playOutputMuted,
-        playOutputUnmuted,
-        playBrailleViewAudio,
-        playInkViewAudio,
-    } = useAudioContext()
 
-    const output = useMemo(() => legacyText(session), [session])
-
-    const dispatch = useCallback(
-        (input: SessionInput) =>
-            setSession((current) => applySessionInput(current, input).state),
-        [],
-    )
+    const output = useMemo(() => legacyText(snapshot), [snapshot])
 
     const interrupt = useCallback(
         (cause: 'focus-loss' | 'page-hidden' | 'pause') =>
@@ -150,8 +114,13 @@ export default function FreeTypingSession({
             )
     }, [interrupt])
 
-    const handleFocus = () =>
-        dispatch({ type: 'activate-capture', source: keyboardSource })
+    useEffect(() => {
+        if (snapshot.capture.status === 'inactive') {
+            setKeyStatus(initialKeyStatus)
+        }
+    }, [snapshot.capture.status])
+
+    const handleFocus = () => dispatch({ type: 'activate-capture' })
 
     const handleBlur = (event: FocusEvent<HTMLElement>) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
@@ -160,45 +129,16 @@ export default function FreeTypingSession({
     }
 
     const handlePresentationKey = (event: KeyboardEvent<HTMLElement>) => {
-        if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) {
-            return false
-        }
-        if (event.code === 'KeyI') {
-            event.preventDefault()
-            onInstructionsRequested()
-            return true
-        }
-        if (event.code === 'KeyT') {
-            event.preventDefault()
-            setShowBraille((current) => {
-                current ? playInkViewAudio() : playBrailleViewAudio()
-                return !current
-            })
-            return true
-        }
-        if (event.code === 'KeyO') {
-            event.preventDefault()
-            setOutputMuted((current) => {
-                current ? playOutputUnmuted() : playOutputMuted()
-                return !current
-            })
-            return true
-        }
-        if (event.code === 'KeyM') {
-            event.preventDefault()
-            setKeyboardMuted((current) => {
-                current ? playKeyboardUnmuted() : playKeyboardMuted()
-                return !current
-            })
-            return true
-        }
-        const reviewDirection = reviewDirectionByCode.get(event.code)
-        if (reviewDirection !== undefined) {
-            event.preventDefault()
-            dispatch({ type: 'move-review', direction: reviewDirection })
-            return true
-        }
-        return false
+        const action = legacyFreeModeActionForKey(event)
+        if (action === undefined) return false
+        event.preventDefault()
+        if (action === 'view-toggled') setShowBraille((current) => !current)
+        if (action === 'output-audio-toggled')
+            setOutputMuted((current) => !current)
+        if (action === 'keyboard-audio-toggled')
+            setKeyboardMuted((current) => !current)
+        onPresentationAction(action)
+        return true
     }
 
     const handleKeyboardEvent = (
@@ -211,24 +151,29 @@ export default function FreeTypingSession({
         if (!mapping.handled) return
         event.preventDefault()
 
-        const visualKey = visualKeyByCode.get(event.code)
-        if (visualKey !== undefined) {
+        if (mapping.control !== undefined) {
+            const visualKey = visualKeyForControl(mapping.control)
             setKeyStatus((current) => ({
                 ...current,
                 [visualKey]: type === 'press',
             }))
         }
-        if (type === 'press' && !event.repeat && !keyboardMuted) playKeyPress()
+        if (type === 'press' && !event.repeat && !keyboardMuted)
+            onMachineKeyPressed()
 
-        setSession((current) =>
-            applyInputs(
-                current,
-                mapping.intents.map((intent) => ({
-                    type: 'machine-intent',
-                    source: keyboardSource,
-                    intent,
-                })),
-            ),
+        if (mapping.command?.type === 'move-review') {
+            dispatch(mapping.command)
+        } else if (mapping.command?.type === 'toggle-capture') {
+            snapshot.capture.status === 'active'
+                ? interrupt('pause')
+                : dispatch({ type: 'activate-capture' })
+        }
+        mapping.intents.forEach((intent) =>
+            dispatch({
+                type: 'machine-intent',
+                source: keyboardSource,
+                intent,
+            }),
         )
     }
 
@@ -246,11 +191,11 @@ export default function FreeTypingSession({
         >
             <div className="fs-1">MODO LIVRE</div>
             <div role="status" aria-live="polite">
-                {session.capture.status === 'active'
+                {snapshot.capture.status === 'active'
                     ? 'Captura ativa'
                     : 'Captura inativa'}{' '}
-                — revisão: linha {session.document.reviewPosition.row + 1},
-                coluna {session.document.reviewPosition.column + 1}
+                — revisão: linha {snapshot.document.reviewPosition.row + 1},
+                coluna {snapshot.document.reviewPosition.column + 1}
             </div>
             <div className="d-flex justify-content-center w-100 fs-5 gap-3 mb-3">
                 <div>
@@ -264,6 +209,9 @@ export default function FreeTypingSession({
                 </div>
                 <div>
                     <strong>(m)</strong> Liga/desliga áudio do teclado
+                </div>
+                <div>
+                    <strong>(Esc)</strong> Pausa/retoma a captura
                 </div>
             </div>
             <textarea

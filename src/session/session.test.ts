@@ -35,7 +35,6 @@ const createConfirmingSession = () =>
 const activateKeyboardCapture = (state: TypingSessionState) =>
     applySessionInput(state, {
         type: 'activate-capture',
-        source: 'web-keyboard',
     }).state
 
 describe('Typing session', () => {
@@ -67,10 +66,7 @@ describe('Typing session', () => {
                 reason: 'capture-inactive',
             },
         ])
-        expect(released.snapshot.capture).toEqual({
-            status: 'active',
-            source: 'web-keyboard',
-        })
+        expect(released.snapshot.capture).toEqual({ status: 'active' })
         expect(
             getDocumentCellImpression(released.state.document, {
                 sheet: 0,
@@ -129,21 +125,48 @@ describe('Typing session', () => {
         ])
     })
 
-    test('keeps the active input source responsible for capture', () => {
+    test('keeps the initiating source responsible only until its chord ends', () => {
         const active = activateKeyboardCapture(createSession())
-
-        const rejected = applySessionInput(active, {
-            type: 'activate-capture',
-            source: 'another-input-adapter',
+        const dot1 = createBrailleDot(1)
+        const pressed = applySessionInput(active, {
+            type: 'machine-intent',
+            source: 'web-keyboard',
+            intent: { type: 'press', control: { type: 'dot', dot: dot1 } },
+        })
+        const rejected = applySessionInput(pressed.state, {
+            type: 'machine-intent',
+            source: 'assisted-composition',
+            intent: {
+                type: 'press',
+                control: { type: 'dot', dot: createBrailleDot(2) },
+            },
+        })
+        const released = applySessionInput(rejected.state, {
+            type: 'machine-intent',
+            source: 'web-keyboard',
+            intent: { type: 'release', control: { type: 'dot', dot: dot1 } },
+        })
+        const nextSource = applySessionInput(released.state, {
+            type: 'machine-intent',
+            source: 'assisted-composition',
+            intent: {
+                type: 'press',
+                control: { type: 'dot', dot: createBrailleDot(2) },
+            },
         })
 
-        expect(rejected.state).toBe(active)
+        expect(rejected.state).toBe(pressed.state)
         expect(rejected.events).toEqual([
             {
                 type: 'session-input-rejected',
                 reason: 'source-not-responsible',
             },
         ])
+        expect(released.snapshot.capture).toEqual({ status: 'active' })
+        expect(nextSource.snapshot.capture).toEqual({
+            status: 'active',
+            owner: 'assisted-composition',
+        })
     })
 
     test('confirms an unfinished chord when required by effective configuration', () => {

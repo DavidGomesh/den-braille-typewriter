@@ -14,6 +14,9 @@ export {
 } from './session'
 export {
     mapWebKeyboardEvent,
+    createDefaultWebKeyboardBindings,
+    type WebKeyboardBindings,
     type WebKeyboardEvent,
     type WebKeyboardMapping,
+    type WebKeyboardCommand,
 } from './adapters/web/keyboard/keyboard'

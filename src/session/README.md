@@ -38,7 +38,6 @@ let session = createTypingSession({
 
 session = applySessionInput(session, {
     type: 'activate-capture',
-    source: 'web-keyboard',
 }).state
 
 session = applySessionInput(session, {
@@ -55,8 +54,9 @@ session = applySessionInput(session, {
 
 - A captura começa inativa e uma Intenção da máquina fora dela produz
   `session-input-rejected` sem alterar estado.
-- A ativação registra a fonte responsável. Outra fonte não pode assumir uma
-  captura ativa silenciosamente.
+- O primeiro adapter que inicia um acorde torna-se responsável por ele. A posse
+  termina quando o Motor volta ao repouso, permitindo que outra fonte inicie o
+  acorde seguinte sem disputar controles ainda pressionados.
 - A UI controla a região focável e informa perda de foco, pausa ou ocultação da
   página por `interrupt-capture`.
 - A interrupção usa `interruptionPolicy` da Configuração efetiva para confirmar
@@ -69,8 +69,9 @@ session = applySessionInput(session, {
 ## Adapter web de teclado
 
 `mapWebKeyboardEvent` recebe somente os campos de teclado de que necessita e
-devolve Intenções da máquina. A UI decide onde instalar os handlers e chama
-`preventDefault` apenas quando `handled` é verdadeiro.
+devolve Intenções da máquina, o Controle lógico para apresentação visual ou um
+Comando da sessão. A UI decide onde instalar os handlers e chama `preventDefault`
+apenas quando `handled` é verdadeiro.
 
 | Código físico | Controle lógico                                  |
 | ------------- | ------------------------------------------------ |
@@ -79,17 +80,20 @@ devolve Intenções da máquina. A UI decide onde instalar os handlers e chama
 | `Space`       | Espaço                                           |
 | `Backspace`   | Retrocesso                                       |
 | `Q`           | Espaçamento de linha seguido de Retorno do carro |
+| Setas         | Movimento da Posição de revisão                  |
+| `Escape`      | Pausa ou retomada da captura                     |
 
 Teclas modificadas e não mapeadas permanecem disponíveis ao navegador. A
 repetição automática é consumida sem repetir a Intenção da máquina.
 
 ## Integração temporária do Modo livre
 
-`ui/session/FreeTypingSession.tsx` é o adapter de apresentação temporário. Ele
-controla foco, estado visual efêmero e atalhos legados, projeta o snapshot no
-`textarea` somente leitura e usa o teclado visual existente. A lista legada de
-celas não participa do Modo livre; o Modo desafio continua no caminho anterior
-até seu corte próprio.
+`views/modes/Free.tsx` compõe a sessão, o feedback legado e a apresentação.
+`ui/session/FreeTypingSession.tsx` recebe somente o snapshot e callbacks:
+controla foco e estado visual efêmero, projeta o snapshot no `textarea` somente
+leitura e usa o teclado visual existente. A lista legada de celas não participa
+do Modo livre; o Modo desafio continua no caminho anterior até seu corte
+próprio.
 
 As setas enviam `move-review` diretamente à sessão; não fingem ser Controles da
 máquina. O estado acessível informa captura e Posição de revisão.
@@ -99,7 +103,7 @@ máquina. O estado acessível informa captura e Posição de revisão.
 - `session.test.ts` exerce criação, captura, fonte responsável, políticas de
   interrupção e atualização do documento pela interface pública;
 - `adapters/web/keyboard/keyboard.test.ts` verifica o contrato do adapter;
-- `tests/Journeys.test.tsx` cobre foco, teclado, controles essenciais,
+- `tests/journeys/free-mode.test.tsx` cobre foco, teclado, controles essenciais,
   interrupção e projeção no Modo livre pelo DOM acessível.
 
 ## Referências

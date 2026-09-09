@@ -34,7 +34,10 @@ module.exports = {
             },
         },
         {
-            files: ['src/tests/**/*.{js,jsx,ts,tsx}'],
+            files: [
+                'src/tests/**/*.{js,jsx,ts,tsx}',
+                'tests/**/*.{js,jsx,ts,tsx}',
+            ],
             extends: ['plugin:testing-library/react'],
         },
     ],

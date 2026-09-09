@@ -7,7 +7,6 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import AudioProvider from '../providers/AudioProvider'
 import Home from '../views/Home'
 import Challenge from '../views/modes/Challenge'
-import Free from '../views/modes/Free'
 
 class AudioStub {
     static instances: AudioStub[] = []
@@ -100,66 +99,6 @@ test('home offers free and challenge modes through focusable links with audio', 
         expect(audioEndingWith('modo-livre.mp3')?.play).toHaveBeenCalled()
         expect(audioEndingWith('modo-desafio.mp3')?.play).toHaveBeenCalled()
     })
-})
-
-test('free mode produces content and preserves output across presentation and audio changes', async () => {
-    renderWithAudio(<Free />)
-    const typewriter = screen.getByRole('region', {
-        name: 'Área de digitação Braille',
-    })
-    const output = screen.getByRole('textbox') as HTMLTextAreaElement
-
-    expect(fireEvent.keyDown(document.body, { code: 'KeyF' })).toBe(true)
-    expect(output).toHaveValue('')
-
-    fireEvent.focus(typewriter)
-    press(typewriter, 'KeyF')
-    press(typewriter, 'Space')
-    press(typewriter, 'Backspace')
-    chord(typewriter, ['KeyF', 'KeyD'])
-    press(typewriter, 'Space')
-    press(typewriter, 'KeyQ')
-    press(typewriter, 'KeyJ')
-    press(typewriter, 'KeyT')
-    press(typewriter, 'KeyO')
-    press(typewriter, 'KeyM')
-    press(typewriter, 'KeyI')
-
-    expect(output).toHaveValue('ab_\n^')
-    expect(output).toHaveAttribute('readonly')
-    expect(output).not.toHaveClass('braille')
-    await waitFor(() => {
-        expect(
-            audioEndingWith('instrucoes-modo-livre.mp3')?.play,
-        ).toHaveBeenCalled()
-    })
-})
-
-test('free mode interrupts an unfinished chord when its capture region loses focus', () => {
-    renderWithAudio(<Free />)
-    const typewriter = screen.getByRole('region', {
-        name: 'Área de digitação Braille',
-    })
-    const output = screen.getByRole('textbox')
-    const captureStatus = screen.getByRole('status')
-
-    expect(captureStatus).toHaveTextContent('Captura inativa')
-    fireEvent.focus(typewriter)
-    expect(captureStatus).toHaveTextContent('Captura ativa')
-
-    fireEvent.keyDown(typewriter, { code: 'KeyF' })
-    fireEvent.blur(typewriter, { relatedTarget: document.body })
-    fireEvent.keyUp(typewriter, { code: 'KeyF' })
-
-    expect(captureStatus).toHaveTextContent('Captura inativa')
-    expect(output).toHaveValue('')
-
-    fireEvent.focus(typewriter)
-    press(typewriter, 'KeyF')
-    expect(output).toHaveValue('a')
-
-    press(typewriter, 'ArrowRight')
-    expect(captureStatus).toHaveTextContent('revisão: linha 1, coluna 2')
 })
 
 test('challenge mode reports errors and advances after a correct chord response', async () => {
