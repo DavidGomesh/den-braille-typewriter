@@ -16,3 +16,17 @@ export {
     type MachineIntent,
     type MachineOperation,
 } from './machine/machine'
+export {
+    createCellImpression,
+    type CellImpression,
+} from './document/impression'
+export {
+    createBrailleGrid,
+    createGridPosition,
+    getCellImpression,
+    recordCellImpression,
+    type BrailleGrid,
+    type GridPosition,
+    type GridResult,
+    type PositionedCellImpression,
+} from './document/document'
