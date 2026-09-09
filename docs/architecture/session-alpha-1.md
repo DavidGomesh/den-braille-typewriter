@@ -52,9 +52,11 @@ React usa o DOM acessível e não inspeciona estado interno.
 - baselines herdadas: 8 falhas de lint isoladas; auditoria com 0
   vulnerabilidades críticas, 4 altas, 1 moderada e 0 baixas.
 
-A verificação manual abaixo não foi executada neste corte porque não havia um
-navegador disponível no ambiente do agente. Ela continua sendo um portão humano
-do marco de release e não é declarada como aprovada por esta evidência.
+A verificação manual abaixo foi executada pelo mantenedor em 9 de setembro de
+2026, após o pipeline automatizado, e a jornada foi aprovada sem problemas
+observados. Navegador, sistema operacional e tecnologias assistivas usados não
+foram registrados; por isso, essa validação não substitui a matriz completa de
+acessibilidade do marco de release.
 
 ## Verificação manual
 
