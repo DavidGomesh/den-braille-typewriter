@@ -5,6 +5,7 @@ import type { MachineControl } from '../../braille/public'
 import Keyboard from '../../components/Keyboard'
 import { Cell, cellToString } from '../../domain/Cell'
 import { Key } from '../../domain/Key'
+import type { SimulatorPreferences } from '../../preferences/public'
 import {
     mapWebKeyboardEvent,
     type SessionInput,
@@ -81,6 +82,7 @@ export type FreeTypingSessionProps = Readonly<{
     snapshot: TypingSessionSnapshot
     dispatch: (input: SessionInput) => void
     keyboardBindings: WebKeyboardBindings
+    presentationPreferences: SimulatorPreferences['presentation']
     onPresentationAction: (action: LegacyFreeModeAction) => void
     onMachineKeyPressed: () => void
 }>
@@ -89,12 +91,10 @@ export default function FreeTypingSession({
     snapshot,
     dispatch,
     keyboardBindings,
+    presentationPreferences,
     onPresentationAction,
     onMachineKeyPressed,
 }: FreeTypingSessionProps) {
-    const [showBraille, setShowBraille] = useState(true)
-    const [, setOutputMuted] = useState(false)
-    const [keyboardMuted, setKeyboardMuted] = useState(false)
     const [keyStatus, setKeyStatus] = useState(initialKeyStatus)
 
     const output = useMemo(() => legacyText(snapshot), [snapshot])
@@ -135,11 +135,6 @@ export default function FreeTypingSession({
         const action = legacyFreeModeActionForKey(event)
         if (action === undefined) return false
         event.preventDefault()
-        if (action === 'view-toggled') setShowBraille((current) => !current)
-        if (action === 'output-audio-toggled')
-            setOutputMuted((current) => !current)
-        if (action === 'keyboard-audio-toggled')
-            setKeyboardMuted((current) => !current)
         onPresentationAction(action)
         return true
     }
@@ -161,7 +156,11 @@ export default function FreeTypingSession({
                 [visualKey]: type === 'press',
             }))
         }
-        if (type === 'press' && !event.repeat && !keyboardMuted)
+        if (
+            type === 'press' &&
+            !event.repeat &&
+            presentationPreferences.keyboardAudioEnabled
+        )
             onMachineKeyPressed()
 
         if (mapping.command?.type === 'move-review') {
@@ -219,7 +218,7 @@ export default function FreeTypingSession({
             </div>
             <textarea
                 aria-label="Saída de Celas Braille digitadas"
-                className={`form-control p-5 mb-3 ${showBraille ? 'braille' : ''}`}
+                className={`form-control p-5 mb-3 ${presentationPreferences.view === 'braille' ? 'braille' : ''}`}
                 readOnly
                 rows={3}
                 value={output}

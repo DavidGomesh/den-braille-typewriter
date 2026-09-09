@@ -4,6 +4,10 @@ import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
 import AudioProvider from '../../src/providers/AudioProvider'
+import {
+    createDefaultSimulatorPreferences,
+    simulatorPreferencesStorageKey,
+} from '../../src/preferences/public'
 import Free from '../../src/views/modes/Free'
 
 class AudioStub {
@@ -44,6 +48,7 @@ const audioEndingWith = (path: string) =>
 beforeEach(() => {
     AudioStub.instances = []
     globalThis.Audio = AudioStub as unknown as typeof Audio
+    globalThis.localStorage.clear()
 })
 
 afterEach(() => vi.restoreAllMocks())
@@ -108,4 +113,82 @@ test('Modo livre interrompe acorde incompleto e permite pausar a captura', () =>
     expect(captureStatus).toHaveTextContent('Captura inativa')
     press(typewriter, 'Escape')
     expect(captureStatus).toHaveTextContent('Captura ativa')
+})
+
+test('Modo livre preserves presentation preferences between typing sessions', async () => {
+    const firstSession = renderFreeMode()
+    const firstTypewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    fireEvent.focus(firstTypewriter)
+    press(firstTypewriter, 'KeyT')
+    press(firstTypewriter, 'KeyO')
+    press(firstTypewriter, 'KeyM')
+    expect(screen.getByRole('textbox')).not.toHaveClass('braille')
+
+    firstSession.unmount()
+    AudioStub.instances = []
+    renderFreeMode()
+    const secondTypewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    expect(screen.getByRole('textbox')).not.toHaveClass('braille')
+    fireEvent.focus(secondTypewriter)
+    press(secondTypewriter, 'KeyO')
+    press(secondTypewriter, 'KeyM')
+
+    await waitFor(() => {
+        expect(
+            audioEndingWith('conversor-desmutado.mp3')?.play,
+        ).toHaveBeenCalled()
+        expect(
+            audioEndingWith('teclado-desmutado.mp3')?.play,
+        ).toHaveBeenCalled()
+    })
+})
+
+test('Modo livre keeps the current session usable when persistence fails', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('storage denied')
+    })
+    renderFreeMode()
+    const typewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    fireEvent.focus(typewriter)
+    press(typewriter, 'KeyT')
+    press(typewriter, 'KeyF')
+
+    expect(screen.getByRole('textbox')).not.toHaveClass('braille')
+    expect(screen.getByRole('textbox')).toHaveValue('a')
+    expect(screen.getByRole('alert')).toHaveTextContent(
+        'A preferência foi aplicada nesta sessão, mas não pôde ser salva.',
+    )
+})
+
+test('Modo livre uses persisted keyboard bindings in a new session', () => {
+    const defaults = createDefaultSimulatorPreferences()
+    globalThis.localStorage.setItem(
+        simulatorPreferencesStorageKey,
+        JSON.stringify({
+            ...defaults,
+            keyboardBindings: {
+                ...defaults.keyboardBindings,
+                dot1: 'KeyA',
+            },
+        }),
+    )
+    renderFreeMode()
+    const typewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    fireEvent.focus(typewriter)
+    press(typewriter, 'KeyF')
+    expect(screen.getByRole('textbox')).toHaveValue('')
+    press(typewriter, 'KeyA')
+    expect(screen.getByRole('textbox')).toHaveValue('a')
 })

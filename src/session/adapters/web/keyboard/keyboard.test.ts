@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 
 import {
     createDefaultWebKeyboardBindings,
+    createWebKeyboardBindings,
     mapWebKeyboardEvent,
 } from '../../../public'
 
@@ -137,6 +138,42 @@ describe('Web keyboard adapter', () => {
                     control: { type: 'dot', dot: 1 },
                 },
             ],
+        })
+    })
+
+    test('builds adapter bindings from persisted keyboard preferences', () => {
+        const bindings = createWebKeyboardBindings({
+            dot1: 'KeyA',
+            dot2: 'KeyD',
+            dot3: 'KeyS',
+            dot4: 'KeyJ',
+            dot5: 'KeyK',
+            dot6: 'KeyL',
+            space: 'Space',
+            backspace: 'Backspace',
+            lineChange: 'KeyQ',
+            reviewUp: 'ArrowUp',
+            reviewRight: 'ArrowRight',
+            reviewDown: 'ArrowDown',
+            reviewLeft: 'ArrowLeft',
+            toggleCapture: 'Escape',
+        })
+
+        expect(
+            mapWebKeyboardEvent(
+                {
+                    code: 'KeyA',
+                    repeat: false,
+                    ctrlKey: false,
+                    altKey: false,
+                    metaKey: false,
+                },
+                'press',
+                bindings,
+            ),
+        ).toMatchObject({
+            handled: true,
+            control: { type: 'dot', dot: 1 },
         })
     })
 })

@@ -15,6 +15,7 @@ export {
 export {
     mapWebKeyboardEvent,
     createDefaultWebKeyboardBindings,
+    createWebKeyboardBindings,
     type WebKeyboardBindings,
     type WebKeyboardEvent,
     type WebKeyboardMapping,

@@ -9,27 +9,59 @@ import {
 } from '../../braille/public'
 import {
     applySessionInput,
-    createDefaultWebKeyboardBindings,
+    createWebKeyboardBindings,
     createTypingSession,
     getTypingSessionSnapshot,
     type SessionInput,
 } from '../../session/public'
 import { FreeTypingSession, type LegacyFreeModeAction } from '../../ui/public'
+import {
+    applySimulatorPreferenceChange,
+    createLocalStoragePreferencesStorage,
+    loadSimulatorPreferences,
+    resolveEffectiveSessionConfiguration,
+    saveSimulatorPreferences,
+    type SimulatorPreferenceChange,
+    type SimulatorPreferences,
+} from '../../preferences/public'
 
-const createFreeSession = () =>
+const freeModeRequirements = Object.freeze({})
+
+const createFreeSession = (preferences: SimulatorPreferences) =>
     createTypingSession({
         paper: createPaperConfiguration({
             type: 'continuous',
             columns: 40,
         }),
         profile: createOrthographyProfile('portuguese-braille-2018'),
-        effectiveConfiguration: { interruptionPolicy: 'discard' },
+        effectiveConfiguration: resolveEffectiveSessionConfiguration(
+            preferences,
+            freeModeRequirements,
+        ).configuration,
     })
 
 export default function Free() {
-    const [session, setSession] = useState(createFreeSession)
+    const preferencesStorage = useMemo(createLocalStoragePreferencesStorage, [])
+    const [initialPreferences] = useState(() =>
+        loadSimulatorPreferences(preferencesStorage),
+    )
+    const [preferences, setPreferences] = useState(
+        initialPreferences.preferences,
+    )
+    const [preferencesNotice, setPreferencesNotice] = useState(() =>
+        initialPreferences.reason === 'invalid' ||
+        initialPreferences.reason === 'unavailable'
+            ? 'As preferências salvas não puderam ser carregadas; os padrões foram aplicados.'
+            : undefined,
+    )
+    const [session, setSession] = useState(() =>
+        createFreeSession(initialPreferences.preferences),
+    )
     const snapshot = useMemo(() => getTypingSessionSnapshot(session), [session])
-    const keyboardBindings = useMemo(createDefaultWebKeyboardBindings, [])
+    const keyboardBindings = useMemo(
+        () => createWebKeyboardBindings(preferences.keyboardBindings),
+        [preferences.keyboardBindings],
+    )
     const {
         playHowToAccessInstructionsAudio,
         playFreeModeInstructionsAudio,
@@ -41,9 +73,6 @@ export default function Free() {
         playBrailleViewAudio,
         playInkViewAudio,
     } = useAudioContext()
-    const [showingBraille, setShowingBraille] = useState(true)
-    const [outputMuted, setOutputMuted] = useState(false)
-    const [keyboardMuted, setKeyboardMuted] = useState(false)
 
     useEffect(() => {
         playHowToAccessInstructionsAudio(() => {})
@@ -57,20 +86,41 @@ export default function Free() {
         (action: LegacyFreeModeAction) => {
             if (action === 'instructions-requested') {
                 playFreeModeInstructionsAudio()
-            } else if (action === 'view-toggled') {
-                showingBraille ? playInkViewAudio() : playBrailleViewAudio()
-                setShowingBraille((current) => !current)
-            } else if (action === 'output-audio-toggled') {
-                outputMuted ? playOutputUnmuted() : playOutputMuted()
-                setOutputMuted((current) => !current)
-            } else {
-                keyboardMuted ? playKeyboardUnmuted() : playKeyboardMuted()
-                setKeyboardMuted((current) => !current)
+                return
             }
+
+            let change: SimulatorPreferenceChange
+            if (action === 'view-toggled') {
+                const showingBraille =
+                    preferences.presentation.view === 'braille'
+                showingBraille ? playInkViewAudio() : playBrailleViewAudio()
+                change = {
+                    type: 'set-view',
+                    view: showingBraille ? 'ink' : 'braille',
+                }
+            } else if (action === 'output-audio-toggled') {
+                const enabled = preferences.presentation.outputAudioEnabled
+                enabled ? playOutputMuted() : playOutputUnmuted()
+                change = { type: 'set-output-audio', enabled: !enabled }
+            } else {
+                const enabled = preferences.presentation.keyboardAudioEnabled
+                enabled ? playKeyboardMuted() : playKeyboardUnmuted()
+                change = { type: 'set-keyboard-audio', enabled: !enabled }
+            }
+
+            const updated = applySimulatorPreferenceChange(preferences, change)
+            setPreferences(updated)
+            const saveResult = saveSimulatorPreferences(
+                preferencesStorage,
+                updated,
+            )
+            setPreferencesNotice(
+                saveResult.status === 'failed'
+                    ? 'A preferência foi aplicada nesta sessão, mas não pôde ser salva.'
+                    : undefined,
+            )
         },
         [
-            keyboardMuted,
-            outputMuted,
             playBrailleViewAudio,
             playFreeModeInstructionsAudio,
             playInkViewAudio,
@@ -78,17 +128,22 @@ export default function Free() {
             playKeyboardUnmuted,
             playOutputMuted,
             playOutputUnmuted,
-            showingBraille,
+            preferences,
+            preferencesStorage,
         ],
     )
 
     return (
         <>
             <main>
+                {preferencesNotice !== undefined && (
+                    <div role="alert">{preferencesNotice}</div>
+                )}
                 <FreeTypingSession
                     snapshot={snapshot}
                     dispatch={dispatch}
                     keyboardBindings={keyboardBindings}
+                    presentationPreferences={preferences.presentation}
                     onPresentationAction={handlePresentationAction}
                     onMachineKeyPressed={playKeyPress}
                 />
