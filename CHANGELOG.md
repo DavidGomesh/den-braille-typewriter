@@ -4,6 +4,11 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 ## [Unreleased]
 
+### Added
+
+- Preferências do simulador versionadas, validadas e persistidas no Modo livre,
+  com migração explícita, fallback seguro e adapters web e determinístico.
+
 ## [3.0.0-alpha.1] - 2026-09-09
 
 ### Added

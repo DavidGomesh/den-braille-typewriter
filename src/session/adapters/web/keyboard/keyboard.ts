@@ -4,6 +4,10 @@ import {
     type MachineIntent,
     type ReviewDirection,
 } from '../../../../braille/public'
+import {
+    createDefaultSimulatorPreferences,
+    type KeyboardBindingPreferences,
+} from '../../../../preferences/public'
 
 /** Browser keyboard data required by the web adapter. */
 export type WebKeyboardEvent = Readonly<{
@@ -37,52 +41,68 @@ export type WebKeyboardBindings = ReadonlyMap<
     | Readonly<{ command: WebKeyboardCommand }>
 >
 
-const dotByCode = new Map<string, number>([
-    ['KeyF', 1],
-    ['KeyD', 2],
-    ['KeyS', 3],
-    ['KeyJ', 4],
-    ['KeyK', 5],
-    ['KeyL', 6],
-])
-
-const directControlsByCode = new Map<string, readonly MachineControl[]>([
-    ['Space', [Object.freeze({ type: 'space' })]],
-    ['Backspace', [Object.freeze({ type: 'backspace' })]],
-    [
-        'KeyQ',
-        [
-            Object.freeze({ type: 'line-feed' }),
-            Object.freeze({ type: 'carriage-return' }),
-        ],
-    ],
-])
-
-const reviewDirectionByCode = new Map<string, ReviewDirection>([
-    ['ArrowUp', 'up'],
-    ['ArrowRight', 'right'],
-    ['ArrowDown', 'down'],
-    ['ArrowLeft', 'left'],
-])
-
-const controlsForCode = (code: string): readonly MachineControl[] => {
-    const dot = dotByCode.get(code)
-    return dot === undefined
-        ? (directControlsByCode.get(code) ?? [])
-        : [Object.freeze({ type: 'dot', dot: createBrailleDot(dot) })]
-}
-
-/** Creates an independent copy of the standard free-mode key bindings. */
-export const createDefaultWebKeyboardBindings = (): WebKeyboardBindings => {
+/** Creates adapter bindings from validated simulator preferences. */
+export const createWebKeyboardBindings = (
+    codes: KeyboardBindingPreferences,
+): WebKeyboardBindings => {
     const bindings = new Map<
         string,
         | Readonly<{ controls: readonly MachineControl[] }>
         | Readonly<{ command: WebKeyboardCommand }>
     >()
-    for (const code of [...dotByCode.keys(), ...directControlsByCode.keys()]) {
-        bindings.set(code, Object.freeze({ controls: controlsForCode(code) }))
-    }
-    for (const [code, direction] of reviewDirectionByCode) {
+    const dots = [
+        codes.dot1,
+        codes.dot2,
+        codes.dot3,
+        codes.dot4,
+        codes.dot5,
+        codes.dot6,
+    ]
+    dots.forEach((code, index) =>
+        bindings.set(
+            code,
+            Object.freeze({
+                controls: Object.freeze([
+                    Object.freeze({
+                        type: 'dot' as const,
+                        dot: createBrailleDot(index + 1),
+                    }),
+                ]),
+            }),
+        ),
+    )
+    bindings.set(
+        codes.space,
+        Object.freeze({
+            controls: Object.freeze([
+                Object.freeze({ type: 'space' as const }),
+            ]),
+        }),
+    )
+    bindings.set(
+        codes.backspace,
+        Object.freeze({
+            controls: Object.freeze([
+                Object.freeze({ type: 'backspace' as const }),
+            ]),
+        }),
+    )
+    bindings.set(
+        codes.lineChange,
+        Object.freeze({
+            controls: Object.freeze([
+                Object.freeze({ type: 'line-feed' as const }),
+                Object.freeze({ type: 'carriage-return' as const }),
+            ]),
+        }),
+    )
+    const reviewCodes: readonly [string, ReviewDirection][] = [
+        [codes.reviewUp, 'up'],
+        [codes.reviewRight, 'right'],
+        [codes.reviewDown, 'down'],
+        [codes.reviewLeft, 'left'],
+    ]
+    reviewCodes.forEach(([code, direction]) =>
         bindings.set(
             code,
             Object.freeze({
@@ -91,16 +111,22 @@ export const createDefaultWebKeyboardBindings = (): WebKeyboardBindings => {
                     direction,
                 }),
             }),
-        )
-    }
+        ),
+    )
     bindings.set(
-        'Escape',
+        codes.toggleCapture,
         Object.freeze({
             command: Object.freeze({ type: 'toggle-capture' as const }),
         }),
     )
     return bindings
 }
+
+/** Creates an independent copy of the standard free-mode key bindings. */
+export const createDefaultWebKeyboardBindings = (): WebKeyboardBindings =>
+    createWebKeyboardBindings(
+        createDefaultSimulatorPreferences().keyboardBindings,
+    )
 
 const defaultBindings = createDefaultWebKeyboardBindings()
 

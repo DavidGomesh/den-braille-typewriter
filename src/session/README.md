@@ -7,6 +7,10 @@ Configuração efetiva da sessão e interpretação observável. Seu núcleo é 
 recebe `SessionInput`, devolve novo estado, snapshot e fatos semânticos e não
 depende de React, DOM, áudio ou dispositivo.
 
+A Configuração efetiva é resolvida pela capacidade `preferences` antes da
+criação da sessão. A sessão recebe somente o resultado imutável e nunca persiste
+nem altera Preferências do simulador.
+
 O Documento Braille contido em `TypingSessionState` é a única fonte de verdade
 da produção. A Interpretação Braille existe somente como projeção derivada em
 `TypingSessionSnapshot`.

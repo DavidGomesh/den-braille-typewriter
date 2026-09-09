@@ -6,7 +6,7 @@ import './styles/index.css'
 import './vendors/bootstrap/css/bootstrap.min.css'
 
 import Home from './views/Home'
-import Free from './views/modes/Free'
+import { FreePage } from './app/public'
 
 import 'bootstrap/dist/js/bootstrap.bundle.js'
 import AudioProvider from './providers/AudioProvider'
@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <HashRouter>
                 <Routes>
                     <Route path="/" Component={Home} />
-                    <Route path="/free" Component={Free} />
+                    <Route path="/free" Component={FreePage} />
                     <Route path="/lessons" Component={Challenge} />
                 </Routes>
             </HashRouter>
