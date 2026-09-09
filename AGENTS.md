@@ -16,6 +16,14 @@ O repositório usa documentação de domínio single-context, escrita em portugu
 
 Código, testes e automações técnicas são escritos em inglês; documentação e comunicação dirigida a pessoas são escritas em português. Consulte `docs/agents/code-language.md`.
 
+### Changelog
+
+Ao adicionar ou alterar uma entrada em `CHANGELOG.md`, comece cada item com a
+data `DD/MM/YYYY` em que a mudança entrou no histórico, seguida de `—` e
+da descrição em português. Confirme a data no histórico do Git (`git blame` ou
+`git log`) quando registrar mudanças existentes e preserve as categorias
+`Added`, `Changed`, `Fixed` e demais categorias já usadas no arquivo.
+
 ## Commits
 
 Quando houver autorização para criar um commit, use Conventional Commits no formato `tipo(escopo): descrição`.
