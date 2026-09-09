@@ -15,6 +15,11 @@ O repositório adotará Git Flow para separar o estado publicado, a integração
 - A linha da modernização usará tags `v3.0.0-alpha.N` em commits verdes de `develop`, seguidas por `v3.0.0-beta.N` e `v3.0.0-rc.N` na branch `release/v3.0.0`. Todas serão GitHub Prereleases; somente a versão sem sufixo será a publicação final da linha.
 - Alpha indica arquitetura incompleta e interfaces ainda mutáveis; Beta indica capacidades funcionalmente completas em estabilização; RC indica conteúdo candidato à versão final, aceitando apenas correções bloqueadoras.
 - `CHANGELOG.md` manterá uma seção `Unreleased` e registrará efeitos relevantes para pessoas usuárias e desenvolvedoras, sem reproduzir a lista de commits.
+- Antes de criar uma tag versionada, o `CHANGELOG.md` deve conter no mesmo
+  commit um cabeçalho datado para aquela versão. O workflow `Versioned release`
+  valida esse contrato no commit marcado e só então publica a GitHub
+  Prerelease; uma tag criada antes da atualização do changelog falha no
+  workflow e não é publicada.
 - `the-original` será preservada como branch histórica, sem novos commits. Não será criada uma branch histórica para a versão 2.
 - As branches `research/baseline-tecnica`, `research/baseline-acessibilidade` e `feature/reader` poderão ser removidas na execução deste plano: as pesquisas já foram incorporadas e o leitor era um experimento descartado.
 - O GitHub Pages passará a receber o artifact de build por GitHub Actions. `gh-pages` será removida somente depois que publicação, rotas, assets, jornadas essenciais e rollback forem validados no novo mecanismo.
