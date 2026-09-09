@@ -3,9 +3,11 @@
 ## Responsabilidade
 
 Esta capacidade concentra regras Braille independentes de experiência,
-dispositivo e apresentação. Neste primeiro corte, `machine` implementa o Motor da
-máquina Braille: recebe `MachineIntent` (Intenção da máquina) e produz estado,
-snapshot e eventos semânticos por uma transição pura.
+dispositivo e apresentação. O módulo `machine` implementa o Motor da máquina
+Braille: recebe `MachineIntent` (Intenção da máquina) e produz estado, snapshot e
+eventos semânticos por uma transição pura. O módulo `document` preserva
+`CellImpression` (Impressão de cela) em posições explícitas de uma Grade Braille
+esparsa, sem atribuir texto às celas.
 
 Não pertencem ao Motor: interpretação textual, Documento Braille, Sessão de
 digitação, origem física dos controles, React, DOM, áudio ou qualquer efeito
@@ -20,6 +22,10 @@ Consumidores e testes importam somente `braille/public.ts`. A interface oferece:
 - `createEngineState` para iniciar uma captura sem controles ativos;
 - `applyIntent` como única transição do Motor;
 - os tipos das intenções, operações, eventos, estado, snapshot e resultado.
+- `createCellImpression` para distinguir pontos elevados, vestígios de pontos
+  apagados e espaço explícito;
+- `createGridPosition`, `createBrailleDocument`, `recordCellImpression` e
+  `getCellImpression` para registrar e consultar a produção por posição.
 
 Exemplo:
 
@@ -58,6 +64,23 @@ semântico em inglês, destinado ao consumo técnico e não à apresentação di
 Estado, snapshot, eventos e valores são serializáveis e não devem ser alterados
 pelo consumidor.
 
+## Documento Braille
+
+- `GridPosition` usa linhas e colunas inteiras, zero-based e não negativas.
+- Uma posição ausente em `BrailleDocument` nunca foi utilizada.
+- Uma `CellImpression` vazia ocupa uma posição e registra um espaço explícito.
+- `erasedDots` preserva vestígios físicos separadamente dos pontos elevados em
+  `cell`; o mesmo ponto não pode ocupar os dois estados.
+- `recordCellImpression` é imutável e rejeita uma posição já utilizada com
+  `position-already-used`. Edição e sobrescrita pertencem ao corte posterior.
+- O documento contém somente geometria Braille. Texto, caracteres e significado
+  pertencem à Interpretação Braille e não fazem parte desta interface.
+
+Coordenadas inválidas e sobreposição entre ponto elevado e apagado produzem
+`RangeError`. Tentativas válidas que conflitam com o estado do documento devolvem
+um `DocumentResult` (Resultado do Documento) com erro estruturado e preservam o
+estado anterior.
+
 ## Dependências e adapters
 
 O Motor usa somente TypeScript e não depende de outras capacidades do produto.
@@ -68,15 +91,17 @@ texto localizado quando houver comunicação com a pessoa usuária.
 
 ## Estratégia de testes
 
-Os exemplos e invariantes são exercitados em `machine.test.ts` exclusivamente
-por `braille/public.ts`. Os testes observam resultados da transição e não acessam
-arquivos internos nem efeitos de plataforma. Código e descrições dos testes usam
-inglês; este documento permanece em português.
+Os exemplos e invariantes são exercitados em `machine.test.ts` e
+`document.test.ts` exclusivamente por `braille/public.ts`. Os testes observam
+resultados públicos e não acessam arquivos internos nem efeitos de plataforma.
+Código e descrições dos testes usam inglês; este documento permanece em
+português.
 
 ## Referências
 
 - `CONTEXT.md`
 - `docs/adr/0001-motor-braille-como-transicao-pura.md`
+- `docs/adr/0002-documento-braille-e-grafia-contextual.md`
 - `docs/adr/0007-testes-por-interfaces-e-guardrails-continuos.md`
 - `docs/adr/0011-arquitetura-por-capacidades-e-interfaces-publicas.md`
 - `docs/adr/0013-ingles-nos-contratos-tecnicos.md`
