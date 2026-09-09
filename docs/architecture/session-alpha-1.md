@@ -38,6 +38,24 @@ Modo livre verifica também:
 Os testes de `session` e do adapter usam somente `session/public.ts`. A jornada
 React usa o DOM acessível e não inspeciona estado interno.
 
+### Resultado registrado
+
+- data: 9 de setembro de 2026;
+- branch: `feature/free-mode-session`;
+- último commit funcional verificado: `6fb94ad`;
+- comando: `npm run ci`;
+- resultado: aprovado, com formatação, lint, TypeScript estrito, fronteiras
+  arquiteturais, testes, build e auditoria concluídos;
+- testes: 9 arquivos e 69 testes Vitest aprovados, além de 30 testes dos
+  guardrails em Node aprovados;
+- build: 126 módulos transformados e artefato Vite produzido;
+- baselines herdadas: 8 falhas de lint isoladas; auditoria com 0
+  vulnerabilidades críticas, 4 altas, 1 moderada e 0 baixas.
+
+A verificação manual abaixo não foi executada neste corte porque não havia um
+navegador disponível no ambiente do agente. Ela continua sendo um portão humano
+do marco de release e não é declarada como aprovada por esta evidência.
+
 ## Verificação manual
 
 Ambiente inicial: navegador desktop com teclado físico e build local da branch.
