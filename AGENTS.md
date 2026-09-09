@@ -19,8 +19,9 @@ Código, testes e automações técnicas são escritos em inglês; documentaçã
 ### Changelog
 
 Ao adicionar ou alterar uma entrada em `CHANGELOG.md`, comece cada item com a
-data `DD/MM/YYYY` em que a mudança entrou no histórico, seguida de `—` e
-da descrição em português. Confirme a data no histórico do Git (`git blame` ou
+data `YYYY-MM-DD` em que a mudança entrou no histórico, seguida de `—` e da
+descrição em português. Ordene as entradas de cada categoria da mais recente
+para a mais antiga. Confirme a data no histórico do Git (`git blame` ou
 `git log`) quando registrar mudanças existentes e preserve as categorias
 `Added`, `Changed`, `Fixed` e demais categorias já usadas no arquivo.
 
