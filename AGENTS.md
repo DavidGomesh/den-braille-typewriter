@@ -16,6 +16,11 @@ O repositório usa documentação de domínio single-context, escrita em portugu
 
 Código, testes e automações técnicas são escritos em inglês; documentação e comunicação dirigida a pessoas são escritas em português. Consulte `docs/agents/code-language.md`.
 
+### Code documentation
+
+Ao criar ou revisar APIs públicas, invariantes ou lógica interna não evidente,
+consulte `docs/agents/code-documentation.md`.
+
 ### Changelog
 
 Ao adicionar ou alterar uma entrada em `CHANGELOG.md`, mantenha as mudanças

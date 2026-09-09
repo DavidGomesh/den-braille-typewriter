@@ -1,8 +1,13 @@
 import { createBrailleCell, type BrailleCell, type BrailleDot } from './values'
 
+/** A non-dot machine control and the operation it produces when released. */
 export type DirectOperationType =
     'space' | 'backspace' | 'line-feed' | 'carriage-return'
 
+/**
+ * A logical machine control independent of its keyboard, touch, or other input
+ * adapter.
+ */
 export type MachineControl =
     | Readonly<{
           type: 'dot'
@@ -10,6 +15,12 @@ export type MachineControl =
       }>
     | Readonly<{ type: DirectOperationType }>
 
+/**
+ * A normalized request to change the machine input state.
+ *
+ * Cancellation always discards a chord. Capture interruption makes the choice
+ * between discarding and confirming explicit in its policy.
+ */
 export type MachineIntent =
     | Readonly<{ type: 'press'; control: MachineControl }>
     | Readonly<{ type: 'release'; control: MachineControl }>
@@ -19,6 +30,10 @@ export type MachineIntent =
           policy: 'discard' | 'confirm'
       }>
 
+/**
+ * A semantic machine result that can be applied by a typing session or Braille
+ * document without knowing the originating device.
+ */
 export type MachineOperation =
     | Readonly<{
           type: 'confirm-cell'
@@ -26,6 +41,12 @@ export type MachineOperation =
       }>
     | Readonly<{ type: DirectOperationType }>
 
+/**
+ * An observable semantic fact produced while applying a machine intent.
+ *
+ * Rejected input is represented as data instead of an exception so adapters
+ * can choose an appropriate feedback modality.
+ */
 export type EngineEvent =
     | Readonly<{
           type: 'operation-produced'
@@ -41,12 +62,19 @@ export type EngineEvent =
           cell: BrailleCell
       }>
 
+/**
+ * The immutable authoritative state carried between engine transitions.
+ *
+ * `accumulatedDots` retains every dot pressed in the current chord, while
+ * `pressedDots` contains only dots that have not yet been released.
+ */
 export type EngineState = Readonly<{
     accumulatedDots: readonly BrailleDot[]
     pressedDots: readonly BrailleDot[]
     pressedControls: readonly DirectOperationType[]
 }>
 
+/** A read-only projection of the engine state intended for consumers. */
 export type EngineSnapshot = Readonly<{
     chord: Readonly<{
         accumulatedDots: readonly BrailleDot[]
@@ -55,6 +83,7 @@ export type EngineSnapshot = Readonly<{
     pressedControls: readonly DirectOperationType[]
 }>
 
+/** The immutable outcome of one engine transition. */
 export type EngineResult = Readonly<{
     state: EngineState
     snapshot: EngineSnapshot
@@ -72,6 +101,7 @@ const createState = (
         pressedControls: Object.freeze([...pressedControls].sort()),
     })
 
+/** Creates an engine state with no chord or direct control in progress. */
 export const createEngineState = (): EngineState => createState([], [])
 
 const createResult = (
@@ -90,6 +120,25 @@ const createResult = (
         events: Object.freeze([...events]),
     })
 
+/**
+ * Applies one normalized intent as a pure engine transition.
+ *
+ * A chord is confirmed only after its last pressed dot is released. Invalid
+ * press-and-release sequences preserve the state and produce `input-rejected`.
+ * Cancellation and interruption never throw for the current engine state.
+ *
+ * @example
+ * ```ts
+ * const pressed = applyIntent(createEngineState(), {
+ *     type: 'press',
+ *     control: { type: 'dot', dot: createBrailleDot(1) },
+ * })
+ * const released = applyIntent(pressed.state, {
+ *     type: 'release',
+ *     control: { type: 'dot', dot: createBrailleDot(1) },
+ * })
+ * ```
+ */
 export const applyIntent = (
     state: EngineState,
     intent: MachineIntent,

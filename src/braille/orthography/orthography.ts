@@ -4,8 +4,10 @@ import type {
     PositionedCellImpression,
 } from '../document/document'
 
+/** The stable identity of every orthography profile supported by this build. */
 export type OrthographyProfileId = 'portuguese-braille-2018'
 
+/** An explicit language-and-edition identity for Braille interpretation. */
 export type OrthographyProfile = Readonly<{
     id: OrthographyProfileId
     language: 'pt-BR'
@@ -14,6 +16,7 @@ export type OrthographyProfile = Readonly<{
 
 type InterpretationSource = readonly DocumentPosition[]
 
+/** A recognized indicator that changes how following cells are interpreted. */
 export type InterpretedIndicatorSegment = Readonly<{
     status: 'interpreted'
     role: 'indicator'
@@ -21,6 +24,12 @@ export type InterpretedIndicatorSegment = Readonly<{
     meaning: 'capital-letter' | 'capital-word' | 'number'
 }>
 
+/**
+ * A recognized textual symbol with every contributing cell in `source`.
+ *
+ * Contextual symbols include their indicator positions as well as the cell
+ * that directly produces text.
+ */
 export type InterpretedSymbolSegment = Readonly<{
     status: 'interpreted'
     role: 'symbol'
@@ -28,9 +37,11 @@ export type InterpretedSymbolSegment = Readonly<{
     text: string
 }>
 
+/** A successfully recognized indicator or textual symbol. */
 export type InterpretedSegment =
     InterpretedIndicatorSegment | InterpretedSymbolSegment
 
+/** A recognized indicator that lacks the adjacent cells needed to resolve it. */
 export type PendingSegment = Readonly<{
     status: 'pending'
     role: 'indicator'
@@ -38,6 +49,7 @@ export type PendingSegment = Readonly<{
     source: InterpretationSource
 }>
 
+/** A source sequence for which the profile preserves multiple valid readings. */
 export type AmbiguousSegment = Readonly<{
     status: 'ambiguous'
     role: 'symbol'
@@ -45,18 +57,31 @@ export type AmbiguousSegment = Readonly<{
     source: InterpretationSource
 }>
 
+/** A source sequence not covered by the selected profile. */
 export type UnrecognizedSegment = Readonly<{
     status: 'unrecognized'
     source: InterpretationSource
 }>
 
+/**
+ * One traceable interpretation outcome.
+ *
+ * Pending, ambiguous, and unrecognized outcomes remain explicit so consumers
+ * never need to infer invented text.
+ */
 export type InterpretationSegment =
     InterpretedSegment | PendingSegment | AmbiguousSegment | UnrecognizedSegment
 
+/** Ordered interpretation segments derived from one used document line. */
 export type InterpretationLine = Readonly<{
     segments: readonly InterpretationSegment[]
 }>
 
+/**
+ * An immutable textual projection that retains its profile and source mapping.
+ *
+ * It is derived data and never replaces or modifies the Braille document.
+ */
 export type BrailleInterpretation = Readonly<{
     profile: OrthographyProfile
     lines: readonly InterpretationLine[]
@@ -419,6 +444,13 @@ const interpretLine = (
     return Object.freeze({ segments: Object.freeze(segments) })
 }
 
+/**
+ * Selects a supported Braille orthography by its normative identity.
+ *
+ * @throws Error
+ * Thrown when `id` does not name a supported profile. The function never falls
+ * back to a profile based only on language.
+ */
 export const createOrthographyProfile = (
     id: OrthographyProfileId,
 ): OrthographyProfile => {
@@ -428,6 +460,13 @@ export const createOrthographyProfile = (
     return Object.freeze({ id, language: 'pt-BR', edition: '2018' })
 }
 
+/**
+ * Interprets used document positions with the selected contextual profile.
+ *
+ * Never-used positions break adjacency, while explicit empty impressions
+ * produce spaces. Every outcome remains traceable through document positions,
+ * and the source document is not modified.
+ */
 export const interpretBrailleDocument = (
     document: BrailleDocument,
     profile: OrthographyProfile,
