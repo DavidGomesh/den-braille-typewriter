@@ -12,6 +12,8 @@ Esta área descreve a arquitetura alvo da modernização. Ela é a fonte canôni
 - [Baseline operacional](modernization-baseline.md): marcos recuperáveis, jornadas essenciais, inventário legado e estratégia de rollback.
 - [Corte do build Vite](vite-build-baseline.md): comandos canônicos, artifact,
   evidências da coexistência encerrada e rollback do corte de plataforma.
+- [Perfil português Braille de 2018](../braille/portuguese-braille-2018.md):
+  regras atualmente interpretadas, exemplos, diagnósticos e limites conhecidos.
 
 ## Documentação relacionada
 
