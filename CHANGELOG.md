@@ -14,6 +14,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 - Desenvolvimento e build Vite equivalentes ao CRA, com artifact próprio e base de publicação do projeto.
 - Documento Braille editável e revisável com configuração e reformatação de
   folha finita ou papel contínuo, preservando impressões e vestígios físicos.
+- Interpretação contextual pela Grafia Braille para a Língua Portuguesa de
+  2018, com segmentos rastreáveis e estados pendente, ambíguo e não reconhecido.
 
 ### Changed
 

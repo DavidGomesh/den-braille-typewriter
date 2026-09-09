@@ -32,6 +32,10 @@ Consumidores e testes importam somente `braille/public.ts`. A interface oferece:
   revisar o documento preservando as distinções mecânicas;
 - `prepareBrailleDocumentReformat` e `confirmBrailleDocumentReformat` para
   confirmar uma nova configuração e repartir as linhas sem perder impressões.
+- `createOrthographyProfile` para selecionar explicitamente a Grafia Braille
+  para a Língua Portuguesa, 3ª edição (2018);
+- `interpretBrailleDocument` para derivar linhas e Segmentos de interpretação
+  rastreáveis sem alterar o Documento Braille.
 
 Exemplo:
 
@@ -99,6 +103,32 @@ Coordenadas inválidas e sobreposição entre ponto elevado e apagado produzem
 um `GridResult` (Resultado da Grade) com erro estruturado e preservam o estado
 anterior.
 
+## Grafia e interpretação
+
+A visão detalhada do algoritmo, seus fluxos e regras de extensão está em
+[`orthography/README.md`](orthography/README.md). O recorte normativo do perfil
+português atual está em
+[`docs/braille/portuguese-braille-2018.md`](../../docs/braille/portuguese-braille-2018.md).
+
+- `OrthographyProfile` identifica a grafia e a edição normativa; perfis
+  desconhecidos são rejeitados, sem inferência silenciosa por idioma.
+- `BrailleInterpretation` é uma projeção imutável do Documento Braille. Cada
+  linha contém segmentos cujas posições em `source` apontam para as Impressões
+  de cela de origem.
+- Segmentos com `role: 'indicator'` permanecem explícitos mesmo quando não
+  produzem texto isoladamente. O símbolo resultante referencia também as celas
+  do indicador que lhe deram contexto.
+- Os indicadores de letra maiúscula, palavra em caixa alta e número são
+  resolvidos como sequências adjacentes. Dentro de um número, as celas de
+  vírgula decimal e de separação de classes são interpretadas pelo contexto
+  numérico; uma posição nunca utilizada interrompe o sinal.
+- Um indicador sem o sinal esperado produz `pending`; um sinal com mais de uma
+  leitura disponível produz `ambiguous`; conteúdo ainda não coberto pelo perfil
+  produz `unrecognized`. Nenhum desses estados inventa um Símbolo textual.
+- As tabelas e o estado contextual ficam internos ao módulo. Consumidores
+  escolhem o perfil e recebem a interpretação estruturada, sem controlar suas
+  regras.
+
 ## Dependências e adapters
 
 O Motor usa somente TypeScript e não depende de outras capacidades do produto.
@@ -109,11 +139,11 @@ texto localizado quando houver comunicação com a pessoa usuária.
 
 ## Estratégia de testes
 
-Os exemplos e invariantes são exercitados em `machine.test.ts` e
-`document.test.ts` exclusivamente por `braille/public.ts`. Os testes observam
-resultados públicos e não acessam arquivos internos nem efeitos de plataforma.
-Código e descrições dos testes usam inglês; este documento permanece em
-português.
+Os exemplos e invariantes são exercitados em `machine.test.ts`,
+`document.test.ts` e `orthography.test.ts` exclusivamente por
+`braille/public.ts`. Os testes observam resultados públicos e não acessam
+arquivos internos nem efeitos de plataforma. Código e descrições dos testes usam
+inglês; este documento permanece em português.
 
 ## Referências
 
@@ -125,3 +155,4 @@ português.
 - `docs/adr/0013-ingles-nos-contratos-tecnicos.md`
 - `docs/architecture/modules.md`
 - `docs/architecture/runtime-flows.md`
+- `docs/Grafia Braille para a Língua Portuguesa.pdf`

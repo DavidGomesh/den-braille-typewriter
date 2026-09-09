@@ -46,3 +46,18 @@ export {
     type ReviewDirection,
     type SheetPaperConfiguration,
 } from './document/document'
+export {
+    createOrthographyProfile,
+    interpretBrailleDocument,
+    type AmbiguousSegment,
+    type BrailleInterpretation,
+    type InterpretationLine,
+    type InterpretationSegment,
+    type InterpretedIndicatorSegment,
+    type InterpretedSegment,
+    type InterpretedSymbolSegment,
+    type OrthographyProfile,
+    type OrthographyProfileId,
+    type PendingSegment,
+    type UnrecognizedSegment,
+} from './orthography/orthography'
