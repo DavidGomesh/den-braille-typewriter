@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import '../../styles/views/modes/Free.css'
 
@@ -14,7 +14,16 @@ import {
     getTypingSessionSnapshot,
     type SessionInput,
 } from '../../session/public'
-import { FreeTypingSession, type LegacyFreeModeAction } from '../../ui/public'
+import {
+    AccessibleFeedback,
+    FreeTypingSession,
+    type LegacyFreeModeAction,
+} from '../../ui/public'
+import {
+    coordinateSessionFeedback,
+    createFeedbackCoordinatorState,
+    type MessageFeedbackPlan,
+} from '../../feedback/public'
 import {
     applySimulatorPreferenceChange,
     createLocalStoragePreferencesStorage,
@@ -64,6 +73,11 @@ export default function FreePage() {
     const [session, setSession] = useState(() =>
         createFreeSession(initialPreferences.preferences),
     )
+    const sessionRef = useRef(session)
+    const feedbackCoordinatorRef = useRef(createFeedbackCoordinatorState())
+    const [feedbackPlans, setFeedbackPlans] = useState<
+        readonly MessageFeedbackPlan[]
+    >([])
     const snapshot = useMemo(() => getTypingSessionSnapshot(session), [session])
     const keyboardBindings = useMemo(
         () => createWebKeyboardBindings(preferences.keyboardBindings),
@@ -86,7 +100,16 @@ export default function FreePage() {
     }, [])
 
     const dispatch = useCallback((input: SessionInput) => {
-        setSession((current) => applySessionInput(current, input).state)
+        const result = applySessionInput(sessionRef.current, input)
+        sessionRef.current = result.state
+        setSession(result.state)
+
+        const feedback = coordinateSessionFeedback(
+            feedbackCoordinatorRef.current,
+            result.events,
+        )
+        feedbackCoordinatorRef.current = feedback.state
+        if (feedback.plans.length > 0) setFeedbackPlans(feedback.plans)
     }, [])
 
     const handlePresentationAction = useCallback(
@@ -146,6 +169,7 @@ export default function FreePage() {
                 {preferencesNotice !== undefined && (
                     <div role="alert">{preferencesNotice}</div>
                 )}
+                <AccessibleFeedback plans={feedbackPlans} />
                 <FreeTypingSession
                     snapshot={snapshot}
                     dispatch={dispatch}

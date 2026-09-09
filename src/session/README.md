@@ -94,7 +94,8 @@ substituí-lo ou remapeá-lo antes de entregá-lo à apresentação.
 
 ## Integração temporária do Modo livre
 
-`views/modes/Free.tsx` compõe a sessão, o feedback legado e a apresentação.
+`app/pages/FreePage.tsx` compõe a sessão, as Preferências do simulador, o
+planejador de Feedback multimodal e a apresentação.
 `ui/session/FreeTypingSession.tsx` recebe somente o snapshot e callbacks:
 controla foco e estado visual efêmero, projeta o snapshot no `textarea` somente
 leitura e usa o teclado visual existente. A lista legada de celas não participa
