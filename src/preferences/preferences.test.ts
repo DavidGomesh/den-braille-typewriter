@@ -42,6 +42,7 @@ describe('Simulator preferences', () => {
     })
 
     test('migrates the legacy presentation choices explicitly', () => {
+        const writes: string[] = []
         const result = loadSimulatorPreferences({
             read: () =>
                 JSON.stringify({
@@ -50,10 +51,12 @@ describe('Simulator preferences', () => {
                     outputMuted: true,
                     keyboardMuted: false,
                 }),
-            write: () => undefined,
+            write: (serialized) => writes.push(serialized),
         })
 
         expect(result.status).toBe('migrated')
+        if (result.status !== 'migrated') throw new Error('migration expected')
+        expect(result.migrationPersistence).toBe('saved')
         expect(result.preferences).toEqual({
             ...createDefaultSimulatorPreferences(),
             presentation: {
@@ -62,6 +65,27 @@ describe('Simulator preferences', () => {
                 keyboardAudioEnabled: true,
             },
         })
+        expect(writes).toEqual([JSON.stringify(result.preferences)])
+    })
+
+    test('keeps migrated choices when persisting the new schema fails', () => {
+        const result = loadSimulatorPreferences({
+            read: () =>
+                JSON.stringify({
+                    version: 0,
+                    showBraille: false,
+                    outputMuted: false,
+                    keyboardMuted: false,
+                }),
+            write: () => {
+                throw new Error('storage denied')
+            },
+        })
+
+        expect(result.status).toBe('migrated')
+        if (result.status !== 'migrated') throw new Error('migration expected')
+        expect(result.migrationPersistence).toBe('failed')
+        expect(result.preferences.presentation.view).toBe('ink')
     })
 
     test('falls back explicitly when persisted data is invalid or unavailable', () => {

@@ -11,10 +11,16 @@ export const simulatorPreferencesStorageKey =
 
 /** Adapts browser local storage to the simulator-preferences storage seam. */
 export const createLocalStoragePreferencesStorage = (
-    storage: WebStorage = globalThis.localStorage,
-    key: string = simulatorPreferencesStorageKey,
+    storage?: WebStorage,
 ): PreferencesStorage =>
     Object.freeze({
-        read: () => storage.getItem(key),
-        write: (serialized: string) => storage.setItem(key, serialized),
+        read: () =>
+            (storage ?? globalThis.localStorage).getItem(
+                simulatorPreferencesStorageKey,
+            ),
+        write: (serialized: string) =>
+            (storage ?? globalThis.localStorage).setItem(
+                simulatorPreferencesStorageKey,
+                serialized,
+            ),
     })

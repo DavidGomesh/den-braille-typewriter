@@ -1,7 +1,13 @@
 /** Version of the persisted simulator-preferences schema. */
 export const simulatorPreferencesVersion = 1 as const
 
-/** Physical keyboard codes selected for each configurable simulator action. */
+/**
+ * Physical keyboard codes selected for each configurable simulator action.
+ *
+ * Every code is non-empty and unique within the snapshot so one physical key
+ * cannot ambiguously select multiple actions. Persisted snapshots that violate
+ * either invariant are rejected and replaced by explicit defaults on load.
+ */
 export type KeyboardBindingPreferences = Readonly<{
     dot1: string
     dot2: string
@@ -38,11 +44,21 @@ export type PreferencesStorage = Readonly<{
 }>
 
 /** Observable outcome of loading persisted preferences. */
-export type PreferencesLoadResult = Readonly<{
-    preferences: SimulatorPreferences
-    status: 'loaded' | 'migrated' | 'defaulted'
-    reason?: 'missing' | 'invalid' | 'unavailable'
-}>
+export type PreferencesLoadResult =
+    | Readonly<{
+          preferences: SimulatorPreferences
+          status: 'loaded'
+      }>
+    | Readonly<{
+          preferences: SimulatorPreferences
+          status: 'migrated'
+          migrationPersistence: 'saved' | 'failed'
+      }>
+    | Readonly<{
+          preferences: SimulatorPreferences
+          status: 'defaulted'
+          reason: 'missing' | 'invalid' | 'unavailable'
+      }>
 
 /** Observable outcome of attempting to persist preferences. */
 export type PreferencesSaveResult = Readonly<{
@@ -193,7 +209,13 @@ export const createDefaultSimulatorPreferences = (): SimulatorPreferences =>
         simulationMode: 'assisted',
     })
 
-/** Loads preferences without allowing storage failures to escape the seam. */
+/**
+ * Loads preferences without allowing storage failures to escape the seam.
+ *
+ * Missing, invalid, or unavailable data produces valid defaults with an
+ * explicit reason. A migrated payload is written back immediately; failure to
+ * write it remains observable without discarding the migrated choices.
+ */
 export const loadSimulatorPreferences = (
     storage: PreferencesStorage,
 ): PreferencesLoadResult => {
@@ -222,7 +244,17 @@ export const loadSimulatorPreferences = (
         }
         const migrated = migrateLegacyPreferences(value)
         if (migrated !== undefined) {
-            return Object.freeze({ preferences: migrated, status: 'migrated' })
+            let migrationPersistence: 'saved' | 'failed' = 'saved'
+            try {
+                storage.write(JSON.stringify(migrated))
+            } catch {
+                migrationPersistence = 'failed'
+            }
+            return Object.freeze({
+                preferences: migrated,
+                status: 'migrated',
+                migrationPersistence,
+            })
         }
     } catch {
         // Invalid persisted data falls through to the explicit safe default.

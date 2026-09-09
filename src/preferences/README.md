@@ -43,6 +43,10 @@ e JSON inválido não atravessam a interface. Falhas de leitura e escrita são
 convertidas em resultados; elas não interrompem nem revertem a Sessão de
 digitação corrente.
 
+Uma migração válida tenta gravar imediatamente o schema atual. Se essa gravação
+falhar, as escolhas migradas continuam ativas na sessão corrente e o resultado
+expõe `migrationPersistence: 'failed'`.
+
 ## Configuração efetiva
 
 O Modo de simulação define a política permanente atualmente suportada:
@@ -57,6 +61,12 @@ O adapter web usa a chave estável `den-braille-typewriter.preferences` no
 `localStorage`; a versão fica dentro do payload para permitir migrações sem
 trocar silenciosamente de namespace. O adapter de memória é determinístico e
 serve ao mesmo contrato sem depender do navegador.
+
+Neste corte, os atalhos do Modo livre permitem alterar e persistir as escolhas
+de apresentação e áudio. Bindings e Modo de simulação já são validados,
+carregados e aplicados quando presentes no snapshot, mas sua edição por uma
+interface própria pertence à evolução planejada da apresentação de
+preferências.
 
 ## Estratégia de testes
 

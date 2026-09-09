@@ -40,7 +40,7 @@ const createFreeSession = (preferences: SimulatorPreferences) =>
         ).configuration,
     })
 
-export default function Free() {
+export default function FreePage() {
     const preferencesStorage = useMemo(createLocalStoragePreferencesStorage, [])
     const [initialPreferences] = useState(() =>
         loadSimulatorPreferences(preferencesStorage),
@@ -48,12 +48,19 @@ export default function Free() {
     const [preferences, setPreferences] = useState(
         initialPreferences.preferences,
     )
-    const [preferencesNotice, setPreferencesNotice] = useState(() =>
-        initialPreferences.reason === 'invalid' ||
-        initialPreferences.reason === 'unavailable'
+    const [preferencesNotice, setPreferencesNotice] = useState(() => {
+        if (
+            initialPreferences.status === 'migrated' &&
+            initialPreferences.migrationPersistence === 'failed'
+        ) {
+            return 'As preferências antigas foram aplicadas nesta sessão, mas não puderam ser atualizadas no armazenamento.'
+        }
+        return 'reason' in initialPreferences &&
+            (initialPreferences.reason === 'invalid' ||
+                initialPreferences.reason === 'unavailable')
             ? 'As preferências salvas não puderam ser carregadas; os padrões foram aplicados.'
-            : undefined,
-    )
+            : undefined
+    })
     const [session, setSession] = useState(() =>
         createFreeSession(initialPreferences.preferences),
     )

@@ -8,7 +8,7 @@ import {
     createDefaultSimulatorPreferences,
     simulatorPreferencesStorageKey,
 } from '../../src/preferences/public'
-import Free from '../../src/views/modes/Free'
+import { FreePage } from '../../src/app/public'
 
 class AudioStub {
     static instances: AudioStub[] = []
@@ -27,7 +27,7 @@ const renderFreeMode = () =>
     render(
         <AudioProvider>
             <MemoryRouter>
-                <Free />
+                <FreePage />
             </MemoryRouter>
         </AudioProvider>,
     )
@@ -115,7 +115,7 @@ test('Modo livre interrompe acorde incompleto e permite pausar a captura', () =>
     expect(captureStatus).toHaveTextContent('Captura ativa')
 })
 
-test('Modo livre preserves presentation preferences between typing sessions', async () => {
+test('Free Mode preserves presentation preferences between typing sessions', async () => {
     const firstSession = renderFreeMode()
     const firstTypewriter = screen.getByRole('region', {
         name: 'Área de digitação Braille',
@@ -149,7 +149,7 @@ test('Modo livre preserves presentation preferences between typing sessions', as
     })
 })
 
-test('Modo livre keeps the current session usable when persistence fails', () => {
+test('Free Mode keeps the current session usable when persistence fails', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
         throw new Error('storage denied')
     })
@@ -169,7 +169,7 @@ test('Modo livre keeps the current session usable when persistence fails', () =>
     )
 })
 
-test('Modo livre uses persisted keyboard bindings in a new session', () => {
+test('Free Mode uses persisted keyboard bindings in a new session', () => {
     const defaults = createDefaultSimulatorPreferences()
     globalThis.localStorage.setItem(
         simulatorPreferencesStorageKey,
