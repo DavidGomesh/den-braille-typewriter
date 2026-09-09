@@ -18,12 +18,13 @@ Código, testes e automações técnicas são escritos em inglês; documentaçã
 
 ### Changelog
 
-Ao adicionar ou alterar uma entrada em `CHANGELOG.md`, comece cada item com a
-data `YYYY-MM-DD` em que a mudança entrou no histórico, seguida de `—` e da
-descrição em português. Ordene as entradas de cada categoria da mais recente
-para a mais antiga. Confirme a data no histórico do Git (`git blame` ou
-`git log`) quando registrar mudanças existentes e preserve as categorias
-`Added`, `Changed`, `Fixed` e demais categorias já usadas no arquivo.
+Ao adicionar ou alterar uma entrada em `CHANGELOG.md`, mantenha as mudanças
+ainda não publicadas sob `## [Unreleased]`, agrupe-as nas categorias `Added`,
+`Changed`, `Deprecated`, `Removed`, `Fixed` e `Security` quando aplicável e
+ordene as versões publicadas da mais recente para a mais antiga. Ao publicar
+uma versão, mova as entradas de `Unreleased` para um cabeçalho no formato
+`## [versão] - YYYY-MM-DD`, usando a data real do release. Preserve as
+categorias e o formato recomendados pelo Keep a Changelog.
 
 ## Commits
 
