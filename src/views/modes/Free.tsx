@@ -9,6 +9,7 @@ import {
 } from '../../braille/public'
 import {
     applySessionInput,
+    createDefaultWebKeyboardBindings,
     createTypingSession,
     getTypingSessionSnapshot,
     type SessionInput,
@@ -28,6 +29,7 @@ const createFreeSession = () =>
 export default function Free() {
     const [session, setSession] = useState(createFreeSession)
     const snapshot = useMemo(() => getTypingSessionSnapshot(session), [session])
+    const keyboardBindings = useMemo(createDefaultWebKeyboardBindings, [])
     const {
         playHowToAccessInstructionsAudio,
         playFreeModeInstructionsAudio,
@@ -86,6 +88,7 @@ export default function Free() {
                 <FreeTypingSession
                     snapshot={snapshot}
                     dispatch={dispatch}
+                    keyboardBindings={keyboardBindings}
                     onPresentationAction={handlePresentationAction}
                     onMachineKeyPressed={playKeyPress}
                 />

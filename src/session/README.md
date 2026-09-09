@@ -85,6 +85,8 @@ apenas quando `handled` é verdadeiro.
 
 Teclas modificadas e não mapeadas permanecem disponíveis ao navegador. A
 repetição automática é consumida sem repetir a Intenção da máquina.
+`createDefaultWebKeyboardBindings` fornece o mapa inicial; a composição pode
+substituí-lo ou remapeá-lo antes de entregá-lo à apresentação.
 
 ## Integração temporária do Modo livre
 

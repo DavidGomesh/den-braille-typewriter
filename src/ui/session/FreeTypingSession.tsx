@@ -9,6 +9,7 @@ import {
     mapWebKeyboardEvent,
     type SessionInput,
     type TypingSessionSnapshot,
+    type WebKeyboardBindings,
 } from '../../session/public'
 import {
     legacyFreeModeActionForKey,
@@ -79,6 +80,7 @@ const legacyText = (snapshot: TypingSessionSnapshot) => {
 export type FreeTypingSessionProps = Readonly<{
     snapshot: TypingSessionSnapshot
     dispatch: (input: SessionInput) => void
+    keyboardBindings: WebKeyboardBindings
     onPresentationAction: (action: LegacyFreeModeAction) => void
     onMachineKeyPressed: () => void
 }>
@@ -86,6 +88,7 @@ export type FreeTypingSessionProps = Readonly<{
 export default function FreeTypingSession({
     snapshot,
     dispatch,
+    keyboardBindings,
     onPresentationAction,
     onMachineKeyPressed,
 }: FreeTypingSessionProps) {
@@ -147,7 +150,7 @@ export default function FreeTypingSession({
     ) => {
         if (type === 'press' && handlePresentationKey(event)) return
 
-        const mapping = mapWebKeyboardEvent(event, type)
+        const mapping = mapWebKeyboardEvent(event, type, keyboardBindings)
         if (!mapping.handled) return
         event.preventDefault()
 
