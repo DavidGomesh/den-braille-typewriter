@@ -2,13 +2,21 @@ import { describe, expect, test } from 'vitest'
 
 import {
     applyIntent,
+    confirmBrailleDocumentReformat,
     createBrailleCell,
     createBrailleDot,
     createBrailleGrid,
+    createBrailleDocument,
     createCellImpression,
     createEngineState,
     createGridPosition,
+    createPaperConfiguration,
+    eraseCellDots,
     getCellImpression,
+    getDocumentCellImpression,
+    moveReviewPosition,
+    applyDocumentOperation,
+    prepareBrailleDocumentReformat,
     recordCellImpression,
 } from './public'
 
@@ -183,5 +191,316 @@ describe('Braille document grid', () => {
                 },
             ],
         })
+    })
+})
+
+describe('Braille document editing and review', () => {
+    test('moves editing and review positions independently', () => {
+        const document = createBrailleDocument(
+            createPaperConfiguration({
+                type: 'sheet',
+                rows: 4,
+                columns: 6,
+                margins: { top: 1, right: 1, bottom: 1, left: 1 },
+            }),
+        )
+
+        const edited = applyDocumentOperation(document, {
+            type: 'confirm-cell',
+            cell: createBrailleCell([1, 4]),
+        })
+        const reviewed = moveReviewPosition(edited, 'down')
+
+        expect(edited.editingPosition).toEqual({ sheet: 0, row: 1, column: 2 })
+        expect(edited.reviewPosition).toEqual({ sheet: 0, row: 1, column: 1 })
+        expect(reviewed.editingPosition).toBe(edited.editingPosition)
+        expect(reviewed.reviewPosition).toEqual({
+            sheet: 0,
+            row: 2,
+            column: 1,
+        })
+        expect(
+            getDocumentCellImpression(reviewed, {
+                sheet: 0,
+                row: 1,
+                column: 1,
+            }),
+        ).toEqual({ cell: { dots: [1, 4] }, erasedDots: [] })
+    })
+
+    test('applies machine movements without conflating their meanings', () => {
+        const initial = createBrailleDocument(
+            createPaperConfiguration({
+                type: 'continuous',
+                columns: 4,
+                margins: { left: 1, right: 1 },
+            }),
+        )
+        const spaced = applyDocumentOperation(initial, { type: 'space' })
+        const backed = applyDocumentOperation(spaced, { type: 'backspace' })
+        const fed = applyDocumentOperation(backed, { type: 'line-feed' })
+        const returned = applyDocumentOperation(fed, {
+            type: 'carriage-return',
+        })
+
+        expect(
+            getDocumentCellImpression(returned, {
+                sheet: 0,
+                row: 0,
+                column: 1,
+            }),
+        ).toEqual({ cell: { dots: [] }, erasedDots: [] })
+        expect(backed.editingPosition).toEqual({
+            sheet: 0,
+            row: 0,
+            column: 1,
+        })
+        expect(fed.editingPosition).toEqual({
+            sheet: 0,
+            row: 1,
+            column: 1,
+        })
+        expect(returned.editingPosition).toEqual({
+            sheet: 0,
+            row: 1,
+            column: 1,
+        })
+    })
+
+    test('continues a finite sheet on a new sheet and continuous paper on a new row', () => {
+        const sheet = createBrailleDocument(
+            createPaperConfiguration({
+                type: 'sheet',
+                rows: 1,
+                columns: 1,
+            }),
+        )
+        const continuous = createBrailleDocument(
+            createPaperConfiguration({ type: 'continuous', columns: 1 }),
+        )
+
+        const nextSheet = applyDocumentOperation(sheet, { type: 'space' })
+        const nextContinuousRow = applyDocumentOperation(continuous, {
+            type: 'space',
+        })
+
+        expect(nextSheet.editingPosition).toEqual({
+            sheet: 1,
+            row: 0,
+            column: 0,
+        })
+        expect(nextSheet.grids).toHaveLength(2)
+        expect(nextContinuousRow.editingPosition).toEqual({
+            sheet: 0,
+            row: 1,
+            column: 0,
+        })
+        expect(nextContinuousRow.grids).toHaveLength(1)
+    })
+
+    test('physical erasure preserves traces and allows erased dots to be raised again', () => {
+        const initial = createBrailleDocument(
+            createPaperConfiguration({ type: 'continuous', columns: 3 }),
+        )
+        const recorded = applyDocumentOperation(initial, {
+            type: 'confirm-cell',
+            cell: createBrailleCell([1, 2, 4]),
+        })
+        const position = { sheet: 0, row: 0, column: 0 } as const
+        const erased = eraseCellDots(recorded, position, [
+            createBrailleDot(2),
+            createBrailleDot(4),
+        ])
+        const repositioned = applyDocumentOperation(
+            applyDocumentOperation(erased, { type: 'backspace' }),
+            { type: 'confirm-cell', cell: createBrailleCell([2, 5]) },
+        )
+
+        expect(getDocumentCellImpression(erased, position)).toEqual({
+            cell: { dots: [1] },
+            erasedDots: [2, 4],
+        })
+        expect(getDocumentCellImpression(repositioned, position)).toEqual({
+            cell: { dots: [1, 2, 5] },
+            erasedDots: [4],
+        })
+    })
+
+    test('reformats each old line separately without losing impressions', () => {
+        const initial = createBrailleDocument(
+            createPaperConfiguration({ type: 'continuous', columns: 4 }),
+        )
+        const firstLine = [1, 2, 3, 4].reduce(
+            (document, dot) =>
+                applyDocumentOperation(document, {
+                    type: 'confirm-cell',
+                    cell: createBrailleCell([dot]),
+                }),
+            initial,
+        )
+        const secondLine = applyDocumentOperation(
+            applyDocumentOperation(firstLine, { type: 'line-feed' }),
+            { type: 'carriage-return' },
+        )
+        const completed = applyDocumentOperation(secondLine, {
+            type: 'confirm-cell',
+            cell: createBrailleCell([5]),
+        })
+
+        const reformat = prepareBrailleDocumentReformat(
+            completed,
+            createPaperConfiguration({ type: 'continuous', columns: 3 }),
+        )
+        const reformatted = confirmBrailleDocumentReformat(reformat)
+
+        expect(completed.paper.columns).toBe(4)
+        expect(reformat.document).toBe(completed)
+        expect(
+            reformatted.grids[0]?.impressions.map(
+                ({ position, impression }) => [
+                    position.row,
+                    position.column,
+                    impression.cell.dots,
+                ],
+            ),
+        ).toEqual([
+            [0, 0, [1]],
+            [0, 1, [2]],
+            [0, 2, [3]],
+            [1, 0, [4]],
+            [3, 0, [5]],
+        ])
+        expect(reformatted.paper).toMatchObject({
+            type: 'continuous',
+            columns: 3,
+        })
+    })
+
+    test('preserves empty sheet boundaries when reformatting to continuous paper', () => {
+        const initial = createBrailleDocument(
+            createPaperConfiguration({
+                type: 'sheet',
+                rows: 1,
+                columns: 1,
+            }),
+        )
+        const firstSheet = applyDocumentOperation(initial, {
+            type: 'confirm-cell',
+            cell: createBrailleCell([1]),
+        })
+        const skippedSheet = applyDocumentOperation(firstSheet, {
+            type: 'line-feed',
+        })
+        const thirdSheet = applyDocumentOperation(skippedSheet, {
+            type: 'confirm-cell',
+            cell: createBrailleCell([2]),
+        })
+
+        const reformatted = confirmBrailleDocumentReformat(
+            prepareBrailleDocumentReformat(
+                thirdSheet,
+                createPaperConfiguration({
+                    type: 'continuous',
+                    columns: 3,
+                    margins: { left: 1, right: 1 },
+                }),
+            ),
+        )
+
+        expect(
+            reformatted.grids[0]?.impressions.map(
+                ({ position, impression }) => [
+                    position.row,
+                    position.column,
+                    impression.cell.dots,
+                ],
+            ),
+        ).toEqual([
+            [0, 1, [1]],
+            [2, 1, [2]],
+        ])
+    })
+
+    test('paginates continuous lines inside the writable area of finite sheets', () => {
+        const initial = createBrailleDocument(
+            createPaperConfiguration({ type: 'continuous', columns: 3 }),
+        )
+        const completed = [1, 2, 3].reduce(
+            (document, dot) =>
+                applyDocumentOperation(document, {
+                    type: 'confirm-cell',
+                    cell: createBrailleCell([dot]),
+                }),
+            initial,
+        )
+
+        const reformatted = confirmBrailleDocumentReformat(
+            prepareBrailleDocumentReformat(
+                completed,
+                createPaperConfiguration({
+                    type: 'sheet',
+                    rows: 3,
+                    columns: 3,
+                    margins: { top: 1, right: 1, bottom: 1, left: 1 },
+                    format: 'custom',
+                    orientation: 'portrait',
+                }),
+            ),
+        )
+
+        expect(reformatted.grids).toHaveLength(3)
+        expect(
+            reformatted.grids.map((grid) => grid.impressions[0]?.position),
+        ).toEqual([
+            { row: 1, column: 1 },
+            { row: 1, column: 1 },
+            { row: 1, column: 1 },
+        ])
+        expect(reformatted.paper).toMatchObject({
+            type: 'sheet',
+            rows: 3,
+            columns: 3,
+            format: 'custom',
+            orientation: 'portrait',
+        })
+    })
+
+    test('validates that paper configuration leaves a writable grid', () => {
+        expect(() =>
+            createPaperConfiguration({
+                type: 'sheet',
+                rows: 2,
+                columns: 2,
+                margins: { top: 1, bottom: 1 },
+            }),
+        ).toThrowError('Paper margins leave no writable rows')
+        expect(() =>
+            createPaperConfiguration({
+                type: 'continuous',
+                columns: 2,
+                margins: { left: 1, right: 1 },
+            }),
+        ).toThrowError('Paper margins leave no writable columns')
+    })
+
+    test('rejects a reformat confirmation that was not prepared', () => {
+        const document = createBrailleDocument(
+            createPaperConfiguration({ type: 'continuous', columns: 3 }),
+        )
+        const unprepared = {
+            document,
+            paper: createPaperConfiguration({
+                type: 'continuous',
+                columns: 2,
+            }),
+        }
+
+        expect(() =>
+            confirmBrailleDocumentReformat(
+                unprepared as Parameters<
+                    typeof confirmBrailleDocumentReformat
+                >[0],
+            ),
+        ).toThrowError('Braille document reformat was not prepared')
     })
 })
