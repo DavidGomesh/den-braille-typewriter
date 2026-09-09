@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import '../../styles/views/modes/Free.css'
 
@@ -14,7 +14,15 @@ import {
     getTypingSessionSnapshot,
     type SessionInput,
 } from '../../session/public'
-import { FreeTypingSession, type LegacyFreeModeAction } from '../../ui/public'
+import {
+    AccessibleFeedback,
+    FreeTypingSession,
+    type LegacyFreeModeAction,
+} from '../../ui/public'
+import {
+    planSessionFeedback,
+    type MessageFeedbackPlan,
+} from '../../feedback/public'
 import {
     applySimulatorPreferenceChange,
     createLocalStoragePreferencesStorage,
@@ -64,6 +72,8 @@ export default function FreePage() {
     const [session, setSession] = useState(() =>
         createFreeSession(initialPreferences.preferences),
     )
+    const sessionRef = useRef(session)
+    const [feedbackPlan, setFeedbackPlan] = useState<MessageFeedbackPlan>()
     const snapshot = useMemo(() => getTypingSessionSnapshot(session), [session])
     const keyboardBindings = useMemo(
         () => createWebKeyboardBindings(preferences.keyboardBindings),
@@ -86,7 +96,18 @@ export default function FreePage() {
     }, [])
 
     const dispatch = useCallback((input: SessionInput) => {
-        setSession((current) => applySessionInput(current, input).state)
+        const result = applySessionInput(sessionRef.current, input)
+        sessionRef.current = result.state
+        setSession(result.state)
+
+        const latestMessage = result.events
+            .map(planSessionFeedback)
+            .filter(
+                (plan): plan is MessageFeedbackPlan =>
+                    plan.disposition === 'message',
+            )
+            .at(-1)
+        if (latestMessage !== undefined) setFeedbackPlan(latestMessage)
     }, [])
 
     const handlePresentationAction = useCallback(
@@ -146,6 +167,7 @@ export default function FreePage() {
                 {preferencesNotice !== undefined && (
                     <div role="alert">{preferencesNotice}</div>
                 )}
+                <AccessibleFeedback plan={feedbackPlan} />
                 <FreeTypingSession
                     snapshot={snapshot}
                     dispatch={dispatch}

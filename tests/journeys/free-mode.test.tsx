@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
@@ -191,4 +191,34 @@ test('Free Mode uses persisted keyboard bindings in a new session', () => {
     expect(screen.getByRole('textbox')).toHaveValue('')
     press(typewriter, 'KeyA')
     expect(screen.getByRole('textbox')).toHaveValue('a')
+})
+
+test('Free Mode presents equivalent visual and accessible feedback without moving focus', () => {
+    renderFreeMode()
+    const typewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    act(() => typewriter.focus())
+
+    const accessibleFeedback = screen.getByRole('status', {
+        name: 'Feedback da sessão',
+    })
+    expect(accessibleFeedback).toHaveTextContent('Captura de acordes ativada.')
+    expect(
+        screen.getByText('Captura de acordes ativada.', { selector: 'p' }),
+    ).toBeVisible()
+    expect(typewriter).toHaveFocus()
+
+    press(typewriter, 'ArrowRight')
+
+    expect(accessibleFeedback).toHaveTextContent(
+        'Revisão movida para linha 1, coluna 2.',
+    )
+    expect(
+        screen.getByText('Revisão movida para linha 1, coluna 2.', {
+            selector: 'p',
+        }),
+    ).toBeVisible()
+    expect(typewriter).toHaveFocus()
 })
