@@ -1,7 +1,14 @@
 /** Version of the persisted simulator-preferences schema. */
 export const simulatorPreferencesVersion = 2 as const
 
-/** Portable choices for application speech and optional machine sounds. */
+/**
+ * Portable choices for application speech and optional machine sounds.
+ *
+ * `locale` is a non-empty BCP 47 language tag. `voicePreference` selects a
+ * logical class rather than persisting a platform voice name: `default` uses
+ * the platform default compatible voice, while `local` prefers an installed
+ * voice. Web Speech ranges are rate 0.1–10, pitch 0–2 and volume 0–1.
+ */
 export type FeedbackPreferences = Readonly<{
     speech: Readonly<{
         enabled: boolean

@@ -1,5 +1,6 @@
 import type { SpeechOutput, SpeechRequest, SpeechResult } from '../../../speech'
 
+/** Portable projection of a platform voice; `name` is never persisted. */
 export type WebSpeechVoice = Readonly<{
     name: string
     lang: string
@@ -8,6 +9,7 @@ export type WebSpeechVoice = Readonly<{
     platformValue?: unknown
 }>
 
+/** Mutable utterance boundary populated before platform playback. */
 export type WebSpeechUtterance = {
     text: string
     lang?: string
@@ -20,12 +22,15 @@ export type WebSpeechUtterance = {
     platformValue?: unknown
 }
 
+/** Minimum Web Speech capability required by the adapter. */
 export type WebSpeechSynthesis = Readonly<{
     getVoices(): readonly WebSpeechVoice[]
     speak(utterance: WebSpeechUtterance): void
     cancel(): void
+    addEventListener?(type: 'voiceschanged', listener: () => void): void
 }>
 
+/** Creates an utterance owned by the target speech platform. */
 export type WebSpeechUtteranceFactory = (text: string) => WebSpeechUtterance
 
 const selectVoice = (
@@ -55,9 +60,14 @@ export const createWebSpeechOutput = (
     createUtterance: WebSpeechUtteranceFactory,
 ): SpeechOutput => {
     let cancelCurrent: (() => void) | undefined
+    let voices = synthesis.getVoices()
+    synthesis.addEventListener?.('voiceschanged', () => {
+        voices = synthesis.getVoices()
+    })
     return {
         speak: async (request): Promise<SpeechResult> => {
-            const voice = selectVoice(synthesis.getVoices(), request)
+            voices = synthesis.getVoices()
+            const voice = selectVoice(voices, request)
             if (voice === undefined) return 'unavailable'
             const utterance = createUtterance(request.text)
             Object.assign(utterance, {
@@ -127,6 +137,15 @@ export const createBrowserSpeechOutput = (): SpeechOutput | undefined => {
                 globalThis.speechSynthesis.speak(native)
             },
             cancel: () => globalThis.speechSynthesis.cancel(),
+            addEventListener:
+                typeof globalThis.speechSynthesis.addEventListener ===
+                'function'
+                    ? (type, listener) =>
+                          globalThis.speechSynthesis.addEventListener(
+                              type,
+                              listener,
+                          )
+                    : undefined,
         },
         (text) => ({
             text,

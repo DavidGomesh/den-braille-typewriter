@@ -54,4 +54,20 @@ describe('Web sound output', () => {
             'failed',
         )
     })
+
+    test('replaces and settles a previous overlapping sound', async () => {
+        const audios = [0, 1].map(() => ({
+            play: vi.fn().mockResolvedValue(undefined),
+            pause: vi.fn(),
+            currentTime: 3,
+            onended: null,
+        }))
+        const output = createWebSoundOutput(() => audios.shift()!)
+
+        const first = output.play({ type: 'machine-key' })
+        void output.play({ type: 'machine-key' })
+
+        await expect(first).resolves.toBe('cancelled')
+        expect(audios).toHaveLength(0)
+    })
 })

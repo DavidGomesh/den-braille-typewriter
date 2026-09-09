@@ -22,10 +22,9 @@ import {
     coordinateSessionFeedback,
     createBrowserSpeechOutput,
     createFeedbackCoordinatorState,
+    createMultimodalFeedbackController,
     createWebSoundOutput,
-    resolveFeedbackMessage,
     type MessageFeedbackPlan,
-    type SpeechRequest,
 } from '../../feedback/public'
 import {
     applySimulatorPreferenceChange,
@@ -83,6 +82,9 @@ export default function FreePage() {
     const [feedbackPlans, setFeedbackPlans] = useState<
         readonly MessageFeedbackPlan[]
     >([])
+    const [instructionFallback, setInstructionFallback] = useState<
+        string | undefined
+    >()
     const snapshot = useMemo(() => getTypingSessionSnapshot(session), [session])
     const keyboardBindings = useMemo(
         () => createWebKeyboardBindings(preferences.keyboardBindings),
@@ -90,24 +92,20 @@ export default function FreePage() {
     )
     const speechOutput = useMemo(createBrowserSpeechOutput, [])
     const soundOutput = useMemo(createWebSoundOutput, [])
-    const lastSpeechRequest = useRef<SpeechRequest | undefined>(undefined)
-
-    const speak = useCallback(
-        (text: string, purpose: SpeechRequest['purpose']) => {
-            const speech = preferencesRef.current.feedback.speech
-            if (!speech.enabled || speechOutput === undefined) return
-            const { enabled: _enabled, ...speechSettings } = speech
-            const request = Object.freeze({ text, purpose, ...speechSettings })
-            lastSpeechRequest.current = request
-            void speechOutput.speak(request).then((result) => {
-                if (result === 'unavailable' || result === 'failed') {
+    const multimodalFeedback = useMemo(
+        () =>
+            createMultimodalFeedbackController({
+                speechOutput,
+                soundOutput,
+                getPreferences: () => preferencesRef.current.feedback,
+                onSpeechUnavailable: () =>
                     setPreferencesNotice(
                         'A leitura falada está indisponível; o texto e as mensagens acessíveis continuam ativos.',
-                    )
-                }
-            })
-        },
-        [speechOutput],
+                    ),
+                presentInstructionFallback: setInstructionFallback,
+                presentAccessibleFallback: setFeedbackPlans,
+            }),
+        [soundOutput, speechOutput],
     )
 
     const dispatch = useCallback(
@@ -122,42 +120,26 @@ export default function FreePage() {
             )
             feedbackCoordinatorRef.current = feedback.state
             if (feedback.plans.length > 0) {
-                setFeedbackPlans(feedback.plans)
-                feedback.plans.forEach((plan) => {
-                    if (plan.interruption !== 'none') speechOutput?.cancel()
-                    speak(resolveFeedbackMessage(plan), 'status')
-                })
+                setFeedbackPlans(
+                    multimodalFeedback.deliverPlans(feedback.plans),
+                )
             }
         },
-        [speak, speechOutput],
+        [multimodalFeedback],
     )
 
     const handlePresentationAction = useCallback(
         (action: LegacyFreeModeAction) => {
             if (action === 'instructions-requested') {
-                const instructions =
-                    'Use F, D, S, J, K e L para formar acordes Braille. Use Espaço, Backspace e Q para editar.'
-                if (preferences.feedback.speech.enabled) {
-                    speak(instructions, 'instruction')
-                } else if (preferences.feedback.sounds.enabled) {
-                    void soundOutput.play({
-                        type: 'editorial',
-                        id: 'free-instructions',
-                    })
-                }
+                multimodalFeedback.requestInstructions()
                 return
             }
             if (action === 'speech-stopped') {
-                speechOutput?.cancel()
-                soundOutput.cancel()
+                multimodalFeedback.stop()
                 return
             }
             if (action === 'speech-repeated') {
-                if (
-                    preferences.feedback.speech.enabled &&
-                    lastSpeechRequest.current !== undefined
-                )
-                    void speechOutput?.speak(lastSpeechRequest.current)
+                multimodalFeedback.repeatSpeech()
                 return
             }
 
@@ -169,7 +151,7 @@ export default function FreePage() {
                     type: 'set-view',
                     view: showingBraille ? 'ink' : 'braille',
                 }
-            } else if (action === 'output-audio-toggled') {
+            } else if (action === 'speech-toggled') {
                 change = {
                     type: 'set-speech-enabled',
                     enabled: !preferences.feedback.speech.enabled,
@@ -182,6 +164,7 @@ export default function FreePage() {
             }
 
             const updated = applySimulatorPreferenceChange(preferences, change)
+            multimodalFeedback.applyPreferences(updated.feedback)
             setPreferences(updated)
             const saveResult = saveSimulatorPreferences(
                 preferencesStorage,
@@ -197,21 +180,22 @@ export default function FreePage() {
                       : undefined,
             )
         },
-        [preferences, preferencesStorage, soundOutput, speak, speechOutput],
+        [multimodalFeedback, preferences, preferencesStorage, speechOutput],
     )
 
     const presentationPreferences = useMemo(
         () => ({
             ...preferences.presentation,
             keyboardAudioEnabled: preferences.feedback.sounds.enabled,
+            speechEnabled: preferences.feedback.speech.enabled,
+            soundsEnabled: preferences.feedback.sounds.enabled,
         }),
         [preferences],
     )
 
     const playMachineSound = useCallback(() => {
-        if (preferencesRef.current.feedback.sounds.enabled)
-            void soundOutput.play({ type: 'machine-key' })
-    }, [soundOutput])
+        multimodalFeedback.playMachineKey()
+    }, [multimodalFeedback])
 
     return (
         <>
@@ -220,6 +204,9 @@ export default function FreePage() {
                     <div role="alert">{preferencesNotice}</div>
                 )}
                 <AccessibleFeedback plans={feedbackPlans} />
+                {instructionFallback !== undefined && (
+                    <p aria-live="polite">{instructionFallback}</p>
+                )}
                 <FreeTypingSession
                     snapshot={snapshot}
                     dispatch={dispatch}

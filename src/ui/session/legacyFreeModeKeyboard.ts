@@ -2,16 +2,16 @@
 export type LegacyFreeModeAction =
     | 'instructions-requested'
     | 'view-toggled'
-    | 'output-audio-toggled'
-    | 'keyboard-audio-toggled'
+    | 'speech-toggled'
+    | 'sounds-toggled'
     | 'speech-stopped'
     | 'speech-repeated'
 
 const actionByCode = new Map<string, LegacyFreeModeAction>([
     ['KeyI', 'instructions-requested'],
     ['KeyT', 'view-toggled'],
-    ['KeyO', 'output-audio-toggled'],
-    ['KeyM', 'keyboard-audio-toggled'],
+    ['KeyO', 'speech-toggled'],
+    ['KeyM', 'sounds-toggled'],
     ['KeyP', 'speech-stopped'],
     ['KeyR', 'speech-repeated'],
 ])

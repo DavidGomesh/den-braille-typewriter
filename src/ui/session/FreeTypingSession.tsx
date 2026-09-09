@@ -83,7 +83,11 @@ export type FreeTypingSessionProps = Readonly<{
     dispatch: (input: SessionInput) => void
     keyboardBindings: WebKeyboardBindings
     presentationPreferences: SimulatorPreferences['presentation'] &
-        Readonly<{ keyboardAudioEnabled: boolean }>
+        Readonly<{
+            keyboardAudioEnabled: boolean
+            speechEnabled: boolean
+            soundsEnabled: boolean
+        }>
     onPresentationAction: (action: LegacyFreeModeAction) => void
     onMachineKeyPressed: () => void
 }>
@@ -193,7 +197,7 @@ export default function FreeTypingSession({
             onKeyUp={(event) => handleKeyboardEvent(event, 'release')}
         >
             <div className="fs-1">MODO LIVRE</div>
-            <div role="status" aria-live="polite">
+            <div role="status" aria-label="Estado da sessão" aria-live="polite">
                 {snapshot.capture.status === 'active'
                     ? 'Captura ativa'
                     : 'Captura inativa'}{' '}
@@ -201,9 +205,20 @@ export default function FreeTypingSession({
                 coluna {snapshot.document.reviewPosition.column + 1}
             </div>
             <p>
-                A leitura falada começa desligada. Pressione O para ativar ou
-                silenciar, R para repetir e P para interromper.
+                A leitura falada começa desligada por padrão. Pressione O para
+                ativar ou silenciar, R para repetir e P para interromper.
             </p>
+            <div aria-live="polite">
+                Leitura falada:{' '}
+                {presentationPreferences.speechEnabled
+                    ? 'ativada'
+                    : 'desativada'}
+                . Sons da máquina:{' '}
+                {presentationPreferences.soundsEnabled
+                    ? 'ativados'
+                    : 'desativados'}
+                .
+            </div>
             <div className="d-flex justify-content-center w-100 fs-5 gap-3 mb-3">
                 <div>
                     <strong>(i)</strong> Instruções

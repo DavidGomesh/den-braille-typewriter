@@ -1,6 +1,7 @@
 import { resolveSoundAsset } from '../../../catalog/sounds'
 import type { SoundCue, SoundOutput, SoundResult } from '../../../sound'
 
+/** Minimum replaceable browser-audio player used by the sound adapter. */
 export type WebAudio = {
     currentTime: number
     onended: null | ((event: Event) => unknown)
@@ -8,6 +9,7 @@ export type WebAudio = {
     pause(): void
 }
 
+/** Creates one player for an adapter-owned asset path. */
 export type WebAudioFactory = (asset: string) => WebAudio
 
 /** Plays semantic sound cues through replaceable browser audio elements. */
@@ -20,6 +22,12 @@ export const createWebSoundOutput = (
 
     return {
         play: async (cue: SoundCue): Promise<SoundResult> => {
+            if (current !== undefined) {
+                current.pause()
+                current.currentTime = 0
+                cancelCurrent?.()
+                current = undefined
+            }
             const asset = resolveSoundAsset(cue, random)
             if (asset === undefined) return 'unavailable'
             let audio: WebAudio

@@ -28,6 +28,11 @@ export {
     type SilentFeedbackPlan,
 } from './feedback'
 export {
+    createMultimodalFeedbackController,
+    type MultimodalFeedbackController,
+    type MultimodalFeedbackPreferences,
+} from './multimodal'
+export {
     executeFeedbackPlan,
     type FeedbackDelivery,
     type FeedbackExecutionResult,

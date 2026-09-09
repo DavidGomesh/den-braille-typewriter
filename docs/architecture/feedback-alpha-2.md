@@ -13,6 +13,9 @@ Este registro documenta os portões técnicos da fase 6 na jornada do Modo livre
   indisponibilidade, cancelamento ou falha das saídas.
 - O Modo livre permite ativar ou silenciar fala e sons, repetir a última fala e
   interromper as saídas sem mover o foco da área de digitação.
+- Um controlador da capacidade `feedback` concentra seleção de canal,
+  interrupção, repetição, instruções e tratamento de indisponibilidade; a página
+  apenas compõe adapters, encaminha fatos e persiste escolhas.
 - Não existe detecção de leitor de tela.
 - O Modo livre não consome o `AudioProvider`; o executor permanece isolado nos
   destinos legados até a substituição de seus últimos consumidores, sem
@@ -25,6 +28,9 @@ Este registro documenta os portões técnicos da fase 6 na jornada do Modo livre
 - testes de preferências cobrem schema v2, migração e persistência;
 - contratos web substituem as APIs reais de fala e som;
 - a jornada cobre fala ligada, repetição, interrupção e conclusão sem áudio;
+- o estado ligado/desligado de fala e sons é textual e anunciado; fala é uma
+  modalidade opcional, ativada explicitamente, enquanto a região viva continua
+  sendo a saída acessível canônica sem qualquer detecção de leitor de tela;
 - `npm run ci` registra o portão automatizado final.
 
 ## Verificação manual para publicação

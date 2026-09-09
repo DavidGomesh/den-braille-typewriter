@@ -111,4 +111,46 @@ describe('Web Speech output', () => {
         expect(synthesis.cancel).toHaveBeenCalledOnce()
         return expect(completion).resolves.toBe('cancelled')
     })
+
+    test('refreshes the voice catalog when the platform announces changes', async () => {
+        const portuguese = {
+            name: 'Portuguese',
+            lang: 'pt-BR',
+            default: true,
+            localService: true,
+        }
+        let voices: (typeof portuguese)[] = []
+        let voicesChanged: (() => void) | undefined
+        const synthesis = {
+            getVoices: vi.fn(() => voices),
+            speak: vi.fn((utterance: { onend?: () => void }) =>
+                utterance.onend?.(),
+            ),
+            cancel: vi.fn(),
+            addEventListener: vi.fn(
+                (_type: 'voiceschanged', listener: () => void) => {
+                    voicesChanged = listener
+                },
+            ),
+        }
+        const output = createWebSpeechOutput(synthesis, (text) => ({ text }))
+        voices = [portuguese]
+        voicesChanged?.()
+
+        await expect(
+            output.speak({
+                text: 'Mensagem',
+                locale: 'pt-BR',
+                purpose: 'status',
+                voicePreference: 'default',
+                rate: 1,
+                pitch: 1,
+                volume: 1,
+            }),
+        ).resolves.toBe('completed')
+        expect(synthesis.addEventListener).toHaveBeenCalledWith(
+            'voiceschanged',
+            expect.any(Function),
+        )
+    })
 })

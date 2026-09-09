@@ -311,8 +311,18 @@ test('Free Mode remains usable when speech and sounds are unavailable', () => {
     press(typewriter, 'KeyM')
     press(typewriter, 'KeyO')
     press(typewriter, 'KeyF')
+    press(typewriter, 'Space')
+    press(typewriter, 'Backspace')
+    chord(typewriter, ['KeyF', 'KeyD'])
+    press(typewriter, 'ArrowRight')
 
-    expect(screen.getByRole('textbox')).toHaveValue('a')
+    expect(screen.getByRole('textbox')).toHaveValue('ab')
+    expect(screen.getByText(/Leitura falada:/)).toHaveTextContent(
+        'Leitura falada: ativada. Sons da máquina: desativados.',
+    )
+    expect(
+        screen.getByRole('status', { name: 'Estado da sessão' }),
+    ).toHaveTextContent('revisão: linha 1, coluna 2')
     expect(screen.getByRole('alert')).toHaveTextContent(
         'A leitura falada está indisponível; o texto e as mensagens acessíveis continuam ativos.',
     )
