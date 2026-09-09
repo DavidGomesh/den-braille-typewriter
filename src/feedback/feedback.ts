@@ -11,7 +11,7 @@ export type FeedbackMessageId =
 export type FeedbackMessage =
     | Readonly<{
           id: 'capture-activated'
-          parameters: Readonly<Record<never, never>>
+          parameters: Readonly<Record<string, never>>
       }>
     | Readonly<{
           id: 'capture-interrupted'
