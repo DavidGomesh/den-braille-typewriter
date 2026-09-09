@@ -6,16 +6,16 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 ### Added
 
-- Interpretação contextual pela Grafia Braille para a Língua Portuguesa de
-  2018, com segmentos rastreáveis e estados pendente, ambíguo e não reconhecido.
+- Documentação da arquitetura alvo por capacidades, com diagramas, interfaces e estrutura de diretórios.
+- Plano incremental da modernização, incluindo pré-lançamentos, critérios de conclusão, auditorias e rollback.
+- Baseline operacional da versão anterior à modernização, com jornadas essenciais, inventário técnico e referências recuperáveis.
+- Ambiente legado reproduzível no Node.js 24, com instalação pelo lockfile, CI e baseline verificável de vulnerabilidades.
+- Separação contínua entre falhas herdadas de lint e novas regressões, com auditoria por advisory e pacote.
+- Desenvolvimento e build Vite equivalentes ao CRA, com artifact próprio e base de publicação do projeto.
 - Documento Braille editável e revisável com configuração e reformatação de
   folha finita ou papel contínuo, preservando impressões e vestígios físicos.
-- Desenvolvimento e build Vite equivalentes ao CRA, com artifact próprio e base de publicação do projeto.
-- Separação contínua entre falhas herdadas de lint e novas regressões, com auditoria por advisory e pacote.
-- Ambiente legado reproduzível no Node.js 24, com instalação pelo lockfile, CI e baseline verificável de vulnerabilidades.
-- Baseline operacional da versão anterior à modernização, com jornadas essenciais, inventário técnico e referências recuperáveis.
-- Plano incremental da modernização, incluindo pré-lançamentos, critérios de conclusão, auditorias e rollback.
-- Documentação da arquitetura alvo por capacidades, com diagramas, interfaces e estrutura de diretórios.
+- Interpretação contextual pela Grafia Braille para a Língua Portuguesa de
+  2018, com segmentos rastreáveis e estados pendente, ambíguo e não reconhecido.
 
 ### Changed
 
