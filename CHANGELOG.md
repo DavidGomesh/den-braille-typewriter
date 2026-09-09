@@ -4,6 +4,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 ## [Unreleased]
 
+## [3.0.0-alpha.1] - 2026-09-09
+
 ### Added
 
 - Documentação da arquitetura alvo por capacidades, com diagramas, interfaces e estrutura de diretórios.
@@ -30,4 +32,5 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 - Vite passa a ser o único caminho de desenvolvimento, build e publicação; o
   caminho concorrente do Create React App foi removido.
 
-[Unreleased]: https://github.com/DavidGomesh/den-braille-typewriter/compare/v1.0...HEAD
+[Unreleased]: https://github.com/DavidGomesh/den-braille-typewriter/compare/v3.0.0-alpha.1...HEAD
+[3.0.0-alpha.1]: https://github.com/DavidGomesh/den-braille-typewriter/releases/tag/v3.0.0-alpha.1
