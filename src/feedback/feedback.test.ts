@@ -1,7 +1,19 @@
 import { describe, expect, test } from 'vitest'
 
 import { createBrailleCell } from '../braille/public'
-import { planSessionFeedback, resolveFeedbackMessage } from './public'
+import {
+    coordinateSessionFeedback,
+    createFeedbackCoordinatorState,
+    planSessionFeedback,
+    resolveFeedbackMessage,
+    type FeedbackPlan,
+} from './public'
+
+const resolvePlannedMessage = (plan: FeedbackPlan): string => {
+    if (plan.disposition === 'silent')
+        throw new Error('Expected a message plan')
+    return resolveFeedbackMessage(plan)
+}
 
 describe('session feedback planning', () => {
     test('plans equivalent visual and accessible capture feedback', () => {
@@ -18,7 +30,7 @@ describe('session feedback planning', () => {
                 accessible: 'polite',
             },
         })
-        expect(resolveFeedbackMessage(plan)).toBe('Captura de acordes ativada.')
+        expect(resolvePlannedMessage(plan)).toBe('Captura de acordes ativada.')
     })
 
     test('assigns interruption and repetition policies to important facts', () => {
@@ -39,7 +51,7 @@ describe('session feedback planning', () => {
             interruption: 'lower-priority',
             channels: { visual: true, accessible: 'polite' },
         })
-        expect(resolveFeedbackMessage(interrupted)).toBe(
+        expect(resolvePlannedMessage(interrupted)).toBe(
             'Captura interrompida porque a área de digitação perdeu o foco; o acorde incompleto foi descartado.',
         )
         expect(rejected).toMatchObject({
@@ -47,7 +59,7 @@ describe('session feedback planning', () => {
             repetition: 'suppress',
             interruption: 'none',
         })
-        expect(resolveFeedbackMessage(rejected)).toBe(
+        expect(resolvePlannedMessage(rejected)).toBe(
             'Entrada ignorada porque a captura está inativa.',
         )
     })
@@ -74,7 +86,7 @@ describe('session feedback planning', () => {
             position: { sheet: 0, row: 1, column: 2 },
         })
 
-        expect(resolveFeedbackMessage(plan)).toBe(
+        expect(resolvePlannedMessage(plan)).toBe(
             'Revisão movida para linha 2, coluna 3.',
         )
         expect(plan).toMatchObject({
@@ -82,5 +94,60 @@ describe('session feedback planning', () => {
             repetition: 'replace',
             channels: { visual: true, accessible: 'polite' },
         })
+    })
+
+    test('keeps same-priority facts from one transition in semantic order', () => {
+        const result = coordinateSessionFeedback(
+            createFeedbackCoordinatorState(),
+            [
+                {
+                    type: 'chord-discarded',
+                    cause: 'interruption',
+                    cell: createBrailleCell([1]),
+                },
+                {
+                    type: 'capture-interrupted',
+                    cause: 'focus-loss',
+                    policy: 'discard',
+                },
+            ],
+        )
+
+        expect(result.plans.map(resolveFeedbackMessage)).toEqual([
+            'Acorde incompleto descartado durante a interrupção.',
+            'Captura interrompida porque a área de digitação perdeu o foco; o acorde incompleto foi descartado.',
+        ])
+    })
+
+    test('suppresses repeated facts and lets higher priority interrupt lower priority', () => {
+        const first = coordinateSessionFeedback(
+            createFeedbackCoordinatorState(),
+            [
+                {
+                    type: 'session-input-rejected',
+                    reason: 'capture-inactive',
+                },
+            ],
+        )
+        const repeated = coordinateSessionFeedback(first.state, [
+            {
+                type: 'session-input-rejected',
+                reason: 'capture-inactive',
+            },
+        ])
+        const interrupted = coordinateSessionFeedback(repeated.state, [
+            { type: 'capture-activated' },
+            {
+                type: 'capture-interrupted',
+                cause: 'pause',
+                policy: 'discard',
+            },
+        ])
+
+        expect(first.plans).toHaveLength(1)
+        expect(repeated.plans).toEqual([])
+        expect(interrupted.plans.map(resolveFeedbackMessage)).toEqual([
+            'Captura interrompida por solicitação da pessoa usuária; o acorde incompleto foi descartado.',
+        ])
     })
 })

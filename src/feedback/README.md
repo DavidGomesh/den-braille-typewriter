@@ -13,6 +13,11 @@ parâmetros estruturados. Planos com `disposition: 'silent'` registram que o
 silêncio foi deliberado; a produção frequente do Documento Braille não é
 duplicada em regiões vivas.
 
+`coordinateSessionFeedback` recebe todos os fatos de uma transição, preserva a
+ordem dos planos de mesma prioridade, aplica supressão entre transições e deixa
+mensagens de prioridade maior interromperem somente planos inferiores ainda
+pendentes no mesmo lote. Essa política permanece fora da página e dos adapters.
+
 O catálogo em português resolve o identificador somente na fronteira de
 apresentação. Assim, texto visual e mensagem programática usam o mesmo conteúdo
 canônico sem transformar a UI na fonte do significado.
@@ -30,10 +35,10 @@ mesmo contrato sem DOM, síntese de voz ou reprodução real de sons.
 
 ## Integração no Modo livre
 
-`app/pages/FreePage.tsx` entrega os fatos produzidos pela sessão ao planejador e
-mantém somente o último plano apresentável. `ui/feedback/AccessibleFeedback.tsx`
-mostra o conteúdo visual e atualiza uma região viva equivalente sem mover o
-foco da área de digitação.
+`app/pages/FreePage.tsx` entrega todos os fatos produzidos pela sessão ao
+coordenador. `ui/feedback/AccessibleFeedback.tsx` mostra cada plano preservado e
+atualiza uma região viva com o conteúdo equivalente sem mover o foco da área de
+digitação.
 
 Áudio e fala substituíveis serão conectados no corte seguinte da capacidade;
 esta etapa cobre o texto visual e as mensagens programáticas da issue #43.

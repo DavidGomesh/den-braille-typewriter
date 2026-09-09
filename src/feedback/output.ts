@@ -1,6 +1,7 @@
-import { resolvePortugueseFeedbackMessage } from './catalogs/portuguese'
+import { resolvePortugueseFeedbackMessage } from './catalog/portuguese'
 import type { FeedbackPlan, MessageFeedbackPlan } from './feedback'
 
+/** Resolved content and policies delivered unchanged to one output adapter. */
 export type FeedbackDelivery = Readonly<{
     content: string
     priority: MessageFeedbackPlan['priority']
@@ -8,6 +9,13 @@ export type FeedbackDelivery = Readonly<{
     interruption: MessageFeedbackPlan['interruption']
 }>
 
+/**
+ * One independently executable feedback destination.
+ *
+ * Delivery may complete synchronously or asynchronously, report cancellation,
+ * or throw/reject when unavailable. The coordinator isolates that outcome from
+ * every other output.
+ */
 export type FeedbackOutput = Readonly<{
     id: string
     deliver(
@@ -15,6 +23,7 @@ export type FeedbackOutput = Readonly<{
     ): Promise<'delivered' | 'cancelled'> | 'delivered' | 'cancelled'
 }>
 
+/** Per-output outcomes in the same order as the requested adapters. */
 export type FeedbackExecutionResult = Readonly<{
     outputs: readonly Readonly<{
         id: string
@@ -22,7 +31,12 @@ export type FeedbackExecutionResult = Readonly<{
     }>[]
 }>
 
-/** Executes independent outputs without allowing one failure to block another. */
+/**
+ * Executes outputs concurrently without allowing one failure to block another.
+ *
+ * A silent plan invokes no adapter. Message results preserve adapter order even
+ * when completion order differs; thrown and rejected failures become `failed`.
+ */
 export const executeFeedbackPlan = async (
     plan: FeedbackPlan,
     outputs: readonly FeedbackOutput[],

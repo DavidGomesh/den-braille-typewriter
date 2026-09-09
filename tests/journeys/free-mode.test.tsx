@@ -222,3 +222,24 @@ test('Free Mode presents equivalent visual and accessible feedback without movin
     ).toBeVisible()
     expect(typewriter).toHaveFocus()
 })
+
+test('Free Mode preserves every important fact from an interrupted chord', () => {
+    renderFreeMode()
+    const typewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    act(() => typewriter.focus())
+    fireEvent.keyDown(typewriter, { code: 'KeyF' })
+    fireEvent.blur(typewriter, { relatedTarget: document.body })
+
+    const accessibleFeedback = screen.getByRole('status', {
+        name: 'Feedback da sessão',
+    })
+    expect(accessibleFeedback).toHaveTextContent(
+        'Acorde incompleto descartado durante a interrupção.',
+    )
+    expect(accessibleFeedback).toHaveTextContent(
+        'Captura interrompida porque a área de digitação perdeu o foco; o acorde incompleto foi descartado.',
+    )
+})

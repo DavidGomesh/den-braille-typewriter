@@ -1,9 +1,13 @@
-import { resolvePortugueseFeedbackMessage } from './catalogs/portuguese'
-import type { FeedbackPlan } from './feedback'
+import { resolvePortugueseFeedbackMessage } from './catalog/portuguese'
+import type { MessageFeedbackPlan } from './feedback'
 
 export { createMemoryFeedbackOutput } from './adapters/memory/memory'
 export {
+    coordinateSessionFeedback,
+    createFeedbackCoordinatorState,
     planSessionFeedback,
+    type FeedbackCoordinationResult,
+    type FeedbackCoordinatorState,
     type FeedbackMessage,
     type FeedbackMessageId,
     type FeedbackPlan,
@@ -17,8 +21,6 @@ export {
     type FeedbackOutput,
 } from './output'
 
-/** Resolves the current product locale for a planned feedback message. */
-export const resolveFeedbackMessage = (plan: FeedbackPlan): string =>
-    plan.disposition === 'message'
-        ? resolvePortugueseFeedbackMessage(plan.message)
-        : ''
+/** Resolves a presentable plan into the current product locale. */
+export const resolveFeedbackMessage = (plan: MessageFeedbackPlan): string =>
+    resolvePortugueseFeedbackMessage(plan.message)

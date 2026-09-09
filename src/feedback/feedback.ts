@@ -7,11 +7,41 @@ export type FeedbackMessageId =
     | 'input-rejected'
     | 'review-position-moved'
 
-export type FeedbackMessage = Readonly<{
-    id: FeedbackMessageId
-    parameters: Readonly<Record<string, string | number>>
-}>
+/** Localizable semantic content with parameters required by each message. */
+export type FeedbackMessage =
+    | Readonly<{
+          id: 'capture-activated'
+          parameters: Readonly<Record<never, never>>
+      }>
+    | Readonly<{
+          id: 'capture-interrupted'
+          parameters: Readonly<{
+              cause: 'focus-loss' | 'page-hidden' | 'pause'
+              policy: 'discard' | 'confirm'
+          }>
+      }>
+    | Readonly<{
+          id: 'chord-discarded'
+          parameters: Readonly<{
+              cause: 'cancellation' | 'interruption'
+          }>
+      }>
+    | Readonly<{
+          id: 'input-rejected'
+          parameters: Readonly<{
+              reason:
+                  | 'capture-inactive'
+                  | 'source-not-responsible'
+                  | 'control-already-pressed'
+                  | 'control-not-pressed'
+          }>
+      }>
+    | Readonly<{
+          id: 'review-position-moved'
+          parameters: Readonly<{ row: number; column: number }>
+      }>
 
+/** Output policy for one presentable semantic message. */
 export type MessageFeedbackPlan = Readonly<{
     disposition: 'message'
     message: FeedbackMessage
@@ -24,12 +54,25 @@ export type MessageFeedbackPlan = Readonly<{
     }>
 }>
 
+/** Deliberate omission of output for a semantic fact. */
 export type SilentFeedbackPlan = Readonly<{
     disposition: 'silent'
     reason: 'frequent-production'
 }>
 
+/** Complete pure planning outcome for one semantic fact. */
 export type FeedbackPlan = MessageFeedbackPlan | SilentFeedbackPlan
+
+/** Minimal immutable history required to apply cross-event feedback policy. */
+export type FeedbackCoordinatorState = Readonly<{
+    lastMessage?: FeedbackMessage
+}>
+
+/** Presentable plans and updated coordinator history for one event batch. */
+export type FeedbackCoordinationResult = Readonly<{
+    state: FeedbackCoordinatorState
+    plans: readonly MessageFeedbackPlan[]
+}>
 
 const messagePlan = (
     message: FeedbackMessage,
@@ -119,4 +162,66 @@ export const planSessionFeedback = (event: SessionEvent): FeedbackPlan => {
                 },
             )
     }
+}
+
+const priorityRank: Readonly<Record<MessageFeedbackPlan['priority'], number>> =
+    Object.freeze({ normal: 0, high: 1, urgent: 2 })
+
+const sameMessage = (left: FeedbackMessage, right: FeedbackMessage): boolean =>
+    left.id === right.id &&
+    JSON.stringify(left.parameters) === JSON.stringify(right.parameters)
+
+/** Creates empty history for the pure feedback coordinator. */
+export const createFeedbackCoordinatorState = (): FeedbackCoordinatorState =>
+    Object.freeze({})
+
+/**
+ * Coordinates every semantic fact from one transition in source order.
+ *
+ * Repeated messages marked `suppress` are omitted across transitions.
+ * Interruption removes only lower-priority plans still pending in the current
+ * batch; same-priority facts remain ordered and observable.
+ */
+export const coordinateSessionFeedback = (
+    state: FeedbackCoordinatorState,
+    events: readonly SessionEvent[],
+): FeedbackCoordinationResult => {
+    let lastMessage = state.lastMessage
+    let plans: MessageFeedbackPlan[] = []
+
+    events.forEach((event) => {
+        const plan = planSessionFeedback(event)
+        if (plan.disposition === 'silent') return
+        if (
+            plan.repetition === 'suppress' &&
+            lastMessage !== undefined &&
+            sameMessage(lastMessage, plan.message)
+        )
+            return
+
+        if (plan.interruption === 'lower-priority') {
+            plans = plans.filter(
+                (pending) =>
+                    priorityRank[pending.priority] >=
+                    priorityRank[plan.priority],
+            )
+        } else if (plan.interruption === 'all') {
+            plans = []
+        }
+        if (plan.repetition === 'replace') {
+            plans = plans.filter(
+                (pending) => pending.message.id !== plan.message.id,
+            )
+        }
+        plans.push(plan)
+        lastMessage = plan.message
+    })
+
+    return Object.freeze({
+        state:
+            lastMessage === undefined
+                ? Object.freeze({})
+                : Object.freeze({ lastMessage }),
+        plans: Object.freeze(plans),
+    })
 }

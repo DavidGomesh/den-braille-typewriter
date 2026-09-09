@@ -6,28 +6,40 @@ import {
 } from '../../feedback/public'
 
 export type AccessibleFeedbackProps = Readonly<{
-    plan?: MessageFeedbackPlan
+    plans: readonly MessageFeedbackPlan[]
 }>
 
-/** Presents one canonical feedback message visually and programmatically. */
-export default function AccessibleFeedback({ plan }: AccessibleFeedbackProps) {
-    if (plan === undefined) return <div />
+/** Presents canonical feedback messages visually and programmatically. */
+export default function AccessibleFeedback({ plans }: AccessibleFeedbackProps) {
+    if (plans.length === 0) return <div />
 
-    const content = resolveFeedbackMessage(plan)
-    const assertive = plan.channels.accessible === 'assertive'
+    const visiblePlans = plans.filter((plan) => plan.channels.visual)
+    const accessiblePlans = plans.filter(
+        (plan) => plan.channels.accessible !== 'off',
+    )
+    const accessibleContent = accessiblePlans
+        .map(resolveFeedbackMessage)
+        .join(' ')
+    const assertive = accessiblePlans.some(
+        (plan) => plan.channels.accessible === 'assertive',
+    )
 
     return (
         <div>
-            {plan.channels.visual && <p aria-hidden="true">{content}</p>}
-            {plan.channels.accessible !== 'off' && (
+            {visiblePlans.map((plan) => (
+                <p key={JSON.stringify(plan.message)} aria-hidden="true">
+                    {resolveFeedbackMessage(plan)}
+                </p>
+            ))}
+            {accessiblePlans.length > 0 && (
                 <div
                     className="visually-hidden"
                     role={assertive ? 'alert' : 'status'}
                     aria-label="Feedback da sessão"
-                    aria-live={plan.channels.accessible}
+                    aria-live={assertive ? 'assertive' : 'polite'}
                     aria-atomic="true"
                 >
-                    {content}
+                    {accessibleContent}
                 </div>
             )}
         </div>

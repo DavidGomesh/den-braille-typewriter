@@ -20,7 +20,8 @@ import {
     type LegacyFreeModeAction,
 } from '../../ui/public'
 import {
-    planSessionFeedback,
+    coordinateSessionFeedback,
+    createFeedbackCoordinatorState,
     type MessageFeedbackPlan,
 } from '../../feedback/public'
 import {
@@ -73,7 +74,10 @@ export default function FreePage() {
         createFreeSession(initialPreferences.preferences),
     )
     const sessionRef = useRef(session)
-    const [feedbackPlan, setFeedbackPlan] = useState<MessageFeedbackPlan>()
+    const feedbackCoordinatorRef = useRef(createFeedbackCoordinatorState())
+    const [feedbackPlans, setFeedbackPlans] = useState<
+        readonly MessageFeedbackPlan[]
+    >([])
     const snapshot = useMemo(() => getTypingSessionSnapshot(session), [session])
     const keyboardBindings = useMemo(
         () => createWebKeyboardBindings(preferences.keyboardBindings),
@@ -100,14 +104,12 @@ export default function FreePage() {
         sessionRef.current = result.state
         setSession(result.state)
 
-        const latestMessage = result.events
-            .map(planSessionFeedback)
-            .filter(
-                (plan): plan is MessageFeedbackPlan =>
-                    plan.disposition === 'message',
-            )
-            .at(-1)
-        if (latestMessage !== undefined) setFeedbackPlan(latestMessage)
+        const feedback = coordinateSessionFeedback(
+            feedbackCoordinatorRef.current,
+            result.events,
+        )
+        feedbackCoordinatorRef.current = feedback.state
+        if (feedback.plans.length > 0) setFeedbackPlans(feedback.plans)
     }, [])
 
     const handlePresentationAction = useCallback(
@@ -167,7 +169,7 @@ export default function FreePage() {
                 {preferencesNotice !== undefined && (
                     <div role="alert">{preferencesNotice}</div>
                 )}
-                <AccessibleFeedback plan={feedbackPlan} />
+                <AccessibleFeedback plans={feedbackPlans} />
                 <FreeTypingSession
                     snapshot={snapshot}
                     dispatch={dispatch}
