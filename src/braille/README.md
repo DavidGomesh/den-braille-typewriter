@@ -37,7 +37,7 @@ Consumidores e testes importam somente `braille/public.ts`. A interface oferece:
 - `interpretBrailleDocument` para derivar linhas e Segmentos de interpretação
   rastreáveis sem alterar o Documento Braille.
 
-Exemplo:
+Exemplo mínimo do ciclo de um acorde:
 
 ```ts
 import { applyIntent, createBrailleDot, createEngineState } from './public'
@@ -52,6 +52,65 @@ const confirmed = applyIntent(pressed.state, {
     control: { type: 'dot', dot: createBrailleDot(1) },
 })
 ```
+
+## Fluxo entre motor, documento e interpretação
+
+O Motor converte intenções normalizadas em operações sem conhecer o documento.
+O Documento Braille aplica essas operações como sua fonte de verdade. A Grafia
+Braille deriva uma interpretação rastreável desse documento, sem substituí-lo.
+
+```ts
+import {
+    applyDocumentOperation,
+    applyIntent,
+    createBrailleDocument,
+    createBrailleDot,
+    createEngineState,
+    createOrthographyProfile,
+    createPaperConfiguration,
+    interpretBrailleDocument,
+    type BrailleDocument,
+    type EngineEvent,
+} from './public'
+
+const applyEngineEvents = (
+    document: BrailleDocument,
+    events: readonly EngineEvent[],
+) =>
+    events.reduce(
+        (current, event) =>
+            event.type === 'operation-produced'
+                ? applyDocumentOperation(current, event.operation)
+                : current,
+        document,
+    )
+
+const initialEngine = createEngineState()
+const pressed = applyIntent(initialEngine, {
+    type: 'press',
+    control: { type: 'dot', dot: createBrailleDot(1) },
+})
+const released = applyIntent(pressed.state, {
+    type: 'release',
+    control: { type: 'dot', dot: createBrailleDot(1) },
+})
+
+const initialDocument = createBrailleDocument(
+    createPaperConfiguration({ type: 'continuous', columns: 20 }),
+)
+const document = applyEngineEvents(initialDocument, released.events)
+const interpretation = interpretBrailleDocument(
+    document,
+    createOrthographyProfile('portuguese-braille-2018'),
+)
+
+// `document` preserves the Braille cell; `interpretation` projects it as "a".
+```
+
+Nesse fluxo, `input-rejected` e `chord-discarded` continuam disponíveis para
+Feedback multimodal, mas não são operações do documento. Essa distinção permite
+que a futura Sessão de digitação coordene as capacidades sem transferir regras
+de captura ou apresentação para `braille`.
 
 ## Invariantes e ordem
 

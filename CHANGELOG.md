@@ -16,6 +16,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
   folha finita ou papel contínuo, preservando impressões e vestígios físicos.
 - Interpretação contextual pela Grafia Braille para a Língua Portuguesa de
   2018, com segmentos rastreáveis e estados pendente, ambíguo e não reconhecido.
+- Convenção de documentação de código e TSDoc nos contratos públicos da
+  capacidade Braille, com fluxo completo entre motor, documento e interpretação.
 
 ### Changed
 

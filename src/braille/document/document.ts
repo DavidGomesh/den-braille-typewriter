@@ -3,20 +3,29 @@ import { createCellImpression } from './impression'
 import { createBrailleCell, type BrailleDot } from '../machine/values'
 import type { MachineOperation } from '../machine/machine'
 
+/** A zero-based, non-negative position within one Braille grid. */
 export type GridPosition = Readonly<{
     row: number
     column: number
 }>
 
+/** A used grid position paired with its recorded physical impression. */
 export type PositionedCellImpression = Readonly<{
     position: GridPosition
     impression: CellImpression
 }>
 
+/**
+ * A sparse, immutable collection of used positions.
+ *
+ * Positions absent from `impressions` have never been used; explicit spaces
+ * remain present as empty cell impressions.
+ */
 export type BrailleGrid = Readonly<{
     impressions: readonly PositionedCellImpression[]
 }>
 
+/** The observable result of attempting to occupy a grid position. */
 export type GridResult =
     | Readonly<{
           status: 'recorded'
@@ -37,6 +46,12 @@ const assertCoordinate = (name: string, value: number) => {
     }
 }
 
+/**
+ * Creates a validated position within a grid.
+ *
+ * @throws RangeError
+ * Thrown when either coordinate is negative or is not an integer.
+ */
 export const createGridPosition = (
     row: number,
     column: number,
@@ -46,12 +61,19 @@ export const createGridPosition = (
     return Object.freeze({ row, column })
 }
 
+/** Creates an empty immutable grid in which every position is never used. */
 export const createBrailleGrid = (): BrailleGrid =>
     Object.freeze({ impressions: Object.freeze([]) })
 
 const positionsAreEqual = (left: GridPosition, right: GridPosition) =>
     left.row === right.row && left.column === right.column
 
+/**
+ * Reads a used grid position without changing the grid.
+ *
+ * @returns The recorded impression, or `undefined` when the position has never
+ * been used.
+ */
 export const getCellImpression = (
     grid: BrailleGrid,
     position: GridPosition,
@@ -60,6 +82,12 @@ export const getCellImpression = (
         positionsAreEqual(entry.position, position),
     )?.impression
 
+/**
+ * Records an impression only when the position has never been used.
+ *
+ * A conflict is returned as `position-already-used`; it preserves the original
+ * grid and does not overwrite even an explicit space.
+ */
 export const recordCellImpression = (
     grid: BrailleGrid,
     position: GridPosition,
@@ -85,6 +113,7 @@ export const recordCellImpression = (
     })
 }
 
+/** Non-negative reserved rows and columns at each paper edge. */
 export type PaperMargins = Readonly<{
     top: number
     right: number
@@ -99,17 +128,20 @@ type PaperDetails = Readonly<{
     orientation?: 'portrait' | 'landscape'
 }>
 
+/** A finite paper configuration that may continue onto additional sheets. */
 export type SheetPaperConfiguration = PaperDetails &
     Readonly<{
         type: 'sheet'
         rows: number
     }>
 
+/** A single-grid paper configuration with unbounded rows. */
 export type ContinuousPaperConfiguration = PaperDetails &
     Readonly<{
         type: 'continuous'
     }>
 
+/** The validated geometry shared by every grid in a Braille document. */
 export type PaperConfiguration =
     SheetPaperConfiguration | ContinuousPaperConfiguration
 
@@ -128,12 +160,19 @@ type PaperConfigurationInput =
           margins?: Pick<Partial<PaperMargins>, 'left' | 'right'>
       }>
 
+/** A zero-based coordinate in the ordered grids of a Braille document. */
 export type DocumentPosition = Readonly<{
     sheet: number
     row: number
     column: number
 }>
 
+/**
+ * The immutable source of truth for Braille production and navigation.
+ *
+ * Editing and review positions evolve independently, and textual
+ * interpretation is deliberately excluded.
+ */
 export type BrailleDocument = Readonly<{
     paper: PaperConfiguration
     grids: readonly BrailleGrid[]
@@ -145,6 +184,12 @@ export type ReviewDirection = 'up' | 'right' | 'down' | 'left'
 
 const preparedReformat = Symbol('prepared Braille document reformat')
 
+/**
+ * An opaque, prepared reformat that must be confirmed explicitly.
+ *
+ * Consumers cannot construct this value without
+ * `prepareBrailleDocumentReformat`.
+ */
 export type BrailleDocumentReformat = Readonly<{
     [preparedReformat]: true
     document: BrailleDocument
@@ -167,6 +212,16 @@ const freezeMargins = (
         left: margins?.left ?? 0,
     })
 
+/**
+ * Validates and canonicalizes the geometry for finite or continuous paper.
+ *
+ * Missing margins default to zero. Continuous paper accepts only horizontal
+ * margins because its rows are unbounded.
+ *
+ * @throws RangeError
+ * Thrown for non-positive dimensions, invalid margins, or margins that leave no
+ * writable row or column.
+ */
 export const createPaperConfiguration = (
     input: PaperConfigurationInput,
 ): PaperConfiguration => {
@@ -227,6 +282,12 @@ const freezeDocument = (
         reviewPosition,
     })
 
+/**
+ * Creates an empty document positioned at the first writable cell.
+ *
+ * The editing and review positions initially coincide, and the first grid is
+ * present even though all its positions are never used.
+ */
 export const createBrailleDocument = (
     paper: PaperConfiguration,
 ): BrailleDocument => {
@@ -234,6 +295,16 @@ export const createBrailleDocument = (
     return freezeDocument(paper, [createBrailleGrid()], position, position)
 }
 
+/**
+ * Reads an impression by document coordinate without changing the document.
+ *
+ * @returns The recorded impression, or `undefined` for a missing grid or a
+ * never-used position.
+ *
+ * @throws RangeError
+ * Thrown when the row or column is negative or is not an integer in an existing
+ * grid.
+ */
 export const getDocumentCellImpression = (
     document: BrailleDocument,
     position: DocumentPosition,
@@ -369,6 +440,14 @@ const embossCell = (
     )
 }
 
+/**
+ * Applies a semantic machine operation as an immutable document transition.
+ *
+ * Confirming a cell raises its dots at the editing position and restores any
+ * matching erased traces before advancing. Space records an explicit empty
+ * impression. Backspace, line feed, and carriage return move the editing
+ * position according to their distinct mechanical meanings.
+ */
 export const applyDocumentOperation = (
     document: BrailleDocument,
     operation: MachineOperation,
@@ -416,6 +495,12 @@ export const applyDocumentOperation = (
     )
 }
 
+/**
+ * Physically erases selected raised dots while preserving their traces.
+ *
+ * Dots that are absent or already erased have no additional effect. A
+ * never-used position preserves the original document.
+ */
 export const eraseCellDots = (
     document: BrailleDocument,
     position: DocumentPosition,
@@ -441,6 +526,13 @@ export const eraseCellDots = (
     )
 }
 
+/**
+ * Moves only the review position within the currently reachable document.
+ *
+ * Horizontal movement stays inside writable columns. Vertical movement may
+ * cross existing finite sheets, but it never creates a sheet or changes the
+ * editing position or content.
+ */
 export const moveReviewPosition = (
     document: BrailleDocument,
     direction: ReviewDirection,
@@ -592,12 +684,25 @@ const reformatBrailleDocument = (
     return freezeDocument(paper, reformatted.grids, position, position)
 }
 
+/**
+ * Prepares an explicit paper change without modifying the source document.
+ *
+ * The opaque result records both the original document and validated target
+ * paper for later confirmation.
+ */
 export const prepareBrailleDocumentReformat = (
     document: BrailleDocument,
     paper: PaperConfiguration,
 ): BrailleDocumentReformat =>
     Object.freeze({ [preparedReformat]: true, document, paper })
 
+/**
+ * Confirms a prepared reformat and returns a new immutable document.
+ *
+ * Each old line is wrapped independently into the target writable area. Used
+ * impressions and internal empty lines are preserved; content from separate
+ * old lines is never recombined.
+ */
 export const confirmBrailleDocumentReformat = (
     reformat: BrailleDocumentReformat,
 ): BrailleDocument => {
