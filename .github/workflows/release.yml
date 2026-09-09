@@ -28,8 +28,9 @@ jobs:
                   import { readFile } from 'node:fs/promises'
 
                   const tag = process.env.RELEASE_TAG
+                  const version = tag.startsWith('v') ? tag.slice(1) : tag
                   const changelog = await readFile('CHANGELOG.md', 'utf8')
-                  const header = `## [${tag}] - `
+                  const header = `## [${version}] - `
 
                   if (!changelog.includes(header)) {
                     throw new Error(
