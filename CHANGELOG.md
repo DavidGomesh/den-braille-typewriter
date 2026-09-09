@@ -1,6 +1,6 @@
 # Changelog
 
-Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As descrições são escritas em português e seguem as categorias de Keep a Changelog; as versões seguem Semantic Versioning.
+Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As descrições são escritas em português e seguem as categorias do [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); as versões seguem Semantic Versioning. As datas aparecem nos cabeçalhos das versões publicadas no formato `YYYY-MM-DD`.
 
 ## [Unreleased]
 

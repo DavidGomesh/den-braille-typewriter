@@ -16,6 +16,19 @@ O repositório usa documentação de domínio single-context, escrita em portugu
 
 Código, testes e automações técnicas são escritos em inglês; documentação e comunicação dirigida a pessoas são escritas em português. Consulte `docs/agents/code-language.md`.
 
+### Changelog
+
+Ao adicionar ou alterar uma entrada em `CHANGELOG.md`, mantenha as mudanças
+ainda não publicadas sob `## [Unreleased]`, agrupe-as nas categorias `Added`,
+`Changed`, `Deprecated`, `Removed`, `Fixed` e `Security` quando aplicável e
+adicione cada nova entrada ao final da categoria correspondente, preservando a
+ordem em que as mudanças foram registradas. Não reordene a lista de
+`Unreleased` por data, commit ou prioridade. Ao publicar uma versão, mova todo
+o conteúdo de `Unreleased` para um cabeçalho no formato `## [versão] -
+YYYY-MM-DD`, usando a data real do release; coloque esse novo cabeçalho acima
+das versões já publicadas. Preserve as categorias e o formato recomendados pelo
+Keep a Changelog.
+
 ## Commits
 
 Quando houver autorização para criar um commit, use Conventional Commits no formato `tipo(escopo): descrição`.
