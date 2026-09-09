@@ -1,12 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 
 import '../../styles/views/modes/Free.css'
 
-import Typewriter from '../../components/Typewriter'
 import { useAudioContext } from '../../providers/AudioProvider'
+import { FreeTypingSession } from '../../ui/public'
 
 export default function Free() {
-    const output = useRef<HTMLTextAreaElement>(null)
     const { playHowToAccessInstructionsAudio, playFreeModeInstructionsAudio } =
         useAudioContext()
 
@@ -17,15 +16,8 @@ export default function Free() {
     return (
         <>
             <main>
-                <Typewriter
-                    outputReference={output}
-                    challengeMode={false}
-                    randomWord={undefined}
-                    onEnterPressed={() => {}}
-                    onInstructionsKeyPressed={() => {
-                        playFreeModeInstructionsAudio()
-                    }}
-                    onRepeatWordKeyPressed={() => {}}
+                <FreeTypingSession
+                    onInstructionsRequested={playFreeModeInstructionsAudio}
                 />
             </main>
         </>

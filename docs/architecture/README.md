@@ -9,6 +9,8 @@ Esta área descreve a arquitetura alvo da modernização. Ela é a fonte canôni
 - [Fluxos em execução](runtime-flows.md): sequências principais da entrada ao feedback e das Experiências do simulador.
 - [Estrutura de diretórios](directory-structure.md): árvore alvo e regras para localizar código e testes.
 - [Plano de migração](migration-plan.md): fases, pré-requisitos, versões, auditorias e rollback.
+- [Prontidão da Sessão para Alpha 1](session-alpha-1.md): portões, evidências e
+  rollback do corte do Modo livre.
 - [Baseline operacional](modernization-baseline.md): marcos recuperáveis, jornadas essenciais, inventário legado e estratégia de rollback.
 - [Corte do build Vite](vite-build-baseline.md): comandos canônicos, artifact,
   evidências da coexistência encerrada e rollback do corte de plataforma.

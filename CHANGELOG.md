@@ -18,6 +18,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
   2018, com segmentos rastreáveis e estados pendente, ambíguo e não reconhecido.
 - Convenção de documentação de código e TSDoc nos contratos públicos da
   capacidade Braille, com fluxo completo entre motor, documento e interpretação.
+- Sessão de digitação pura e adapter web de teclado integrados ao Modo livre,
+  com captura focada e Documento Braille como única fonte de verdade.
 
 ### Changed
 
