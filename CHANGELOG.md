@@ -4,6 +4,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 ## [Unreleased]
 
+## [3.0.0-alpha.2] - 2026-09-12
+
 ### Added
 
 - Preferências do simulador versionadas, validadas e persistidas no Modo livre,
@@ -48,5 +50,6 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 - Vite passa a ser o único caminho de desenvolvimento, build e publicação; o
   caminho concorrente do Create React App foi removido.
 
-[Unreleased]: https://github.com/DavidGomesh/den-braille-typewriter/compare/v3.0.0-alpha.1...HEAD
+[Unreleased]: https://github.com/DavidGomesh/den-braille-typewriter/compare/v3.0.0-alpha.2...HEAD
+[3.0.0-alpha.2]: https://github.com/DavidGomesh/den-braille-typewriter/releases/tag/v3.0.0-alpha.2
 [3.0.0-alpha.1]: https://github.com/DavidGomesh/den-braille-typewriter/releases/tag/v3.0.0-alpha.1
