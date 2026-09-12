@@ -81,6 +81,7 @@ describe('multimodal feedback controller', () => {
         await Promise.resolve()
         controller.repeatSpeech()
         controller.playMachineKey()
+        controller.readProduction('a')
         controller.applyPreferences({
             ...createDefaultSimulatorPreferences().feedback,
             speech: {
@@ -91,7 +92,10 @@ describe('multimodal feedback controller', () => {
         })
         controller.stop()
 
-        expect(speech.speak).toHaveBeenCalledTimes(2)
+        expect(speech.speak).toHaveBeenCalledTimes(3)
+        expect(speech.speak).toHaveBeenCalledWith(
+            expect.objectContaining({ text: 'a', purpose: 'reading' }),
+        )
         expect(sound.play).toHaveBeenCalledWith({ type: 'machine-key' })
         expect(speech.cancel).toHaveBeenCalledOnce()
         expect(sound.cancel).toHaveBeenCalledTimes(2)
@@ -103,7 +107,10 @@ describe('multimodal feedback controller', () => {
         disabled.controller.requestInstructions()
         disabled.controller.repeatSpeech()
         disabled.controller.playMachineKey()
-        expect(disabled.speech.speak).not.toHaveBeenCalled()
+        expect(disabled.speech.speak).toHaveBeenCalledTimes(2)
+        expect(disabled.speech.speak).toHaveBeenCalledWith(
+            expect.objectContaining({ purpose: 'instruction' }),
+        )
         expect(disabled.sound.play).not.toHaveBeenCalled()
         expect(disabledPlans[0]?.channels.accessible).toBe('polite')
 
@@ -136,12 +143,10 @@ describe('multimodal feedback controller', () => {
         await Promise.resolve()
         expect(failedSpeech.accessibleFallback).toHaveBeenCalledWith([plan])
 
-        expect(disabled.instructionFallback).toHaveBeenCalledOnce()
-
-        const failedSound = setup(false, true)
-        vi.mocked(failedSound.sound.play).mockResolvedValue('failed')
-        failedSound.controller.requestInstructions()
+        const failedInstruction = setup(false, true)
+        vi.mocked(failedInstruction.speech.speak).mockResolvedValue('failed')
+        failedInstruction.controller.requestInstructions()
         await Promise.resolve()
-        expect(failedSound.instructionFallback).toHaveBeenCalledOnce()
+        expect(failedInstruction.instructionFallback).toHaveBeenCalledOnce()
     })
 })

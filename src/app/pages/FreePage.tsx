@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import '../../styles/views/modes/Free.css'
 
@@ -16,6 +16,7 @@ import {
 import {
     AccessibleFeedback,
     FreeTypingSession,
+    legacyFreeModeActionForKey,
     type LegacyFreeModeAction,
 } from '../../ui/public'
 import {
@@ -24,6 +25,7 @@ import {
     createFeedbackCoordinatorState,
     createMultimodalFeedbackController,
     createWebSoundOutput,
+    resolveAutomaticReading,
     type MessageFeedbackPlan,
 } from '../../feedback/public'
 import {
@@ -110,6 +112,9 @@ export default function FreePage() {
 
     const dispatch = useCallback(
         (input: SessionInput) => {
+            const previousSnapshot = getTypingSessionSnapshot(
+                sessionRef.current,
+            )
             const result = applySessionInput(sessionRef.current, input)
             sessionRef.current = result.state
             setSession(result.state)
@@ -119,6 +124,13 @@ export default function FreePage() {
                 result.events,
             )
             feedbackCoordinatorRef.current = feedback.state
+            const automaticReading = resolveAutomaticReading(
+                previousSnapshot.interpretation,
+                result.snapshot.interpretation,
+                result.events,
+            )
+            if (automaticReading !== undefined)
+                multimodalFeedback.readProduction(automaticReading)
             if (feedback.plans.length > 0) {
                 setFeedbackPlans(
                     multimodalFeedback.deliverPlans(feedback.plans),
@@ -196,6 +208,25 @@ export default function FreePage() {
     const playMachineSound = useCallback(() => {
         multimodalFeedback.playMachineKey()
     }, [multimodalFeedback])
+
+    useEffect(() => {
+        const handleGlobalPresentationKey = (event: KeyboardEvent) => {
+            if (
+                event.target instanceof Element &&
+                event.target.closest('#typewriter') !== null
+            )
+                return
+            const action = legacyFreeModeActionForKey(event)
+            if (action === undefined) return
+            event.preventDefault()
+            handlePresentationAction(action)
+        }
+        document.addEventListener('keydown', handleGlobalPresentationKey)
+        return () => {
+            document.removeEventListener('keydown', handleGlobalPresentationKey)
+            multimodalFeedback.stop()
+        }
+    }, [handlePresentationAction, multimodalFeedback])
 
     return (
         <>

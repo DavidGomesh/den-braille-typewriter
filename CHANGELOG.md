@@ -13,6 +13,13 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 - Leitura falada por Web Speech e sons opcionais substituíveis no Modo livre,
   com preferências portáveis, interrupção, repetição e fallback sem áudio.
 
+### Fixed
+
+- Conteúdo falado do menu, das instruções e das palavras do desafio usa síntese
+  de voz sem sobrepor gravações; os controles do Modo livre continuam ativos
+  após perda de foco, a tecla O controla a leitura automática dos símbolos e
+  todas as saídas são interrompidas ao sair da experiência.
+
 ## [3.0.0-alpha.1] - 2026-09-09
 
 ### Added

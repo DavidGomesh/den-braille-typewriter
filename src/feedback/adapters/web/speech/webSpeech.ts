@@ -110,10 +110,12 @@ export const createBrowserSpeechOutput = (): SpeechOutput | undefined => {
         typeof globalThis.SpeechSynthesisUtterance === 'undefined'
     )
         return undefined
+    const nativeSynthesis = globalThis.speechSynthesis
+    const NativeUtterance = globalThis.SpeechSynthesisUtterance
     return createWebSpeechOutput(
         {
             getVoices: () =>
-                globalThis.speechSynthesis.getVoices().map((voice) => ({
+                nativeSynthesis.getVoices().map((voice) => ({
                     name: voice.name,
                     lang: voice.lang,
                     default: voice.default,
@@ -122,9 +124,9 @@ export const createBrowserSpeechOutput = (): SpeechOutput | undefined => {
                 })),
             speak: (utterance) => {
                 const native =
-                    utterance.platformValue instanceof SpeechSynthesisUtterance
+                    utterance.platformValue instanceof NativeUtterance
                         ? utterance.platformValue
-                        : new SpeechSynthesisUtterance(utterance.text)
+                        : new NativeUtterance(utterance.text)
                 native.lang = utterance.lang ?? ''
                 native.voice = (utterance.voice?.platformValue ??
                     null) as SpeechSynthesisVoice | null
@@ -134,22 +136,18 @@ export const createBrowserSpeechOutput = (): SpeechOutput | undefined => {
                 native.onend = () => utterance.onend?.()
                 native.onerror = (event) =>
                     utterance.onerror?.({ error: event.error })
-                globalThis.speechSynthesis.speak(native)
+                nativeSynthesis.speak(native)
             },
-            cancel: () => globalThis.speechSynthesis.cancel(),
+            cancel: () => nativeSynthesis.cancel(),
             addEventListener:
-                typeof globalThis.speechSynthesis.addEventListener ===
-                'function'
+                typeof nativeSynthesis.addEventListener === 'function'
                     ? (type, listener) =>
-                          globalThis.speechSynthesis.addEventListener(
-                              type,
-                              listener,
-                          )
+                          nativeSynthesis.addEventListener(type, listener)
                     : undefined,
         },
         (text) => ({
             text,
-            platformValue: new SpeechSynthesisUtterance(text),
+            platformValue: new NativeUtterance(text),
         }),
     )
 }

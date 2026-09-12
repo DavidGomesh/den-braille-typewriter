@@ -300,6 +300,103 @@ test('Free Mode speaks canonical feedback and lets the user repeat or stop it', 
     expect(typewriter).toHaveFocus()
 })
 
+test('Free Mode controls speech after capture loses focus and stops on exit', () => {
+    class UtteranceStub {
+        lang = ''
+        rate = 1
+        pitch = 1
+        volume = 1
+        onend?: () => void
+        onerror?: (event: { error?: string }) => void
+
+        constructor(public text: string) {}
+    }
+    const voice = {
+        name: 'Português local',
+        lang: 'pt-BR',
+        default: true,
+        localService: true,
+    }
+    const synthesis = {
+        getVoices: vi.fn(() => [voice]),
+        speak: vi.fn(),
+        cancel: vi.fn(),
+    }
+    vi.stubGlobal('SpeechSynthesisUtterance', UtteranceStub)
+    vi.stubGlobal('speechSynthesis', synthesis)
+    const defaults = createDefaultSimulatorPreferences()
+    globalThis.localStorage.setItem(
+        simulatorPreferencesStorageKey,
+        JSON.stringify({
+            ...defaults,
+            feedback: {
+                ...defaults.feedback,
+                speech: { ...defaults.feedback.speech, enabled: true },
+            },
+        }),
+    )
+    const rendered = renderFreeMode()
+    const typewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    act(() => typewriter.focus())
+    fireEvent.blur(typewriter, { relatedTarget: document.body })
+    press(document.body, 'KeyI')
+    expect(synthesis.speak).toHaveBeenCalledWith(
+        expect.objectContaining({
+            text: expect.stringContaining('As teclas F, D, S, J, K e L'),
+        }),
+    )
+
+    press(document.body, 'KeyP')
+    expect(synthesis.cancel).toHaveBeenCalled()
+    const cancellationsBeforeExit = synthesis.cancel.mock.calls.length
+    rendered.unmount()
+    expect(synthesis.cancel).toHaveBeenCalledTimes(cancellationsBeforeExit + 1)
+})
+
+test('O enables automatic reading of produced Braille symbols', () => {
+    class UtteranceStub {
+        lang = ''
+        rate = 1
+        pitch = 1
+        volume = 1
+        onend?: () => void
+        onerror?: (event: { error?: string }) => void
+
+        constructor(public text: string) {}
+    }
+    const synthesis = {
+        getVoices: vi.fn(() => [
+            {
+                name: 'Português',
+                lang: 'pt-BR',
+                default: true,
+                localService: true,
+            },
+        ]),
+        speak: vi.fn((utterance: UtteranceStub) => utterance.onend?.()),
+        cancel: vi.fn(),
+    }
+    vi.stubGlobal('SpeechSynthesisUtterance', UtteranceStub)
+    vi.stubGlobal('speechSynthesis', synthesis)
+    renderFreeMode()
+    const typewriter = screen.getByRole('region', {
+        name: 'Área de digitação Braille',
+    })
+
+    act(() => typewriter.focus())
+    press(typewriter, 'KeyF')
+    expect(synthesis.speak).not.toHaveBeenCalled()
+
+    press(typewriter, 'KeyO')
+    chord(typewriter, ['KeyF', 'KeyD'])
+    expect(synthesis.speak).toHaveBeenCalledWith(
+        expect.objectContaining({ text: 'b' }),
+    )
+})
+
 test('Free Mode remains usable when speech and sounds are unavailable', () => {
     vi.stubGlobal('Audio', undefined)
     renderFreeMode()

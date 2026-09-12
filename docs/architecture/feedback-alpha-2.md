@@ -13,6 +13,8 @@ Este registro documenta os portões técnicos da fase 6 na jornada do Modo livre
   indisponibilidade, cancelamento ou falha das saídas.
 - O Modo livre permite ativar ou silenciar fala e sons, repetir a última fala e
   interromper as saídas sem mover o foco da área de digitação.
+- A letra O ativa ou desativa a leitura automática dos Símbolos textuais
+  produzidos; instruções solicitadas por I permanecem disponíveis separadamente.
 - Um controlador da capacidade `feedback` concentra seleção de canal,
   interrupção, repetição, instruções e tratamento de indisponibilidade; a página
   apenas compõe adapters, encaminha fatos e persiste escolhas.

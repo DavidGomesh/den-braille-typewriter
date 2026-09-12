@@ -1,3 +1,4 @@
+import { freeModeInstructionsPortuguese } from './catalog/instructions'
 import { resolvePortugueseFeedbackMessage } from './catalog/portuguese'
 import type { MessageFeedbackPlan } from './feedback'
 import type { SoundOutput } from './sound'
@@ -23,13 +24,11 @@ export type MultimodalFeedbackController = Readonly<{
     ): readonly MessageFeedbackPlan[]
     requestInstructions(): void
     repeatSpeech(): void
+    readProduction(text: string): void
     playMachineKey(): void
     applyPreferences(preferences: MultimodalFeedbackPreferences): void
     stop(): void
 }>
-
-const freeModeInstructions =
-    'Use F, D, S, J, K e L para formar acordes Braille. Use Espaço, Backspace e Q para editar.'
 
 /**
  * Coordinates channel policy without coupling pages to browser media APIs.
@@ -52,9 +51,10 @@ export const createMultimodalFeedbackController = (options: {
         text: string,
         purpose: SpeechRequest['purpose'],
         onUnavailable?: () => void,
+        requireEnabled = true,
     ) => {
         const speech = options.getPreferences().speech
-        if (!speech.enabled) return
+        if (requireEnabled && !speech.enabled) return
         if (options.speechOutput === undefined) {
             options.onSpeechUnavailable()
             onUnavailable?.()
@@ -97,34 +97,28 @@ export const createMultimodalFeedbackController = (options: {
                 : plans
         },
         requestInstructions: () => {
-            const preferences = options.getPreferences()
-            if (preferences.speech.enabled) {
-                speak(freeModeInstructions, 'instruction', () =>
-                    options.presentInstructionFallback(freeModeInstructions),
+            if (options.speechOutput !== undefined) {
+                speak(
+                    freeModeInstructionsPortuguese,
+                    'instruction',
+                    () =>
+                        options.presentInstructionFallback(
+                            freeModeInstructionsPortuguese,
+                        ),
+                    false,
                 )
-            } else if (preferences.sounds.enabled) {
-                void options.soundOutput
-                    .play({
-                        type: 'editorial',
-                        id: 'free-instructions',
-                    })
-                    .then((result) => {
-                        if (result === 'unavailable' || result === 'failed')
-                            options.presentInstructionFallback(
-                                freeModeInstructions,
-                            )
-                    })
             } else {
-                options.presentInstructionFallback(freeModeInstructions)
+                options.onSpeechUnavailable()
+                options.presentInstructionFallback(
+                    freeModeInstructionsPortuguese,
+                )
             }
         },
         repeatSpeech: () => {
-            if (
-                options.getPreferences().speech.enabled &&
-                lastSpeechRequest !== undefined
-            )
+            if (lastSpeechRequest !== undefined)
                 void options.speechOutput?.speak(lastSpeechRequest)
         },
+        readProduction: (text) => speak(text, 'reading'),
         playMachineKey: () => {
             if (options.getPreferences().sounds.enabled)
                 void options.soundOutput.play({ type: 'machine-key' })

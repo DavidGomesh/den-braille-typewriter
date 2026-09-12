@@ -49,9 +49,19 @@ do catálogo. No Modo livre, leitura e sons podem ser ligados, desligados,
 repetidos ou interrompidos pelos atalhos documentados. Ausência ou falha da
 plataforma não remove o texto nem a semântica acessível.
 
-O `AudioProvider` permanece temporariamente apenas para destinos legados. O
-Modo livre não o consome, evitando feedback duplicado; ele será removido quando
-o último destino legado for substituído.
+Instruções e repetições solicitadas explicitamente usam Web Speech mesmo quando
+o feedback falado automático está desligado. Assim, I e R continuam sendo
+ações disponíveis; P interrompe a saída corrente em qualquer estado de captura.
+Quando O ativa a leitura automática, a Interpretação Braille fornece o novo
+Símbolo textual produzido; espaços recebem um nome pronunciável e operações de
+edição permanecem silenciosas. Unidades por palavra, linha e documento ainda
+dependem da política configurável de leitura.
+
+O `AudioProvider` permanece temporariamente apenas para efeitos e destinos
+legados. Conteúdo falado do menu e do Modo desafio já usa Web Speech por essa
+ponte transitória; os MP3s permanecem ativos somente onde ainda representam
+efeitos ou conteúdo legado não migrado. O Modo livre não consome o provider,
+evitando feedback duplicado, e cancela fala e sons ao sair da experiência.
 
 ## Estratégia de testes
 

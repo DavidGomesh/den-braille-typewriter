@@ -10,7 +10,7 @@ export default function Home() {
         playMainMenuAudio,
         playFreeModeAudio,
         playChallengeModeAudio,
-        playAboutModeAudio,
+        stopAllAudio,
     } = useAudioContext()
 
     function handleBtnFreeModeFocused() {
@@ -21,13 +21,10 @@ export default function Home() {
         playChallengeModeAudio()
     }
 
-    function handleBtnAboutFocused() {
-        playAboutModeAudio()
-    }
-
     useEffect(() => {
         playMainMenuAudio()
-    }, [])
+        return stopAllAudio
+    }, [playMainMenuAudio, stopAllAudio])
 
     return (
         <>

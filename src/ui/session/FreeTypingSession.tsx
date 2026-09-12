@@ -227,7 +227,7 @@ export default function FreeTypingSession({
                     <strong>(t)</strong> Ver texto a tinta ou em Braille
                 </div>
                 <div>
-                    <strong>(o)</strong> Liga/desliga leitura falada
+                    <strong>(O — letra)</strong> Liga/desliga leitura falada
                 </div>
                 <div>
                     <strong>(m)</strong> Liga/desliga sons da máquina

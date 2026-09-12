@@ -3,6 +3,10 @@ import type { MessageFeedbackPlan } from './feedback'
 
 export { createMemoryFeedbackOutput } from './adapters/memory/memory'
 export {
+    challengeModeInstructionsPortuguese,
+    freeModeInstructionsPortuguese,
+} from './catalog/instructions'
+export {
     createBrowserSpeechOutput,
     createWebSpeechOutput,
     type WebSpeechSynthesis,
@@ -38,6 +42,7 @@ export {
     type FeedbackExecutionResult,
     type FeedbackOutput,
 } from './output'
+export { resolveAutomaticReading } from './reading'
 export {
     type SpeechOutput,
     type SpeechRequest,

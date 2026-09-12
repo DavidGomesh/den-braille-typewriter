@@ -90,7 +90,7 @@ describe('Simulator preferences', () => {
                 enabled: false,
                 locale: 'pt-BR',
                 voicePreference: 'default',
-                rate: 1,
+                rate: 0.9,
                 pitch: 1,
                 volume: 1,
             },

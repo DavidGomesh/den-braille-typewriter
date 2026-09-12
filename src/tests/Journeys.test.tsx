@@ -1,5 +1,5 @@
 // Temporary legacy journey tests; remove them with the legacy implementation.
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
@@ -19,6 +19,31 @@ class AudioStub {
     constructor(public src: string) {
         AudioStub.instances.push(this)
     }
+}
+
+class UtteranceStub {
+    lang = ''
+    rate = 1
+    pitch = 1
+    volume = 1
+    onend?: () => void
+    onerror?: (event: { error?: string }) => void
+
+    constructor(public text: string) {}
+}
+
+const speechSynthesisStub = {
+    getVoices: vi.fn(() => [
+        {
+            name: 'Português',
+            lang: 'pt-BR',
+            default: true,
+            localService: true,
+        },
+    ]),
+    speak: vi.fn((utterance: UtteranceStub) => utterance.onend?.()),
+    cancel: vi.fn(),
+    addEventListener: vi.fn(),
 }
 
 function renderWithAudio(component: React.ReactElement) {
@@ -77,13 +102,17 @@ function audioEndingWith(path: string) {
 beforeEach(() => {
     AudioStub.instances = []
     globalThis.Audio = AudioStub as unknown as typeof Audio
+    vi.stubGlobal('SpeechSynthesisUtterance', UtteranceStub)
+    vi.stubGlobal('speechSynthesis', speechSynthesisStub)
+    speechSynthesisStub.speak.mockClear()
+    speechSynthesisStub.cancel.mockClear()
 })
 
 afterEach(() => {
     vi.restoreAllMocks()
 })
 
-test('home offers free and challenge modes through focusable links with audio', async () => {
+test('home speaks menu labels without recorded speech files', async () => {
     renderWithAudio(<Home />)
 
     const freeMode = screen.getByRole('link', { name: 'Modo livre' })
@@ -96,9 +125,17 @@ test('home offers free and challenge modes through focusable links with audio', 
     fireEvent.focus(challengeMode)
 
     await waitFor(() => {
-        expect(audioEndingWith('modo-livre.mp3')?.play).toHaveBeenCalled()
-        expect(audioEndingWith('modo-desafio.mp3')?.play).toHaveBeenCalled()
+        expect(speechSynthesisStub.speak).toHaveBeenCalledWith(
+            expect.objectContaining({ text: 'Modo livre' }),
+        )
     })
+    await waitFor(() => {
+        expect(speechSynthesisStub.speak).toHaveBeenCalledWith(
+            expect.objectContaining({ text: 'Modo desafio' }),
+        )
+    })
+    expect(audioEndingWith('modo-livre.mp3')).toBeUndefined()
+    expect(audioEndingWith('modo-desafio.mp3')).toBeUndefined()
 })
 
 test('challenge mode reports errors and advances after a correct chord response', async () => {
@@ -117,28 +154,36 @@ test('challenge mode reports errors and advances after a correct chord response'
     press(typewriter, 'Enter')
 
     await waitFor(() => {
-        expect(audioEndingWith('resposta-errada.mp3')?.play).toHaveBeenCalled()
-        expect(
-            audioEndingWith(
-                `words/${word.replace('é', 'e').replace('ã', 'a')}.mp3`,
-            )?.play,
-        ).toHaveBeenCalled()
+        expect(speechSynthesisStub.speak).toHaveBeenCalledWith(
+            expect.objectContaining({ text: 'Resposta incorreta' }),
+        )
     })
+    expect(speechSynthesisStub.speak).toHaveBeenCalledWith(
+        expect.objectContaining({
+            text: expect.stringContaining('No modo desafio'),
+        }),
+    )
+    expect(speechSynthesisStub.speak).toHaveBeenCalledWith(
+        expect.objectContaining({ text: word }),
+    )
+    expect(audioEndingWith('instrucoes-modo-desafio.mp3')).toBeUndefined()
+    expect(
+        audioEndingWith(
+            `words/${word.replace('é', 'e').replace('ã', 'a')}.mp3`,
+        ),
+    ).toBeUndefined()
 
     for (const letter of word) {
         chord(typewriter, letterChords[letter as keyof typeof letterChords])
     }
-    press(typewriter, 'Enter')
-
-    const successAudio = await waitFor(() => {
-        const audio = audioEndingWith('certa-resposta.mp3')
-        expect(audio?.play).toHaveBeenCalled()
-        return audio as AudioStub
-    })
-
     const selectionsBeforeSuccess = random.mock.calls.length
     random.mockReturnValue(0.1)
-    await act(async () => successAudio.onended?.())
+    press(typewriter, 'Enter')
+    await waitFor(() => {
+        expect(speechSynthesisStub.speak).toHaveBeenCalledWith(
+            expect.objectContaining({ text: 'Resposta correta' }),
+        )
+    })
 
     await waitFor(() =>
         expect(random.mock.calls.length).toBeGreaterThan(
