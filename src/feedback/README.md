@@ -54,8 +54,20 @@ o feedback falado automático está desligado. Assim, I e R continuam sendo
 ações disponíveis; P interrompe a saída corrente em qualquer estado de captura.
 Quando O ativa a leitura automática, a Interpretação Braille fornece o novo
 Símbolo textual produzido; espaços recebem um nome pronunciável e operações de
-edição permanecem silenciosas. Unidades por palavra, linha e documento ainda
-dependem da política configurável de leitura.
+edição permanecem silenciosas. Caracteres acentuados do perfil português usam
+nomes inequívocos, como “a agudo”, “a til” e “a circunflexo”, sem alterar a
+Interpretação Braille. Unidades por palavra, linha e documento ainda dependem da
+política configurável de leitura.
+
+A naturalidade, a qualidade e a disponibilidade das vozes Web Speech pertencem
+ao navegador e ao sistema operacional, portanto podem variar entre ambientes.
+Na validação manual em Linux, a voz disponível foi considerada muito robótica e
+por vezes difícil de compreender. Essa implementação é somente a baseline
+técnica da Alpha 2: ela não representa a qualidade de voz pretendida para o
+produto, não garante uma voz idêntica nem operação offline em todas as
+plataformas e exige uma melhoria substancial. A #80 acompanha a pesquisa e a
+adoção de um motor em português mais natural e consistente, capaz de substituir
+o adapter atual.
 
 O `AudioProvider` permanece temporariamente apenas para efeitos e destinos
 legados. Conteúdo falado do menu e do Modo desafio já usa Web Speech por essa

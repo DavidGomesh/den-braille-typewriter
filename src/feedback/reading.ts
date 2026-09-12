@@ -11,6 +11,25 @@ const interpretedText = (interpretation: BrailleInterpretation): string =>
         .map((segment) => segment.text)
         .join('')
 
+const portugueseSpokenCharacters: Readonly<Record<string, string>> =
+    Object.freeze({
+        á: 'a agudo',
+        à: 'a grave',
+        â: 'a circunflexo',
+        ã: 'a til',
+        ç: 'c cedilha',
+        é: 'e agudo',
+        ê: 'e circunflexo',
+        í: 'i agudo',
+        ó: 'o agudo',
+        ô: 'o circunflexo',
+        õ: 'o til',
+        ú: 'u agudo',
+    })
+
+const resolveSpokenCharacter = (text: string): string =>
+    portugueseSpokenCharacters[text] ?? text
+
 /**
  * Resolves the smallest textual reading introduced by one production batch.
  *
@@ -33,5 +52,5 @@ export const resolveAutomaticReading = (
     const after = interpretedText(current)
     if (!after.startsWith(before) || after.length <= before.length)
         return undefined
-    return after.slice(before.length)
+    return resolveSpokenCharacter(after.slice(before.length))
 }

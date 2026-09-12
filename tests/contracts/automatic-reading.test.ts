@@ -36,6 +36,37 @@ describe('automatic production reading', () => {
         ).toBe('b')
     })
 
+    test.each([
+        ['á', 'a agudo'],
+        ['à', 'a grave'],
+        ['â', 'a circunflexo'],
+        ['ã', 'a til'],
+        ['ç', 'c cedilha'],
+        ['é', 'e agudo'],
+        ['ê', 'e circunflexo'],
+        ['í', 'i agudo'],
+        ['ó', 'o agudo'],
+        ['ô', 'o circunflexo'],
+        ['õ', 'o til'],
+        ['ú', 'u agudo'],
+    ])('names the Portuguese character %s as %s', (symbol, spokenName) => {
+        expect(
+            resolveAutomaticReading(
+                interpretation(''),
+                interpretation(symbol),
+                [
+                    {
+                        type: 'operation-produced',
+                        operation: {
+                            type: 'confirm-cell',
+                            cell: { dots: [1] },
+                        },
+                    },
+                ],
+            ),
+        ).toBe(spokenName)
+    })
+
     test('names an explicit blank cell and ignores editing operations', () => {
         expect(
             resolveAutomaticReading(interpretation('a'), interpretation('a '), [
