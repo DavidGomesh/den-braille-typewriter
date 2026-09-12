@@ -6,6 +6,7 @@ export {
     saveSimulatorPreferences,
     simulatorPreferencesVersion,
     type KeyboardBindingPreferences,
+    type FeedbackPreferences,
     type EffectiveSessionConfigurationResult,
     type ExperienceRequirements,
     type PreferencesLoadResult,

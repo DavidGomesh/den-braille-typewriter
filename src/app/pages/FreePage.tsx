@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import '../../styles/views/modes/Free.css'
 
-import { useAudioContext } from '../../providers/AudioProvider'
 import {
     createOrthographyProfile,
     createPaperConfiguration,
@@ -17,11 +16,16 @@ import {
 import {
     AccessibleFeedback,
     FreeTypingSession,
+    legacyFreeModeActionForKey,
     type LegacyFreeModeAction,
 } from '../../ui/public'
 import {
     coordinateSessionFeedback,
+    createBrowserSpeechOutput,
     createFeedbackCoordinatorState,
+    createMultimodalFeedbackController,
+    createWebSoundOutput,
+    resolveAutomaticReading,
     type MessageFeedbackPlan,
 } from '../../feedback/public'
 import {
@@ -57,6 +61,8 @@ export default function FreePage() {
     const [preferences, setPreferences] = useState(
         initialPreferences.preferences,
     )
+    const preferencesRef = useRef(preferences)
+    preferencesRef.current = preferences
     const [preferencesNotice, setPreferencesNotice] = useState(() => {
         if (
             initialPreferences.status === 'migrated' &&
@@ -78,44 +84,74 @@ export default function FreePage() {
     const [feedbackPlans, setFeedbackPlans] = useState<
         readonly MessageFeedbackPlan[]
     >([])
+    const [instructionFallback, setInstructionFallback] = useState<
+        string | undefined
+    >()
     const snapshot = useMemo(() => getTypingSessionSnapshot(session), [session])
     const keyboardBindings = useMemo(
         () => createWebKeyboardBindings(preferences.keyboardBindings),
         [preferences.keyboardBindings],
     )
-    const {
-        playHowToAccessInstructionsAudio,
-        playFreeModeInstructionsAudio,
-        playKeyPress,
-        playKeyboardMuted,
-        playKeyboardUnmuted,
-        playOutputMuted,
-        playOutputUnmuted,
-        playBrailleViewAudio,
-        playInkViewAudio,
-    } = useAudioContext()
+    const speechOutput = useMemo(createBrowserSpeechOutput, [])
+    const soundOutput = useMemo(createWebSoundOutput, [])
+    const multimodalFeedback = useMemo(
+        () =>
+            createMultimodalFeedbackController({
+                speechOutput,
+                soundOutput,
+                getPreferences: () => preferencesRef.current.feedback,
+                onSpeechUnavailable: () =>
+                    setPreferencesNotice(
+                        'A leitura falada está indisponível; o texto e as mensagens acessíveis continuam ativos.',
+                    ),
+                presentInstructionFallback: setInstructionFallback,
+                presentAccessibleFallback: setFeedbackPlans,
+            }),
+        [soundOutput, speechOutput],
+    )
 
-    useEffect(() => {
-        playHowToAccessInstructionsAudio(() => {})
-    }, [])
+    const dispatch = useCallback(
+        (input: SessionInput) => {
+            const previousSnapshot = getTypingSessionSnapshot(
+                sessionRef.current,
+            )
+            const result = applySessionInput(sessionRef.current, input)
+            sessionRef.current = result.state
+            setSession(result.state)
 
-    const dispatch = useCallback((input: SessionInput) => {
-        const result = applySessionInput(sessionRef.current, input)
-        sessionRef.current = result.state
-        setSession(result.state)
-
-        const feedback = coordinateSessionFeedback(
-            feedbackCoordinatorRef.current,
-            result.events,
-        )
-        feedbackCoordinatorRef.current = feedback.state
-        if (feedback.plans.length > 0) setFeedbackPlans(feedback.plans)
-    }, [])
+            const feedback = coordinateSessionFeedback(
+                feedbackCoordinatorRef.current,
+                result.events,
+            )
+            feedbackCoordinatorRef.current = feedback.state
+            const automaticReading = resolveAutomaticReading(
+                previousSnapshot.interpretation,
+                result.snapshot.interpretation,
+                result.events,
+            )
+            if (automaticReading !== undefined)
+                multimodalFeedback.readProduction(automaticReading)
+            if (feedback.plans.length > 0) {
+                setFeedbackPlans(
+                    multimodalFeedback.deliverPlans(feedback.plans),
+                )
+            }
+        },
+        [multimodalFeedback],
+    )
 
     const handlePresentationAction = useCallback(
         (action: LegacyFreeModeAction) => {
             if (action === 'instructions-requested') {
-                playFreeModeInstructionsAudio()
+                multimodalFeedback.requestInstructions()
+                return
+            }
+            if (action === 'speech-stopped') {
+                multimodalFeedback.stop()
+                return
+            }
+            if (action === 'speech-repeated') {
+                multimodalFeedback.repeatSpeech()
                 return
             }
 
@@ -123,22 +159,24 @@ export default function FreePage() {
             if (action === 'view-toggled') {
                 const showingBraille =
                     preferences.presentation.view === 'braille'
-                showingBraille ? playInkViewAudio() : playBrailleViewAudio()
                 change = {
                     type: 'set-view',
                     view: showingBraille ? 'ink' : 'braille',
                 }
-            } else if (action === 'output-audio-toggled') {
-                const enabled = preferences.presentation.outputAudioEnabled
-                enabled ? playOutputMuted() : playOutputUnmuted()
-                change = { type: 'set-output-audio', enabled: !enabled }
+            } else if (action === 'speech-toggled') {
+                change = {
+                    type: 'set-speech-enabled',
+                    enabled: !preferences.feedback.speech.enabled,
+                }
             } else {
-                const enabled = preferences.presentation.keyboardAudioEnabled
-                enabled ? playKeyboardMuted() : playKeyboardUnmuted()
-                change = { type: 'set-keyboard-audio', enabled: !enabled }
+                change = {
+                    type: 'set-sounds-enabled',
+                    enabled: !preferences.feedback.sounds.enabled,
+                }
             }
 
             const updated = applySimulatorPreferenceChange(preferences, change)
+            multimodalFeedback.applyPreferences(updated.feedback)
             setPreferences(updated)
             const saveResult = saveSimulatorPreferences(
                 preferencesStorage,
@@ -147,21 +185,48 @@ export default function FreePage() {
             setPreferencesNotice(
                 saveResult.status === 'failed'
                     ? 'A preferência foi aplicada nesta sessão, mas não pôde ser salva.'
-                    : undefined,
+                    : change.type === 'set-speech-enabled' &&
+                        change.enabled &&
+                        speechOutput === undefined
+                      ? 'A leitura falada está indisponível; o texto e as mensagens acessíveis continuam ativos.'
+                      : undefined,
             )
         },
-        [
-            playBrailleViewAudio,
-            playFreeModeInstructionsAudio,
-            playInkViewAudio,
-            playKeyboardMuted,
-            playKeyboardUnmuted,
-            playOutputMuted,
-            playOutputUnmuted,
-            preferences,
-            preferencesStorage,
-        ],
+        [multimodalFeedback, preferences, preferencesStorage, speechOutput],
     )
+
+    const presentationPreferences = useMemo(
+        () => ({
+            ...preferences.presentation,
+            keyboardAudioEnabled: preferences.feedback.sounds.enabled,
+            speechEnabled: preferences.feedback.speech.enabled,
+            soundsEnabled: preferences.feedback.sounds.enabled,
+        }),
+        [preferences],
+    )
+
+    const playMachineSound = useCallback(() => {
+        multimodalFeedback.playMachineKey()
+    }, [multimodalFeedback])
+
+    useEffect(() => {
+        const handleGlobalPresentationKey = (event: KeyboardEvent) => {
+            if (
+                event.target instanceof Element &&
+                event.target.closest('#typewriter') !== null
+            )
+                return
+            const action = legacyFreeModeActionForKey(event)
+            if (action === undefined) return
+            event.preventDefault()
+            handlePresentationAction(action)
+        }
+        document.addEventListener('keydown', handleGlobalPresentationKey)
+        return () => {
+            document.removeEventListener('keydown', handleGlobalPresentationKey)
+            multimodalFeedback.stop()
+        }
+    }, [handlePresentationAction, multimodalFeedback])
 
     return (
         <>
@@ -170,13 +235,16 @@ export default function FreePage() {
                     <div role="alert">{preferencesNotice}</div>
                 )}
                 <AccessibleFeedback plans={feedbackPlans} />
+                {instructionFallback !== undefined && (
+                    <p aria-live="polite">{instructionFallback}</p>
+                )}
                 <FreeTypingSession
                     snapshot={snapshot}
                     dispatch={dispatch}
                     keyboardBindings={keyboardBindings}
-                    presentationPreferences={preferences.presentation}
+                    presentationPreferences={presentationPreferences}
                     onPresentationAction={handlePresentationAction}
-                    onMachineKeyPressed={playKeyPress}
+                    onMachineKeyPressed={playMachineSound}
                 />
             </main>
         </>

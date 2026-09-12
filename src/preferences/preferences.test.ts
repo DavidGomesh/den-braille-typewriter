@@ -27,8 +27,6 @@ describe('Simulator preferences', () => {
             ...createDefaultSimulatorPreferences(),
             presentation: {
                 view: 'ink' as const,
-                outputAudioEnabled: false,
-                keyboardAudioEnabled: false,
             },
             simulationMode: 'physical-fidelity' as const,
         }
@@ -61,11 +59,43 @@ describe('Simulator preferences', () => {
             ...createDefaultSimulatorPreferences(),
             presentation: {
                 view: 'ink',
-                outputAudioEnabled: false,
-                keyboardAudioEnabled: true,
+            },
+            feedback: {
+                ...createDefaultSimulatorPreferences().feedback,
+                sounds: { enabled: true },
             },
         })
         expect(writes).toEqual([JSON.stringify(result.preferences)])
+    })
+
+    test('migrates version one into explicit speech and sound preferences', () => {
+        const versionOne = {
+            ...createDefaultSimulatorPreferences(),
+            version: 1,
+            presentation: {
+                ...createDefaultSimulatorPreferences().presentation,
+                outputAudioEnabled: true,
+                keyboardAudioEnabled: true,
+            },
+        }
+        const { feedback: _feedback, ...persistedVersionOne } = versionOne
+        const result = loadSimulatorPreferences({
+            read: () => JSON.stringify(persistedVersionOne),
+            write: () => undefined,
+        })
+
+        expect(result.status).toBe('migrated')
+        expect(result.preferences.feedback).toEqual({
+            speech: {
+                enabled: false,
+                locale: 'pt-BR',
+                voicePreference: 'default',
+                rate: 0.9,
+                pitch: 1,
+                volume: 1,
+            },
+            sounds: { enabled: true },
+        })
     })
 
     test('keeps migrated choices when persisting the new schema fails', () => {
@@ -166,19 +196,18 @@ describe('Simulator preferences', () => {
 
     test('updates persistent audio choices independently', () => {
         const initial = createDefaultSimulatorPreferences()
-        const withoutOutputAudio = applySimulatorPreferenceChange(initial, {
-            type: 'set-output-audio',
-            enabled: false,
+        const withSpeech = applySimulatorPreferenceChange(initial, {
+            type: 'set-speech-enabled',
+            enabled: true,
         })
-        const silent = applySimulatorPreferenceChange(withoutOutputAudio, {
-            type: 'set-keyboard-audio',
+        const silent = applySimulatorPreferenceChange(withSpeech, {
+            type: 'set-sounds-enabled',
             enabled: false,
         })
 
-        expect(silent.presentation).toEqual({
-            view: 'braille',
-            outputAudioEnabled: false,
-            keyboardAudioEnabled: false,
+        expect(silent.feedback).toEqual({
+            speech: { ...initial.feedback.speech, enabled: true },
+            sounds: { enabled: false },
         })
     })
 })

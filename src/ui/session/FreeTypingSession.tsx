@@ -82,7 +82,12 @@ export type FreeTypingSessionProps = Readonly<{
     snapshot: TypingSessionSnapshot
     dispatch: (input: SessionInput) => void
     keyboardBindings: WebKeyboardBindings
-    presentationPreferences: SimulatorPreferences['presentation']
+    presentationPreferences: SimulatorPreferences['presentation'] &
+        Readonly<{
+            keyboardAudioEnabled: boolean
+            speechEnabled: boolean
+            soundsEnabled: boolean
+        }>
     onPresentationAction: (action: LegacyFreeModeAction) => void
     onMachineKeyPressed: () => void
 }>
@@ -192,12 +197,27 @@ export default function FreeTypingSession({
             onKeyUp={(event) => handleKeyboardEvent(event, 'release')}
         >
             <div className="fs-1">MODO LIVRE</div>
-            <div role="status" aria-live="polite">
+            <div role="status" aria-label="Estado da sessão" aria-live="polite">
                 {snapshot.capture.status === 'active'
                     ? 'Captura ativa'
                     : 'Captura inativa'}{' '}
                 — revisão: linha {snapshot.document.reviewPosition.row + 1},
                 coluna {snapshot.document.reviewPosition.column + 1}
+            </div>
+            <p>
+                A leitura falada começa desligada por padrão. Pressione O para
+                ativar ou silenciar, R para repetir e P para interromper.
+            </p>
+            <div aria-live="polite">
+                Leitura falada:{' '}
+                {presentationPreferences.speechEnabled
+                    ? 'ativada'
+                    : 'desativada'}
+                . Sons da máquina:{' '}
+                {presentationPreferences.soundsEnabled
+                    ? 'ativados'
+                    : 'desativados'}
+                .
             </div>
             <div className="d-flex justify-content-center w-100 fs-5 gap-3 mb-3">
                 <div>
@@ -207,10 +227,16 @@ export default function FreeTypingSession({
                     <strong>(t)</strong> Ver texto a tinta ou em Braille
                 </div>
                 <div>
-                    <strong>(o)</strong> Liga/desliga áudio do conversor
+                    <strong>(O — letra)</strong> Liga/desliga leitura falada
                 </div>
                 <div>
-                    <strong>(m)</strong> Liga/desliga áudio do teclado
+                    <strong>(m)</strong> Liga/desliga sons da máquina
+                </div>
+                <div>
+                    <strong>(r)</strong> Repetir última fala
+                </div>
+                <div>
+                    <strong>(p)</strong> Interromper fala e sons
                 </div>
                 <div>
                     <strong>(Esc)</strong> Pausa/retoma a captura

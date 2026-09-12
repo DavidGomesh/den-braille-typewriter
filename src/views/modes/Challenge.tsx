@@ -9,7 +9,6 @@ import { useAudioContext } from '../../providers/AudioProvider'
 
 export interface RandomWord {
     word: string
-    audioSrc: string
     cells: List<Cell>
 }
 
@@ -20,10 +19,12 @@ export default function Challenge() {
         playWordAudio,
         playRightAnswer,
         playWrongAnswer,
+        stopAllAudio,
     } = useAudioContext()
 
     const output = useRef<HTMLTextAreaElement>(null)
-    const [randomWord, setRandomWord] = useState<RandomWord>()
+    const [randomWord, setRandomWord] = useState<RandomWord>(getRandomWord)
+    const initialWord = useRef(randomWord)
 
     function getNextRandomWord() {
         console.info('Get next random word')
@@ -31,10 +32,8 @@ export default function Challenge() {
     }
 
     function playRandomWordAudio() {
-        if (randomWord) {
-            console.info('Play word audio: ' + randomWord.word)
-            playWordAudio(randomWord?.audioSrc)
-        }
+        console.info('Play word audio: ' + randomWord.word)
+        playWordAudio(randomWord.word)
     }
 
     function verifyAnswer(outputValue: string) {
@@ -64,9 +63,11 @@ export default function Challenge() {
     }
 
     useEffect(() => {
-        getNextRandomWord()
-        playHowToAccessInstructionsAudio(playRandomWordAudio)
-    }, [])
+        playHowToAccessInstructionsAudio(() =>
+            playWordAudio(initialWord.current.word),
+        )
+        return stopAllAudio
+    }, [playHowToAccessInstructionsAudio, playWordAudio, stopAllAudio])
 
     return (
         <>
@@ -92,7 +93,6 @@ const wordsMap = Map([
     [
         'casa',
         {
-            audioSrc: 'assets/audio/views/challenge/words/casa.mp3',
             cells: List([Cell.C14, Cell.C1, Cell.C234, Cell.C1]),
         },
     ],
@@ -100,7 +100,6 @@ const wordsMap = Map([
     [
         'amor',
         {
-            audioSrc: 'assets/audio/views/challenge/words/amor.mp3',
             cells: List([Cell.C1, Cell.C134, Cell.C135, Cell.C1235]),
         },
     ],
@@ -108,7 +107,6 @@ const wordsMap = Map([
     [
         'feliz',
         {
-            audioSrc: 'assets/audio/views/challenge/words/feliz.mp3',
             cells: List([Cell.C124, Cell.C15, Cell.C123, Cell.C24, Cell.C1356]),
         },
     ],
@@ -116,7 +114,6 @@ const wordsMap = Map([
     [
         'livro',
         {
-            audioSrc: 'assets/audio/views/challenge/words/livro.mp3',
             cells: List([
                 Cell.C123,
                 Cell.C24,
@@ -130,7 +127,6 @@ const wordsMap = Map([
     [
         'braille',
         {
-            audioSrc: 'assets/audio/views/challenge/words/braille.mp3',
             cells: List([
                 Cell.C12,
                 Cell.C1235,
@@ -146,7 +142,6 @@ const wordsMap = Map([
     [
         'flor',
         {
-            audioSrc: 'assets/audio/views/challenge/words/flor.mp3',
             cells: List([Cell.C124, Cell.C123, Cell.C135, Cell.C1235]),
         },
     ],
@@ -154,7 +149,6 @@ const wordsMap = Map([
     [
         'escola',
         {
-            audioSrc: 'assets/audio/views/challenge/words/escola.mp3',
             cells: List([
                 Cell.C15,
                 Cell.C234,
@@ -169,7 +163,6 @@ const wordsMap = Map([
     [
         'brasil',
         {
-            audioSrc: 'assets/audio/views/challenge/words/brasil.mp3',
             cells: List([
                 Cell.C12,
                 Cell.C1235,
@@ -184,7 +177,6 @@ const wordsMap = Map([
     [
         'café',
         {
-            audioSrc: 'assets/audio/views/challenge/words/cafe.mp3',
             cells: List([Cell.C14, Cell.C1, Cell.C124, Cell.C123456]),
         },
     ],
@@ -192,7 +184,6 @@ const wordsMap = Map([
     [
         'natureza',
         {
-            audioSrc: 'assets/audio/views/challenge/words/natureza.mp3',
             cells: List([
                 Cell.C1345,
                 Cell.C1,
@@ -209,7 +200,6 @@ const wordsMap = Map([
     [
         'sol',
         {
-            audioSrc: 'assets/audio/views/challenge/words/sol.mp3',
             cells: List([Cell.C234, Cell.C135, Cell.C123]),
         },
     ],
@@ -217,7 +207,6 @@ const wordsMap = Map([
     [
         'estrela',
         {
-            audioSrc: 'assets/audio/views/challenge/words/estrela.mp3',
             cells: List([
                 Cell.C15,
                 Cell.C234,
@@ -233,7 +222,6 @@ const wordsMap = Map([
     [
         'computador',
         {
-            audioSrc: 'assets/audio/views/challenge/words/computador.mp3',
             cells: List([
                 Cell.C14,
                 Cell.C135,
@@ -252,7 +240,6 @@ const wordsMap = Map([
     [
         'inclusão',
         {
-            audioSrc: 'assets/audio/views/challenge/words/inclusao.mp3',
             cells: List([
                 Cell.C24,
                 Cell.C1345,
@@ -269,7 +256,6 @@ const wordsMap = Map([
     [
         'aventura',
         {
-            audioSrc: 'assets/audio/views/challenge/words/aventura.mp3',
             cells: List([
                 Cell.C1,
                 Cell.C1236,
@@ -293,7 +279,6 @@ function getRandomWord() {
 
     const obj = {
         word: word,
-        audioSrc: entry?.audioSrc as string,
         cells: entry?.cells as List<Cell>,
     }
 

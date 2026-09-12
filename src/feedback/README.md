@@ -40,13 +40,47 @@ coordenador. `ui/feedback/AccessibleFeedback.tsx` mostra cada plano preservado e
 atualiza uma região viva com o conteúdo equivalente sem mover o foco da área de
 digitação.
 
-Áudio e fala substituíveis serão conectados no corte seguinte da capacidade;
-esta etapa cobre o texto visual e as mensagens programáticas da issue #43.
+O adapter Web Speech recebe texto canônico, localidade BCP 47, finalidade e
+características portáveis. Ele seleciona primeiro a localidade completa, depois
+o idioma-base, sem transformar o nome bruto de uma voz em preferência.
+
+O adapter web de sons recebe identificadores semânticos e resolve assets dentro
+do catálogo. No Modo livre, leitura e sons podem ser ligados, desligados,
+repetidos ou interrompidos pelos atalhos documentados. Ausência ou falha da
+plataforma não remove o texto nem a semântica acessível.
+
+Instruções e repetições solicitadas explicitamente usam Web Speech mesmo quando
+o feedback falado automático está desligado. Assim, I e R continuam sendo
+ações disponíveis; P interrompe a saída corrente em qualquer estado de captura.
+Quando O ativa a leitura automática, a Interpretação Braille fornece o novo
+Símbolo textual produzido; espaços recebem um nome pronunciável e operações de
+edição permanecem silenciosas. Caracteres acentuados do perfil português usam
+nomes inequívocos, como “a agudo”, “a til” e “a circunflexo”, sem alterar a
+Interpretação Braille. Unidades por palavra, linha e documento ainda dependem da
+política configurável de leitura.
+
+A naturalidade, a qualidade e a disponibilidade das vozes Web Speech pertencem
+ao navegador e ao sistema operacional, portanto podem variar entre ambientes.
+Na validação manual em Linux, a voz disponível foi considerada muito robótica e
+por vezes difícil de compreender. Essa implementação é somente a baseline
+técnica da Alpha 2: ela não representa a qualidade de voz pretendida para o
+produto, não garante uma voz idêntica nem operação offline em todas as
+plataformas e exige uma melhoria substancial. A #80 acompanha a pesquisa e a
+adoção de um motor em português mais natural e consistente, capaz de substituir
+o adapter atual.
+
+O `AudioProvider` permanece temporariamente apenas para efeitos e destinos
+legados. Conteúdo falado do menu e do Modo desafio já usa Web Speech por essa
+ponte transitória; os MP3s permanecem ativos somente onde ainda representam
+efeitos ou conteúdo legado não migrado. O Modo livre não consome o provider,
+evitando feedback duplicado, e cancela fala e sons ao sair da experiência.
 
 ## Estratégia de testes
 
 - `feedback.test.ts` verifica decisões do planejador pela interface pública;
 - `tests/contracts/feedback-output.test.ts` verifica isolamento entre adapters;
+- `tests/contracts/web-speech-output.test.ts` verifica a Web Speech substituída;
+- `tests/contracts/web-sound-output.test.ts` verifica sons determinísticos;
 - `tests/journeys/free-mode.test.tsx` verifica equivalência de conteúdo e
   preservação de foco pelo DOM acessível.
 

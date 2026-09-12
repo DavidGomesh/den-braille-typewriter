@@ -1,5 +1,25 @@
 /** Version of the persisted simulator-preferences schema. */
-export const simulatorPreferencesVersion = 1 as const
+export const simulatorPreferencesVersion = 2 as const
+
+/**
+ * Portable choices for application speech and optional machine sounds.
+ *
+ * `locale` is a non-empty BCP 47 language tag. `voicePreference` selects a
+ * logical class rather than persisting a platform voice name: `default` uses
+ * the platform default compatible voice, while `local` prefers an installed
+ * voice. Web Speech ranges are rate 0.1–10, pitch 0–2 and volume 0–1.
+ */
+export type FeedbackPreferences = Readonly<{
+    speech: Readonly<{
+        enabled: boolean
+        locale: string
+        voicePreference: 'default' | 'local'
+        rate: number
+        pitch: number
+        volume: number
+    }>
+    sounds: Readonly<{ enabled: boolean }>
+}>
 
 /**
  * Physical keyboard codes selected for each configurable simulator action.
@@ -30,11 +50,10 @@ export type SimulatorPreferences = Readonly<{
     version: typeof simulatorPreferencesVersion
     presentation: Readonly<{
         view: 'braille' | 'ink'
-        outputAudioEnabled: boolean
-        keyboardAudioEnabled: boolean
     }>
     keyboardBindings: KeyboardBindingPreferences
     simulationMode: 'assisted' | 'physical-fidelity'
+    feedback: FeedbackPreferences
 }>
 
 /** Minimal persistence seam implemented by web and deterministic adapters. */
@@ -85,7 +104,7 @@ export type SimulatorPreferenceChange =
           view: 'braille' | 'ink'
       }>
     | Readonly<{
-          type: 'set-output-audio' | 'set-keyboard-audio'
+          type: 'set-speech-enabled' | 'set-sounds-enabled'
           enabled: boolean
       }>
 
@@ -132,18 +151,38 @@ const decodeCurrentPreferences = (
 ): SimulatorPreferences | undefined => {
     if (!isRecord(value) || value.version !== simulatorPreferencesVersion)
         return undefined
-    if (!isRecord(value.presentation) || !isRecord(value.keyboardBindings))
+    if (
+        !isRecord(value.presentation) ||
+        !isRecord(value.keyboardBindings) ||
+        !isRecord(value.feedback) ||
+        !isRecord(value.feedback.speech) ||
+        !isRecord(value.feedback.sounds)
+    )
         return undefined
 
     const keyboardBindings = value.keyboardBindings
-    const { view, outputAudioEnabled, keyboardAudioEnabled } =
-        value.presentation
+    const { view } = value.presentation
+    const speech = value.feedback.speech
+    const sounds = value.feedback.sounds
     if (
         (view !== 'braille' && view !== 'ink') ||
-        typeof outputAudioEnabled !== 'boolean' ||
-        typeof keyboardAudioEnabled !== 'boolean' ||
         (value.simulationMode !== 'assisted' &&
-            value.simulationMode !== 'physical-fidelity')
+            value.simulationMode !== 'physical-fidelity') ||
+        typeof speech.enabled !== 'boolean' ||
+        typeof speech.locale !== 'string' ||
+        speech.locale.length === 0 ||
+        (speech.voicePreference !== 'default' &&
+            speech.voicePreference !== 'local') ||
+        typeof speech.rate !== 'number' ||
+        speech.rate < 0.1 ||
+        speech.rate > 10 ||
+        typeof speech.pitch !== 'number' ||
+        speech.pitch < 0 ||
+        speech.pitch > 2 ||
+        typeof speech.volume !== 'number' ||
+        speech.volume < 0 ||
+        speech.volume > 1 ||
+        typeof sounds.enabled !== 'boolean'
     ) {
         return undefined
     }
@@ -163,13 +202,34 @@ const decodeCurrentPreferences = (
         version: simulatorPreferencesVersion,
         presentation: Object.freeze({
             view,
-            outputAudioEnabled,
-            keyboardAudioEnabled,
         }),
         keyboardBindings: Object.freeze(
             bindings as unknown as KeyboardBindingPreferences,
         ),
         simulationMode: value.simulationMode,
+        feedback: Object.freeze({
+            speech: Object.freeze({
+                enabled: speech.enabled,
+                locale: speech.locale,
+                voicePreference: speech.voicePreference,
+                rate: speech.rate,
+                pitch: speech.pitch,
+                volume: speech.volume,
+            }),
+            sounds: Object.freeze({ enabled: sounds.enabled }),
+        }),
+    })
+}
+
+const migrateVersionOnePreferences = (
+    value: unknown,
+): SimulatorPreferences | undefined => {
+    if (!isRecord(value) || value.version !== 1) return undefined
+    const candidate = { ...value, version: simulatorPreferencesVersion }
+    const defaults = createDefaultSimulatorPreferences()
+    return decodeCurrentPreferences({
+        ...candidate,
+        feedback: defaults.feedback,
     })
 }
 
@@ -190,8 +250,10 @@ const migrateLegacyPreferences = (
         ...defaults,
         presentation: Object.freeze({
             view: value.showBraille ? 'braille' : 'ink',
-            outputAudioEnabled: !value.outputMuted,
-            keyboardAudioEnabled: !value.keyboardMuted,
+        }),
+        feedback: Object.freeze({
+            ...defaults.feedback,
+            sounds: Object.freeze({ enabled: !value.keyboardMuted }),
         }),
     })
 }
@@ -202,11 +264,20 @@ export const createDefaultSimulatorPreferences = (): SimulatorPreferences =>
         version: simulatorPreferencesVersion,
         presentation: Object.freeze({
             view: 'braille',
-            outputAudioEnabled: true,
-            keyboardAudioEnabled: true,
         }),
         keyboardBindings: defaultKeyboardBindings(),
         simulationMode: 'assisted',
+        feedback: Object.freeze({
+            speech: Object.freeze({
+                enabled: false,
+                locale: 'pt-BR',
+                voicePreference: 'default',
+                rate: 0.9,
+                pitch: 1,
+                volume: 1,
+            }),
+            sounds: Object.freeze({ enabled: true }),
+        }),
     })
 
 /**
@@ -242,7 +313,9 @@ export const loadSimulatorPreferences = (
         if (preferences !== undefined) {
             return Object.freeze({ preferences, status: 'loaded' })
         }
-        const migrated = migrateLegacyPreferences(value)
+        const migrated =
+            migrateVersionOnePreferences(value) ??
+            migrateLegacyPreferences(value)
         if (migrated !== undefined) {
             let migrationPersistence: 'saved' | 'failed' = 'saved'
             try {
@@ -308,15 +381,25 @@ export const applySimulatorPreferenceChange = (
     const presentation = {
         ...preferences.presentation,
         ...(change.type === 'set-view' ? { view: change.view } : {}),
-        ...(change.type === 'set-output-audio'
-            ? { outputAudioEnabled: change.enabled }
-            : {}),
-        ...(change.type === 'set-keyboard-audio'
-            ? { keyboardAudioEnabled: change.enabled }
-            : {}),
+    }
+    const feedback = {
+        ...preferences.feedback,
+        speech: Object.freeze({
+            ...preferences.feedback.speech,
+            ...(change.type === 'set-speech-enabled'
+                ? { enabled: change.enabled }
+                : {}),
+        }),
+        sounds: Object.freeze({
+            ...preferences.feedback.sounds,
+            ...(change.type === 'set-sounds-enabled'
+                ? { enabled: change.enabled }
+                : {}),
+        }),
     }
     return Object.freeze({
         ...preferences,
         presentation: Object.freeze(presentation),
+        feedback: Object.freeze(feedback),
     })
 }

@@ -30,8 +30,6 @@ describe.each<[string, StorageFactory]>([
             ...createDefaultSimulatorPreferences(),
             presentation: {
                 view: 'ink' as const,
-                outputAudioEnabled: false,
-                keyboardAudioEnabled: true,
             },
         }
 
