@@ -1279,7 +1279,7 @@
       "file_type": "code",
       "norm_label": "braillegridviewprops",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L148"
+      "source_location": "L152"
     },
     {
       "id": "src_ui_braille_braillerenderer_braillepresentationoptions",
@@ -1292,7 +1292,7 @@
       "file_type": "code",
       "norm_label": "braillepresentationoptions",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L12"
+      "source_location": "L19"
     },
     {
       "id": "src_ui_braille_braillerenderer_cellimpressionviewprops",
@@ -1305,7 +1305,7 @@
       "file_type": "code",
       "norm_label": "cellimpressionviewprops",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L65"
+      "source_location": "L72"
     },
     {
       "id": "src_ui_braille_braillerenderer_customproperties",
@@ -1318,7 +1318,7 @@
       "file_type": "code",
       "norm_label": "customproperties",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L37"
+      "source_location": "L44"
     },
     {
       "id": "src_braille_document_impression_cellimpression",
@@ -5175,42 +5175,6 @@
       "source_location": "L273"
     },
     {
-      "id": "src_braille_document_document_assertcoordinate",
-      "label": "assertCoordinate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "BrailleRenderer.tsx",
-      "file_type": "code",
-      "norm_label": "assertcoordinate()",
-      "source_file": "src/braille/document/document.ts",
-      "source_location": "L43"
-    },
-    {
-      "id": "src_braille_document_document_creategridposition",
-      "label": "createGridPosition()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "BrailleRenderer.tsx",
-      "file_type": "code",
-      "norm_label": "creategridposition()",
-      "source_file": "src/braille/document/document.ts",
-      "source_location": "L55"
-    },
-    {
-      "id": "src_ui_braille_braillerenderer_braillegridview",
-      "label": "BrailleGridView()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "BrailleRenderer.tsx",
-      "file_type": "code",
-      "norm_label": "braillegridview()",
-      "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L157"
-    },
-    {
       "id": "src_ui_braille_braillerenderer_cellimpressionview",
       "label": "CellImpressionView()",
       "_callable": true,
@@ -5220,7 +5184,7 @@
       "file_type": "code",
       "norm_label": "cellimpressionview()",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L91"
+      "source_location": "L97"
     },
     {
       "id": "src_ui_braille_braillerenderer_createdefaultbraillepresentationoptions",
@@ -5232,7 +5196,7 @@
       "file_type": "code",
       "norm_label": "createdefaultbraillepresentationoptions()",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L24"
+      "source_location": "L31"
     },
     {
       "id": "src_ui_braille_braillerenderer_describecellimpression",
@@ -5244,7 +5208,7 @@
       "file_type": "code",
       "norm_label": "describecellimpression()",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L47"
+      "source_location": "L54"
     },
     {
       "id": "src_ui_braille_braillerenderer_joindots",
@@ -5256,7 +5220,7 @@
       "file_type": "code",
       "norm_label": "joindots()",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L41"
+      "source_location": "L48"
     },
     {
       "id": "src_ui_braille_braillerenderer_presentationstyle",
@@ -5268,7 +5232,7 @@
       "file_type": "code",
       "norm_label": "presentationstyle()",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L71"
+      "source_location": "L77"
     },
     {
       "id": "src_braille_machine_machine_applyintent",
@@ -5377,6 +5341,18 @@
       "norm_label": "applydocumentoperation()",
       "source_file": "src/braille/document/document.ts",
       "source_location": "L451"
+    },
+    {
+      "id": "src_braille_document_document_creategridposition",
+      "label": "createGridPosition()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "creategridposition()",
+      "source_file": "src/braille/document/document.ts",
+      "source_location": "L55"
     },
     {
       "id": "src_braille_document_document_embosscell",
@@ -5497,6 +5473,18 @@
       "norm_label": "source()",
       "source_file": "src/braille/orthography.test.ts",
       "source_location": "L40"
+    },
+    {
+      "id": "src_ui_braille_braillerenderer_braillegridview",
+      "label": "BrailleGridView()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "braillegridview()",
+      "source_file": "src/ui/braille/BrailleRenderer.tsx",
+      "source_location": "L161"
     },
     {
       "id": "src_vendors_bootstrap_js_bootstrap_bundle_min_ao_hide",
@@ -6660,6 +6648,18 @@
       "file_type": "code",
       "norm_label": "createfreesession()",
       "source_file": "src/app/pages/FreePage.tsx",
+      "source_location": "L43"
+    },
+    {
+      "id": "src_braille_document_document_assertcoordinate",
+      "label": "assertCoordinate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 42,
+      "community_name": "createPaperConfiguration",
+      "file_type": "code",
+      "norm_label": "assertcoordinate()",
+      "source_file": "src/braille/document/document.ts",
       "source_location": "L43"
     },
     {
@@ -11085,18 +11085,7 @@
       "file_type": "code",
       "norm_label": "dotorder",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_ui_braille_braillerenderer_test",
-      "label": "BrailleRenderer.test.tsx",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "BrailleRenderer.tsx",
-      "file_type": "code",
-      "norm_label": "braillerenderer.test.tsx",
-      "source_file": "src/ui/braille/BrailleRenderer.test.tsx",
-      "source_location": "L1"
+      "source_location": "L46"
     },
     {
       "id": "src_ui_public",
@@ -11239,6 +11228,17 @@
       "file_type": "code",
       "norm_label": "orthography.test.ts",
       "source_file": "src/braille/orthography.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_ui_braille_braillerenderer_test",
+      "label": "BrailleRenderer.test.tsx",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "braillerenderer.test.tsx",
+      "source_file": "src/ui/braille/BrailleRenderer.test.tsx",
       "source_location": "L1"
     },
     {
@@ -17477,7 +17477,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L181",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -17489,11 +17489,11 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L183",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
-      "source": "src_ui_braille_braillerenderer_braillegridview",
+      "source": "src_ui_braille_braillerenderer_cellimpressionview",
       "target": "src_ui_braille_braillerenderer_describecellimpression",
       "relation": "calls",
       "_origin": "ast",
@@ -17501,7 +17501,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L190",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -17513,19 +17513,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L106",
-      "weight": 1.0
-    },
-    {
-      "source": "src_ui_braille_braillerenderer_cellimpressionview",
-      "target": "src_ui_braille_braillerenderer_describecellimpression",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L96",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -17537,7 +17525,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L57",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -35489,24 +35477,13 @@
     },
     {
       "source": "src_ui_braille_braillerenderer",
-      "target": "src_ui_braille_braillerenderer_braillepresentationoptions",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "src_ui_braille_braillerenderer",
       "target": "src_ui_braille_braillerenderer_braillegridviewprops",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L148",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -35517,7 +35494,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L157",
+      "source_location": "L161",
+      "weight": 1.0
+    },
+    {
+      "source": "src_ui_braille_braillerenderer",
+      "target": "src_ui_braille_braillerenderer_braillepresentationoptions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/ui/braille/BrailleRenderer.tsx",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -35528,7 +35516,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L24",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -35539,7 +35527,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L37",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -35550,7 +35538,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L39",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -35561,7 +35549,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L41",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -35572,7 +35560,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L47",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -35583,7 +35571,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L65",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -35594,7 +35582,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L71",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -35605,7 +35593,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/ui/braille/BrailleRenderer.tsx",
-      "source_location": "L91",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -41867,5 +41855,5 @@
       "source_file": "src/session/README.md"
     }
   ],
-  "built_at_commit": "d9c652ac954a48066bf2cdb35b8097c7da4befe3"
+  "built_at_commit": "5309e66b6468bc3011d2468328c2d85cd422300a"
 }

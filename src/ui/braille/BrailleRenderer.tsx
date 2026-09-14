@@ -7,8 +7,15 @@ import {
     type BrailleGrid,
     type CellImpression,
 } from '../../braille/public'
-import './BrailleRenderer.css'
+import styles from './BrailleRenderer.module.css'
 
+/**
+ * Visual choices for rendering Braille positions and grids.
+ *
+ * `scale` and both dot-spacing factors are positive finite multipliers.
+ * `cellGap` and `lineGap` are finite, non-negative CSS pixel values. Invalid
+ * values are outside this UI contract and must not be supplied by consumers.
+ */
 export type BraillePresentationOptions = Readonly<{
     style: 'essential' | 'soft-frame'
     didactic: boolean
@@ -65,7 +72,6 @@ export const describeCellImpression = (
 export type CellImpressionViewProps = Readonly<{
     impression: CellImpression | undefined
     options?: BraillePresentationOptions
-    'aria-label'?: string
 }>
 
 const presentationStyle = (
@@ -91,60 +97,58 @@ const presentationStyle = (
 export function CellImpressionView({
     impression,
     options = createDefaultBraillePresentationOptions(),
-    'aria-label': ariaLabel,
 }: CellImpressionViewProps) {
-    const label = ariaLabel ?? describeCellImpression(impression)
-    if (impression === undefined) {
-        return (
-            <span
-                className="braille-cell braille-cell--unused"
-                role="img"
-                aria-label={label}
-                data-style={options.style}
-                data-didactic={String(options.didactic)}
-                data-number-font={options.numberFont}
-                style={presentationStyle(options)}
-            />
-        )
-    }
+    const className = `${styles['braille-cell']} ${
+        impression === undefined ? styles['braille-cell--unused'] : ''
+    }`
 
     return (
         <span
-            className="braille-cell"
+            className={className}
             role="img"
-            aria-label={label}
+            aria-label={describeCellImpression(impression)}
             data-style={options.style}
             data-didactic={String(options.didactic)}
             data-number-font={options.numberFont}
             style={presentationStyle(options)}
         >
-            <span className="braille-cell__dots" aria-hidden="true">
-                {dotOrder.map((dot) => {
-                    const state = impression.cell.dots.includes(dot)
-                        ? 'raised'
-                        : impression.erasedDots.includes(dot)
-                          ? 'erased'
-                          : 'inactive'
-                    return (
-                        <span
-                            className="braille-cell__slot"
-                            key={dot}
-                            data-dot={dot}
-                        >
+            {impression === undefined ? null : (
+                <span
+                    className={styles['braille-cell__dots']}
+                    aria-hidden="true"
+                >
+                    {dotOrder.map((dot) => {
+                        const state = impression.cell.dots.includes(dot)
+                            ? 'raised'
+                            : impression.erasedDots.includes(dot)
+                              ? 'erased'
+                              : 'inactive'
+                        return (
                             <span
-                                className="braille-cell__dot"
-                                data-dot-state={state}
+                                className={styles['braille-cell__slot']}
+                                key={dot}
+                                data-dot={dot}
                             >
-                                {options.didactic ? dot : null}
+                                <span
+                                    className={styles['braille-cell__dot']}
+                                    data-dot-state={state}
+                                >
+                                    {options.didactic ? dot : null}
+                                </span>
                             </span>
-                        </span>
-                    )
-                })}
-            </span>
+                        )
+                    })}
+                </span>
+            )}
         </span>
     )
 }
 
+/**
+ * Grid composition inputs.
+ *
+ * `rows` and `columns` are positive integers describing the visible grid.
+ */
 export type BrailleGridViewProps = Readonly<{
     grid: BrailleGrid
     rows: number
@@ -168,7 +172,7 @@ export function BrailleGridView({
     }
     return (
         <div
-            className="braille-grid"
+            className={styles['braille-grid']}
             role="grid"
             aria-label={ariaLabel}
             aria-rowcount={rows}
@@ -176,18 +180,25 @@ export function BrailleGridView({
             style={style}
         >
             {Array.from({ length: rows }, (_, row) => (
-                <div role="row" className="braille-grid__row" key={row}>
+                <div
+                    role="row"
+                    className={styles['braille-grid__row']}
+                    key={row}
+                >
                     {Array.from({ length: columns }, (_, column) => {
                         const impression = getCellImpression(
                             grid,
                             createGridPosition(row, column),
                         )
                         return (
-                            <div role="gridcell" key={column}>
+                            <div
+                                role="gridcell"
+                                aria-label={`Linha ${row + 1}, coluna ${column + 1}`}
+                                key={column}
+                            >
                                 <CellImpressionView
                                     impression={impression}
                                     options={options}
-                                    aria-label={`Linha ${row + 1}, coluna ${column + 1}. ${describeCellImpression(impression)}`}
                                 />
                             </div>
                         )

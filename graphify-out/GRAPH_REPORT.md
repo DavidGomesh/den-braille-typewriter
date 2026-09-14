@@ -1,17 +1,17 @@
 # Graph Report - den-braille-typewriter  (2026-09-14)
 
 ## Corpus Check
-- 141 files · ~120,171 words
+- 141 files · ~120,245 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 35 file(s) not represented in the graph (top: .tex 17, .css 7, (none) 6)
 
 ## Summary
-- 1193 nodes · 2350 edges · 90 communities (56 shown, 26 thin omitted)
+- 1193 nodes · 2349 edges · 90 communities (56 shown, 26 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 81 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d9c652ac`
+- Built from commit: `5309e66b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -220,8 +220,8 @@ Cohesion: 0.25
 Nodes (11): playChallengeModeInstructionsAudio(), playHowToAccessInstructionsAudio(), playRightAnswer(), playWordAudio(), playWrongAnswer(), Challenge(), getNextRandomWord(), playRandomWordAudio() (+3 more)
 
 ### Community 30 - "BrailleRenderer.tsx"
-Cohesion: 0.24
-Nodes (14): assertCoordinate(), BrailleGrid, createGridPosition(), BrailleGridView(), BrailleGridViewProps, BraillePresentationOptions, CellImpressionView(), CellImpressionViewProps (+6 more)
+Cohesion: 0.27
+Nodes (11): BrailleGrid, BrailleGridViewProps, BraillePresentationOptions, CellImpressionView(), CellImpressionViewProps, createDefaultBraillePresentationOptions(), CustomProperties, describeCellImpression() (+3 more)
 
 ### Community 31 - "machine.ts"
 Cohesion: 0.19
@@ -232,8 +232,8 @@ Cohesion: 0.36
 Nodes (5): publicBasePathFromHomepage(), @vitejs/plugin-react, createNotFoundPage(), preparePagesArtifact(), publicBasePath
 
 ### Community 33 - "vitest"
-Cohesion: 0.31
-Nodes (11): vitest, applyDocumentOperation(), embossCell(), eraseCellDots(), getCellImpression(), getDocumentCellImpression(), recordCellImpression(), createCellImpression() (+3 more)
+Cohesion: 0.29
+Nodes (13): vitest, applyDocumentOperation(), createGridPosition(), embossCell(), eraseCellDots(), getCellImpression(), getDocumentCellImpression(), recordCellImpression() (+5 more)
 
 ### Community 35 - "W"
 Cohesion: 0.14
@@ -264,8 +264,8 @@ Cohesion: 0.33
 Nodes (6): Answer Verification, Audio Controls, Braille Response Area, Challenge Mode Braille Interface, Physical Key Mapping, Target Word
 
 ### Community 42 - "createPaperConfiguration"
-Cohesion: 0.38
-Nodes (9): createFreeSession(), assertPositiveInteger(), createPaperConfiguration(), freezeMargins(), createOrthographyProfile(), createTypingSession(), activateKeyboardCapture(), createConfirmingSession() (+1 more)
+Cohesion: 0.33
+Nodes (10): createFreeSession(), assertCoordinate(), assertPositiveInteger(), createPaperConfiguration(), freezeMargins(), createOrthographyProfile(), createTypingSession(), activateKeyboardCapture() (+2 more)
 
 ### Community 43 - "Renderer visual Braille — alpha.3"
 Cohesion: 0.40
@@ -367,7 +367,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.049) - this node is a cross-community bridge._
 - **Why does `react` connect `Journeys.test.tsx` to `FreePage.tsx`, `feedback/public.ts`, `Key`, `package.json`, `Typewriter.tsx`, `BrailleRenderer.tsx`?**
   _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **Why does `vitest` connect `vitest` to `braille/public.ts`, `FreePage.tsx`, `feedback/public.ts`, `Journeys.test.tsx`, `package.json`, `createPaperConfiguration`, `Key.ts`, `Typewriter.tsx`, `BrailleRenderer.tsx`?**
+- **Why does `vitest` connect `vitest` to `braille/public.ts`, `FreePage.tsx`, `feedback/public.ts`, `Journeys.test.tsx`, `package.json`, `createPaperConfiguration`, `Key.ts`, `Typewriter.tsx`?**
   _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **Are the 12 inferred relationships involving `Typewriter()` (e.g. with `handleBackspaceKeyPressed()` and `handleBackspaceKeyReleased()`) actually correct?**
   _`Typewriter()` has 12 INFERRED edges - model-reasoned connections that need verification._

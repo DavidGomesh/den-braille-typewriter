@@ -2,11 +2,11 @@
 
 ## Contrato implementado
 
-`CellImpressionView` apresenta uma posição a partir de `CellImpression | undefined`.
-Ela não recebe Sessão de digitação, Experiência do simulador, áudio,
-interpretação, coordenadas ou ações. `BrailleGridView` compõe posições a partir
-de `BrailleGrid`, acrescenta coordenadas às descrições e mantém seleção, foco e
-navegação sob responsabilidade de quem a consome.
+`CellImpressionView` apresenta uma posição a partir de `CellImpression | undefined`
+e das opções visuais. Ela não recebe Sessão de digitação, Experiência do
+simulador, áudio, interpretação, coordenadas ou ações. `BrailleGridView` compõe
+posições a partir de `BrailleGrid`, identifica suas coordenadas e mantém seleção,
+foco e navegação sob responsabilidade de quem a consome.
 
 Os seis pontos são HTML/CSS sem fonte Braille, SVG ou Canvas e ficam ocultos da
 árvore acessível como primitivas gráficas. Cada posição expõe uma única
