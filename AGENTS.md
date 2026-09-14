@@ -56,3 +56,29 @@ Exemplos:
 Use prefixos funcionais, como `feature/`, `fix/`, `docs/`, `refactor/` ou
 `chore/`, de acordo com a natureza principal da mudança. Nunca use como prefixo
 `codex`, `claude`, `gemini` nem o nome de qualquer agente.
+
+## graphify
+
+Este projeto mantém um grafo de conhecimento em `graphify-out/`, com nós centrais,
+estrutura de comunidades e relações entre arquivos.
+
+Quando a pessoa usuária digitar `/graphify`, use a skill ou as instruções do
+graphify antes de qualquer outra ação.
+
+Regras:
+
+- Para perguntas sobre o código, execute primeiro `graphify query "<pergunta>"`
+  quando `graphify-out/graph.json` existir. Use `graphify path "<A>" "<B>"`
+  para relações e `graphify explain "<conceito>"` para conceitos específicos.
+  Esses comandos retornam um subgrafo delimitado, geralmente muito menor que
+  `GRAPH_REPORT.md` ou uma busca textual bruta.
+- Alterações pendentes em `graphify-out/` são esperadas após hooks ou atualizações
+  incrementais e não justificam ignorar o graphify. Ignore-o somente quando a
+  tarefa tratar de uma saída desatualizada ou incorreta do próprio grafo, ou
+  quando a pessoa usuária pedir isso explicitamente.
+- Quando `graphify-out/wiki/index.md` existir, use-o para navegação ampla em vez
+  de explorar diretamente os arquivos-fonte.
+- Leia `graphify-out/GRAPH_REPORT.md` apenas em revisões arquiteturais amplas ou
+  quando `query`, `path` e `explain` não trouxerem contexto suficiente.
+- Após modificar código, execute `graphify update .` para manter o grafo atual
+  (somente AST, sem custo de API).

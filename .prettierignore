@@ -1,3 +1,4 @@
 # Exceptions governed in config/format-baseline.json.
 docs/
+graphify-out/
 src/vendors/

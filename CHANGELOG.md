@@ -4,6 +4,11 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 ## [Unreleased]
 
+### Added
+
+- Grafo de conhecimento versionado, com consulta orientada a agentes e hook
+  portátil para manter a análise estrutural atualizada durante o desenvolvimento.
+
 ## [3.0.0-alpha.2] - 2026-09-12
 
 ### Added
