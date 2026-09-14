@@ -126,21 +126,14 @@ describe('BrailleGridView', () => {
         expect(within(grid).getAllByRole('gridcell')).toHaveLength(2)
         expect(
             within(grid).getByRole('gridcell', {
-                name: 'Linha 1, coluna 1',
+                name: 'Linha 1, coluna 1. Pontos elevados: 1. Sem vestígios de pontos apagados.',
             }),
-        ).toContainElement(
-            within(grid).getByRole('img', {
-                name: 'Pontos elevados: 1. Sem vestígios de pontos apagados.',
-            }),
-        )
+        ).toBeInTheDocument()
         expect(
             within(grid).getByRole('gridcell', {
-                name: 'Linha 1, coluna 2',
+                name: 'Linha 1, coluna 2. Posição nunca utilizada.',
             }),
-        ).toContainElement(
-            within(grid).getByRole('img', {
-                name: 'Posição nunca utilizada.',
-            }),
-        )
+        ).toBeInTheDocument()
+        expect(within(grid).queryAllByRole('img')).toHaveLength(0)
     })
 })

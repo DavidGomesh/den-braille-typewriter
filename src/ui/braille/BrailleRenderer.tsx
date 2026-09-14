@@ -193,13 +193,15 @@ export function BrailleGridView({
                         return (
                             <div
                                 role="gridcell"
-                                aria-label={`Linha ${row + 1}, coluna ${column + 1}`}
+                                aria-label={`Linha ${row + 1}, coluna ${column + 1}. ${describeCellImpression(impression)}`}
                                 key={column}
                             >
-                                <CellImpressionView
-                                    impression={impression}
-                                    options={options}
-                                />
+                                <span aria-hidden="true">
+                                    <CellImpressionView
+                                        impression={impression}
+                                        options={options}
+                                    />
+                                </span>
                             </div>
                         )
                     })}

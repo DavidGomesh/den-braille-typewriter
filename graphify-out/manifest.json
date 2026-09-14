@@ -1704,15 +1704,15 @@
     "semantic_hash": "4a83bc623acf107e260b2e5007d956db"
   },
   "src/ui/braille/BrailleRenderer.test.tsx": {
-    "mtime": 1789423187.0931747,
-    "seen": 1789423206.7863066,
-    "ast_hash": "b15ffa7696f36041b4366c0f20f6e198",
+    "mtime": 1789423311.1315794,
+    "seen": 1789423324.624725,
+    "ast_hash": "ddb9672b05fb59ef18ee91412f677718",
     "semantic_hash": ""
   },
   "src/ui/braille/BrailleRenderer.tsx": {
-    "mtime": 1789423195.536987,
-    "seen": 1789423206.78631,
-    "ast_hash": "e658d3e56c82eb8d18c7b7558af9ccf4",
+    "mtime": 1789423311.02458,
+    "seen": 1789423324.6247282,
+    "ast_hash": "dc309b6108ecc288ff25cd92604dde35",
     "semantic_hash": ""
   },
   "docs/architecture/braille-renderer-alpha-3.md": {
