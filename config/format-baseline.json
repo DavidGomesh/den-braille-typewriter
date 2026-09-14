@@ -11,6 +11,15 @@
             "trackingIssue": "#2"
         },
         {
+            "pattern": "graphify-out/",
+            "reason": "Os artefatos são regenerados pelo Graphify e a formatação posterior produz diffs extensos e instáveis.",
+            "risk": "Os artefatos gerados permanecem fora da verificação automática de formato do projeto.",
+            "owner": "@DavidGomesh",
+            "expiresOn": "2026-12-31",
+            "approvedBy": "@DavidGomesh",
+            "trackingIssue": "#85"
+        },
+        {
             "pattern": "src/vendors/",
             "reason": "O diretório contém código de terceiros minificado que não deve ser reformatado localmente.",
             "risk": "O conteúdo de terceiros permanece fora da verificação de formato até ser removido com o legado.",
