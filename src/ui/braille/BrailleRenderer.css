@@ -1,0 +1,108 @@
+.braille-cell {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--braille-pitch-x) * 2 + var(--braille-padding-x));
+    height: calc(var(--braille-pitch-y) * 3 + var(--braille-padding-y));
+    flex: none;
+    background: Canvas;
+    color: CanvasText;
+}
+
+.braille-cell[data-style='soft-frame'] {
+    border: max(2px, calc(2px * var(--braille-scale))) solid #606060;
+    border-radius: calc(16px * var(--braille-scale));
+}
+
+.braille-cell--unused[data-style='soft-frame'] {
+    border-style: dashed;
+}
+
+.braille-cell__dots {
+    display: grid;
+    grid-template-columns: repeat(2, var(--braille-pitch-x));
+    grid-template-rows: repeat(3, var(--braille-pitch-y));
+}
+
+.braille-cell__slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.braille-cell__dot {
+    display: flex;
+    width: var(--braille-inactive-size);
+    height: var(--braille-inactive-size);
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #767676;
+    font:
+        600 var(--braille-number-size) / 1 system-ui,
+        sans-serif;
+}
+
+.braille-cell__dot[data-dot-state='raised'],
+.braille-cell__dot[data-dot-state='erased'],
+.braille-cell[data-didactic='true'] .braille-cell__dot {
+    width: var(--braille-raised-size);
+    height: var(--braille-raised-size);
+}
+
+.braille-cell__dot[data-dot-state='raised'] {
+    background: #111;
+    color: #fff;
+}
+
+.braille-cell__dot[data-dot-state='erased'] {
+    border: max(2px, calc(2px * var(--braille-scale))) solid #555;
+    background: transparent;
+}
+
+.braille-cell[data-didactic='true']
+    .braille-cell__dot[data-dot-state='inactive'] {
+    border: max(1px, calc(1px * var(--braille-scale))) solid #555;
+    background: transparent;
+}
+
+.braille-cell[data-number-font='monospace'] .braille-cell__dot {
+    font-family: ui-monospace, 'DejaVu Sans Mono', Consolas, monospace;
+}
+
+.braille-grid {
+    display: grid;
+    width: max-content;
+    max-width: 100%;
+    row-gap: var(--braille-line-gap);
+    overflow: auto;
+}
+
+.braille-grid__row {
+    display: grid;
+    grid-template-columns: repeat(var(--braille-grid-columns), max-content);
+    column-gap: var(--braille-cell-gap);
+}
+
+@media (forced-colors: active) {
+    .braille-cell,
+    .braille-cell__dot {
+        forced-color-adjust: auto;
+    }
+
+    .braille-cell__dot[data-dot-state='raised'] {
+        border: 2px solid CanvasText;
+        background: CanvasText;
+        color: Canvas;
+    }
+
+    .braille-cell__dot[data-dot-state='erased'] {
+        border: 2px dashed CanvasText;
+    }
+
+    .braille-cell__dot[data-dot-state='inactive'] {
+        border: 1px solid CanvasText;
+        background: Canvas;
+    }
+}

@@ -6,3 +6,12 @@ export {
 } from './session/legacyFreeModeKeyboard'
 export { default as AccessibleFeedback } from './feedback/AccessibleFeedback'
 export type { AccessibleFeedbackProps } from './feedback/AccessibleFeedback'
+export {
+    BrailleGridView,
+    CellImpressionView,
+    createDefaultBraillePresentationOptions,
+    describeCellImpression,
+    type BrailleGridViewProps,
+    type BraillePresentationOptions,
+    type CellImpressionViewProps,
+} from './braille/BrailleRenderer'

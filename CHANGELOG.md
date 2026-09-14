@@ -8,6 +8,8 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 
 - Grafo de conhecimento versionado, com consulta orientada a agentes e hook
   portátil para manter a análise estrutural atualizada durante o desenvolvimento.
+- Renderer HTML/CSS de Impressões de cela e Grade Braille, com estados
+  acessíveis, estilos e geometria configuráveis e padrões restauráveis.
 
 ## [3.0.0-alpha.2] - 2026-09-12
 
