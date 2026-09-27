@@ -22,6 +22,7 @@ export default function Home() {
     }
 
     useEffect(() => {
+        document.title = 'Máquina Den Braille'
         playMainMenuAudio()
         return stopAllAudio
     }, [playMainMenuAudio, stopAllAudio])
@@ -49,6 +50,14 @@ export default function Home() {
                             style={{ width: '300px' }}
                         >
                             Modo desafio
+                        </Link>
+
+                        <Link
+                            to="/braille-renderer"
+                            className="btn btn-outline-primary btn-lg fw-bold mb-2"
+                            style={{ width: '300px' }}
+                        >
+                            Ver celas Braille
                         </Link>
 
                         {/* <button

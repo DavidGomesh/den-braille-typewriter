@@ -161,7 +161,7 @@
     ],
     "narrative": {
         "northStar": "Caderno de prática",
-        "overview": "A interface atual é didática e informal. Fundo branco, texto em grafite, letras com aparência manuscrita e bordas levemente irregulares lembram uma página de exercícios. A composição é espaçosa: poucas ações aparecem de cada vez, e a área de produção Braille ocupa a maior parte do Modo livre e do Modo desafio.\n\nEssa identidade vem do Bootswatch Sketchy versionado em `src/vendors/bootstrap/css/bootstrap.min.css`, com ajustes locais. É a linguagem visível nas telas atuais, não uma aprovação de todos os limites herdados de layout ou acessibilidade. O renderer HTML/CSS de Impressões de cela, já implementado em `src/ui/braille/`, ainda não está integrado às páginas e possui geometria própria.",
+        "overview": "A interface atual é didática e informal. Fundo branco, texto em grafite, letras com aparência manuscrita e bordas levemente irregulares lembram uma página de exercícios. A composição é espaçosa: poucas ações aparecem de cada vez, e a área de produção Braille ocupa a maior parte do Modo livre e do Modo desafio.\n\nEssa identidade vem do Bootswatch Sketchy versionado em `src/vendors/bootstrap/css/bootstrap.min.css`, com ajustes locais. É a linguagem visível nas telas atuais, não uma aprovação de todos os limites herdados de layout ou acessibilidade. O renderer HTML/CSS de Impressões de cela, implementado em `src/ui/braille/`, aparece na página de demonstração, mas ainda não está integrado aos modos de digitação e possui geometria própria.",
         "keyCharacteristics": [
             "Papel branco e grafite, com cor usada sobretudo para indicar estado.",
             "Tipografia de esboço em títulos e manuscrita no texto de interface.",

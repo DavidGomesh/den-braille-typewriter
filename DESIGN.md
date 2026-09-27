@@ -81,7 +81,7 @@ components:
 
 A interface atual é didática e informal. Fundo branco, texto em grafite, letras com aparência manuscrita e bordas levemente irregulares lembram uma página de exercícios. A composição é espaçosa: poucas ações aparecem de cada vez, e a área de produção Braille ocupa a maior parte do Modo livre e do Modo desafio.
 
-Essa identidade vem do Bootswatch Sketchy versionado em `src/vendors/bootstrap/css/bootstrap.min.css`, com ajustes locais. É a linguagem visível nas telas atuais, não uma aprovação de todos os limites herdados de layout ou acessibilidade. O renderer HTML/CSS de Impressões de cela, já implementado em `src/ui/braille/`, ainda não está integrado às páginas e possui geometria própria.
+Essa identidade vem do Bootswatch Sketchy versionado em `src/vendors/bootstrap/css/bootstrap.min.css`, com ajustes locais. É a linguagem visível nas telas atuais, não uma aprovação de todos os limites herdados de layout ou acessibilidade. O renderer HTML/CSS de Impressões de cela, implementado em `src/ui/braille/`, aparece na página de demonstração, mas ainda não está integrado aos modos de digitação e possui geometria própria.
 
 **Key Characteristics:**
 
@@ -129,7 +129,7 @@ A visualização Braille legada do campo de saída usa a fonte local Braille ASC
 
 A página inicial centraliza título e duas ações empilhadas. Modo livre e Modo desafio centralizam título, instruções, área de produção e representação do teclado em uma coluna. O conteúdo usa o contêiner Bootstrap, que chega a `1320px` em telas largas. A área de saída tem altura fixa de `400px` e `3rem` de preenchimento; as teclas de ponto medem `75 × 75px`, enquanto a de espaço mede `145 × 75px`.
 
-As páginas atuais usam regiões com `100vh` e uma linha de instruções extensa. Esses valores descrevem a implementação observada, mas não são regra para novas telas: zoom e refluxo devem continuar obedecendo aos requisitos de acessibilidade do produto.
+As páginas legadas usam regiões com `100vh` e uma linha de instruções extensa. Esses valores descrevem a implementação observada, mas não são regra para novas telas: zoom e refluxo devem continuar obedecendo aos requisitos de acessibilidade do produto.
 
 ## Elevation & Depth
 
@@ -159,7 +159,7 @@ Os pontos são círculos contornados; espaço é uma cápsula; Enter e Retrocess
 
 ### Impressão de cela nova
 
-O componente isolado em `src/ui/braille/` desenha pontos elevados, inativos e vestígios em HTML/CSS. Seu estilo Essencial é o padrão e Moldura suave é alternativa. Ele ainda não é visível nas telas da aplicação; sua geometria aprovada está documentada em `docs/architecture/braille-renderer-alpha-3.md`.
+O componente em `src/ui/braille/` desenha pontos elevados, inativos e vestígios em HTML/CSS. Seu estilo Essencial é o padrão e Moldura suave é alternativa. Ele é visível na página de demonstração, mas ainda não nos modos de digitação; sua geometria aprovada está documentada em `docs/architecture/braille-renderer-alpha-3.md`.
 
 ## Do's and Don'ts
 

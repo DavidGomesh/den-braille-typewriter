@@ -6,7 +6,7 @@ import './styles/index.css'
 import './vendors/bootstrap/css/bootstrap.min.css'
 
 import Home from './views/Home'
-import { FreePage } from './app/public'
+import { BrailleRendererDemoPage, FreePage } from './app/public'
 
 import 'bootstrap/dist/js/bootstrap.bundle.js'
 import AudioProvider from './providers/AudioProvider'
@@ -20,6 +20,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                     <Route path="/" Component={Home} />
                     <Route path="/free" Component={FreePage} />
                     <Route path="/lessons" Component={Challenge} />
+                    <Route
+                        path="/braille-renderer"
+                        Component={BrailleRendererDemoPage}
+                    />
                 </Routes>
             </HashRouter>
         </AudioProvider>
