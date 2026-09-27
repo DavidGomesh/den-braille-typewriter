@@ -1,0 +1,194 @@
+{
+    "schemaVersion": 2,
+    "generatedAt": "2026-09-27T21:27:02Z",
+    "title": "Design System: Máquina Den Braille",
+    "extensions": {
+        "colorMeta": {
+            "graphite": {
+                "role": "primary",
+                "displayName": "Grafite",
+                "canonical": "#333333",
+                "tonalRamp": [
+                    "#171717",
+                    "#333333",
+                    "#555555",
+                    "#777777",
+                    "#999999",
+                    "#bdbdbd",
+                    "#dedede",
+                    "#ffffff"
+                ]
+            },
+            "graphite-muted": {
+                "role": "primary",
+                "displayName": "Grafite secundário",
+                "canonical": "#555555",
+                "tonalRamp": [
+                    "#171717",
+                    "#333333",
+                    "#555555",
+                    "#777777",
+                    "#999999",
+                    "#bdbdbd",
+                    "#dedede",
+                    "#ffffff"
+                ]
+            },
+            "ink": {
+                "role": "neutral",
+                "displayName": "Tinta",
+                "canonical": "#212529",
+                "tonalRamp": [
+                    "#14171a",
+                    "#212529",
+                    "#41474d",
+                    "#626a72",
+                    "#858d94",
+                    "#aab0b5",
+                    "#d1d5d8",
+                    "#f5f6f7"
+                ]
+            },
+            "paper": {
+                "role": "neutral",
+                "displayName": "Papel branco",
+                "canonical": "#ffffff",
+                "tonalRamp": [
+                    "#171717",
+                    "#333333",
+                    "#555555",
+                    "#777777",
+                    "#999999",
+                    "#bdbdbd",
+                    "#dedede",
+                    "#ffffff"
+                ]
+            },
+            "paper-soft": {
+                "role": "neutral",
+                "displayName": "Papel suave",
+                "canonical": "#f7f7f9",
+                "tonalRamp": [
+                    "#171719",
+                    "#333337",
+                    "#55555b",
+                    "#77777f",
+                    "#9999a2",
+                    "#bbbbc3",
+                    "#dedee3",
+                    "#f7f7f9"
+                ]
+            },
+            "rule": {
+                "role": "neutral",
+                "displayName": "Linha discreta",
+                "canonical": "#dee2e6",
+                "tonalRamp": [
+                    "#171b1f",
+                    "#30363b",
+                    "#4e565e",
+                    "#6d7780",
+                    "#9099a2",
+                    "#b5bdc4",
+                    "#dee2e6",
+                    "#f8f9fa"
+                ]
+            }
+        },
+        "typographyMeta": {
+            "display": {
+                "displayName": "Display",
+                "purpose": "Título da página inicial."
+            },
+            "headline": {
+                "displayName": "Headline",
+                "purpose": "Nome dos modos de digitação."
+            },
+            "body": {
+                "displayName": "Body",
+                "purpose": "Instruções e estados."
+            },
+            "label": {
+                "displayName": "Label",
+                "purpose": "Ações grandes do menu."
+            }
+        },
+        "shadows": [],
+        "motion": [],
+        "breakpoints": [{ "name": "xl", "value": "1200px" }]
+    },
+    "components": [
+        {
+            "name": "Link do menu",
+            "kind": "nav",
+            "refersTo": "menu-link",
+            "description": "Acesso principal a uma experiência do simulador.",
+            "html": "<a class=\"ds-menu-link\" href=\"#\">Modo livre</a>",
+            "css": ".ds-menu-link { display: inline-block; width: 300px; padding: 8px 16px; border: 2px solid #333; border-radius: 55px 225px 15px 25px / 25px 25px 35px 355px; background: #fff; color: #333; font: 700 20px/1.5 Neucha, system-ui, sans-serif; text-align: center; text-decoration: none; } .ds-menu-link:hover, .ds-menu-link:focus-visible { background: #333; color: #fff; outline: 3px solid #333; outline-offset: 3px; }"
+        },
+        {
+            "name": "Link do menu em destaque",
+            "kind": "nav",
+            "refersTo": "menu-link-hover",
+            "description": "Estado preenchido do acesso principal.",
+            "html": "<a class=\"ds-menu-link-active\" href=\"#\">Modo desafio</a>",
+            "css": ".ds-menu-link-active { display: inline-block; width: 300px; padding: 8px 16px; border: 2px solid #333; border-radius: 55px 225px 15px 25px / 25px 25px 35px 355px; background: #333; color: #fff; font: 700 20px/1.5 Neucha, system-ui, sans-serif; text-align: center; text-decoration: none; } .ds-menu-link-active:focus-visible { outline: 3px solid #333; outline-offset: 3px; }"
+        },
+        {
+            "name": "Área de produção",
+            "kind": "input",
+            "refersTo": "output-field",
+            "description": "Campo amplo que apresenta a produção Braille no caminho atual.",
+            "html": "<textarea class=\"ds-output\" aria-label=\"Saída de Celas Braille digitadas\" readonly>⠁⠃⠉</textarea>",
+            "css": ".ds-output { box-sizing: border-box; display: block; width: 100%; height: 400px; padding: 48px; border: 2px solid #333; border-radius: 55px 225px 15px 25px / 25px 25px 35px 355px; background: #fff; color: #212529; font: 700 32px/1.5 Neucha, system-ui, sans-serif; } .ds-output:focus-visible { outline: 3px solid #333; outline-offset: 3px; }"
+        },
+        {
+            "name": "Tecla de ponto",
+            "kind": "custom",
+            "refersTo": "keyboard-dot",
+            "description": "Representação visual de um controle de ponto da máquina.",
+            "html": "<span class=\"ds-key-dot\" aria-hidden=\"true\">F</span>",
+            "css": ".ds-key-dot { display: inline-flex; width: 75px; height: 75px; align-items: center; justify-content: center; border: 2px solid #555; border-radius: 50%; background: #fff; color: #212529; font: 700 20px/1.5 Neucha, system-ui, sans-serif; } .ds-key-dot[data-pressed=\"true\"] { background: #555; color: #fff; }"
+        },
+        {
+            "name": "Tecla de espaço",
+            "kind": "custom",
+            "refersTo": "keyboard-space",
+            "description": "Representação visual larga do controle de espaço da máquina.",
+            "html": "<span class=\"ds-key-space\" aria-hidden=\"true\">−</span>",
+            "css": ".ds-key-space { display: inline-flex; width: 145px; height: 75px; align-items: center; justify-content: center; border: 2px solid #555; border-radius: 50rem; background: #fff; color: #212529; font: 700 20px/1.5 Neucha, system-ui, sans-serif; } .ds-key-space[data-pressed=\"true\"] { background: #555; color: #fff; }"
+        }
+    ],
+    "narrative": {
+        "northStar": "Caderno de prática",
+        "overview": "A interface atual é didática e informal. Fundo branco, texto em grafite, letras com aparência manuscrita e bordas levemente irregulares lembram uma página de exercícios. A composição é espaçosa: poucas ações aparecem de cada vez, e a área de produção Braille ocupa a maior parte do Modo livre e do Modo desafio.\n\nEssa identidade vem do Bootswatch Sketchy versionado em `src/vendors/bootstrap/css/bootstrap.min.css`, com ajustes locais. É a linguagem visível nas telas atuais, não uma aprovação de todos os limites herdados de layout ou acessibilidade. O renderer HTML/CSS de Impressões de cela está em uma branch de funcionalidade separada; ainda não integra esta branch nem as páginas e possui geometria própria.",
+        "keyCharacteristics": [
+            "Papel branco e grafite, com cor usada sobretudo para indicar estado.",
+            "Tipografia de esboço em títulos e manuscrita no texto de interface.",
+            "Contornos irregulares em ações e área de escrita; teclas da máquina com formas reconhecíveis.",
+            "Composição centrada na tarefa de produzir Braille."
+        ],
+        "rules": [
+            {
+                "name": "The Papel e Grafite Rule",
+                "body": "A ação e o conteúdo se distinguem por texto, preenchimento e contorno; não atribua significado somente à cor.",
+                "section": "colors"
+            },
+            {
+                "name": "The Contorno Primeiro Rule",
+                "body": "Use o traço para delimitar superfícies e ações; não adicione elevação onde o desenho atual é plano.",
+                "section": "elevation"
+            }
+        ],
+        "dos": [
+            "**Do** manter texto e contornos legíveis sobre papel branco, usando os valores observados como ponto de partida.",
+            "**Do** preservar nomes, estados, foco e ordem semântica ao compor novas telas.",
+            "**Do** tratar a área de produção como centro da tarefa e manter instruções próximas da ação correspondente."
+        ],
+        "donts": [
+            "**Don't** usar a fonte Braille ASCII como base de novos componentes de Impressão de cela.",
+            "**Don't** tratar os tokens disponíveis no Bootstrap como padrões visuais já adotados pela aplicação.",
+            "**Don't** reproduzir alturas fixas ou linhas sem refluxo quando impedirem zoom, leitura ou operação por teclado."
+        ]
+    }
+}
