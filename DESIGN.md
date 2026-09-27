@@ -81,7 +81,7 @@ components:
 
 A interface atual é didática e informal. Fundo branco, texto em grafite, letras com aparência manuscrita e bordas levemente irregulares lembram uma página de exercícios. A composição é espaçosa: poucas ações aparecem de cada vez, e a área de produção Braille ocupa a maior parte do Modo livre e do Modo desafio.
 
-Essa identidade vem do Bootswatch Sketchy versionado em `src/vendors/bootstrap/css/bootstrap.min.css`, com ajustes locais. É a linguagem visível nas telas atuais, não uma aprovação de todos os limites herdados de layout ou acessibilidade. O renderer HTML/CSS de Impressões de cela está em uma branch de funcionalidade separada; ainda não integra esta branch nem as páginas e possui geometria própria.
+Essa identidade vem do Bootswatch Sketchy versionado em `src/vendors/bootstrap/css/bootstrap.min.css`, com ajustes locais. É a linguagem visível nas telas atuais, não uma aprovação de todos os limites herdados de layout ou acessibilidade. O renderer HTML/CSS de Impressões de cela, já implementado em `src/ui/braille/`, ainda não está integrado às páginas e possui geometria própria.
 
 **Key Characteristics:**
 
@@ -159,7 +159,7 @@ Os pontos são círculos contornados; espaço é uma cápsula; Enter e Retrocess
 
 ### Impressão de cela nova
 
-O componente em desenvolvimento numa branch de funcionalidade desenha pontos elevados, inativos e vestígios em HTML/CSS. Seu estilo Essencial é o padrão e Moldura suave é alternativa. Ele ainda não está nesta branch nem é visível nas telas da aplicação.
+O componente isolado em `src/ui/braille/` desenha pontos elevados, inativos e vestígios em HTML/CSS. Seu estilo Essencial é o padrão e Moldura suave é alternativa. Ele ainda não é visível nas telas da aplicação; sua geometria aprovada está documentada em `docs/architecture/braille-renderer-alpha-3.md`.
 
 ## Do's and Don'ts
 
