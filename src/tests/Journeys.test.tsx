@@ -117,9 +117,13 @@ test('home speaks menu labels without recorded speech files', async () => {
 
     const freeMode = screen.getByRole('link', { name: 'Modo livre' })
     const challengeMode = screen.getByRole('link', { name: 'Modo desafio' })
+    const rendererDemo = screen.getByRole('link', {
+        name: 'Ver celas Braille',
+    })
 
     expect(freeMode).toHaveAttribute('href', '/free')
     expect(challengeMode).toHaveAttribute('href', '/lessons')
+    expect(rendererDemo).toHaveAttribute('href', '/braille-renderer')
 
     fireEvent.focus(freeMode)
     fireEvent.focus(challengeMode)

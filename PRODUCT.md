@@ -28,7 +28,7 @@ A prática é organizada em torno de controles e operações de uma máquina Bra
 ## Capabilities and Constraints
 
 - O Documento Braille é a fonte de verdade da produção. A interpretação textual é derivada e contextual.
-- O renderer HTML/CSS de Impressões de cela está em desenvolvimento numa branch de funcionalidade; ainda não integra esta branch nem as páginas da aplicação.
+- O renderer HTML/CSS de Impressões de cela está implementado na capacidade visual e aparece na página de demonstração; ainda não está ligado aos modos de digitação.
 - Preferências do simulador persistem entre Sessões de digitação; Requisitos da experiência podem substituí-las temporariamente sem alterar as escolhas permanentes.
 - A captura de acordes por teclado físico pertence a uma região focada e identificável. Toque e ponteiro não fazem parte da entrada Braille modernizada atual.
 - O GitHub Pages é o destino web atual; a arquitetura não depende dele para as regras do produto.

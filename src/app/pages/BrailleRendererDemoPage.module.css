@@ -1,0 +1,316 @@
+.page {
+    height: auto;
+    min-height: 100vh;
+    background: #fff;
+    color: #212529;
+    font-family: Neucha, system-ui, sans-serif;
+}
+
+.shell {
+    width: min(100% - 2rem, 1220px);
+    margin-inline: auto;
+    padding-block: 2rem 5rem;
+}
+
+.backLink {
+    display: inline-block;
+    padding: 0.35rem 0.7rem;
+    border: 2px solid #333;
+    border-radius: 55px 225px 15px 25px / 25px 25px 35px 355px;
+    color: #333;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.backLink:hover {
+    background: #333;
+    color: #fff;
+}
+
+.intro {
+    max-width: 68ch;
+    margin-block: 2.5rem 2.25rem;
+}
+
+.intro h1 {
+    margin-bottom: 0.55rem;
+    font-family: 'Cabin Sketch', cursive;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 1.1;
+}
+
+.intro h1:focus {
+    outline: none;
+}
+
+.intro p {
+    max-width: 65ch;
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+.workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+    gap: 2rem;
+    align-items: start;
+}
+
+.preview,
+.controls {
+    min-width: 0;
+}
+
+.sectionHeading {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.sectionHeading h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    line-height: 1.15;
+}
+
+.sectionHeading p,
+.sectionHeading span {
+    margin: 0;
+    color: #555;
+}
+
+.previewStage {
+    display: grid;
+    min-height: 370px;
+    place-items: center;
+    overflow: auto;
+    padding: 2rem;
+    border: 2px solid #333;
+    border-radius: 55px 225px 15px 25px / 25px 25px 35px 355px;
+}
+
+.description {
+    min-height: 3rem;
+    margin: 0.8rem 0 0;
+    font-size: 1.25rem;
+}
+
+.controls {
+    padding: 1.25rem;
+    border: 2px solid #333;
+    border-radius: 25px 35px 15px 25px / 35px 25px 25px 15px;
+}
+
+.resetButton {
+    border: 0;
+    background: none;
+    color: #333;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.resetButton:hover {
+    color: #212529;
+}
+
+.dotFieldset,
+.styleFieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.dotFieldset legend,
+.styleFieldset legend {
+    float: none;
+    width: auto;
+    margin-bottom: 0.65rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.dotControls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.dotControl,
+.selectControl {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.dotControl select,
+.selectControl select {
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0.3rem 0.5rem;
+    border: 2px solid #555;
+    border-radius: 15px 25px 15px 25px;
+    background: #fff;
+    color: #212529;
+}
+
+.styleFieldset {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 1.25rem;
+}
+
+.styleFieldset legend {
+    flex-basis: 100%;
+}
+
+.styleFieldset label,
+.checkControl {
+    display: inline-flex;
+    gap: 0.7rem;
+    align-items: center;
+}
+
+.styleFieldset input,
+.checkControl input {
+    flex: none;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin: 0;
+    accent-color: #333;
+}
+
+.optionControls {
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 1.2rem;
+}
+
+.rangeControl {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.rangeControl span {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.rangeControl output {
+    font-variant-numeric: tabular-nums;
+}
+
+.rangeControl input {
+    width: 100%;
+    accent-color: #333;
+}
+
+.examples {
+    margin-top: 3.5rem;
+}
+
+.exampleList {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    border-block: 2px solid #333;
+}
+
+.example {
+    min-width: 0;
+    padding: 1.4rem 1rem;
+}
+
+.example + .example {
+    border-left: 1px solid #dee2e6;
+}
+
+.exampleCell {
+    display: flex;
+    min-height: 135px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.8rem;
+}
+
+.example h3 {
+    margin-bottom: 0.3rem;
+    font-size: 1.25rem;
+}
+
+.example p {
+    margin: 0;
+    color: #555;
+}
+
+.page :where(a, button, input, select):focus-visible {
+    outline: 3px solid #333;
+    outline-offset: 3px;
+}
+
+.page ::selection {
+    background: #333;
+    color: #fff;
+}
+
+@media (max-width: 900px) {
+    .workbench {
+        grid-template-columns: 1fr;
+    }
+
+    .exampleList {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .example:nth-child(4) {
+        border-left: 0;
+    }
+
+    .example:nth-child(n + 4) {
+        border-top: 1px solid #dee2e6;
+    }
+}
+
+@media (max-width: 560px) {
+    .shell {
+        width: min(100% - 1.5rem, 1220px);
+        padding-block: 1.25rem 3rem;
+    }
+
+    .intro {
+        margin-block: 2rem;
+    }
+
+    .intro h1 {
+        font-size: 2.5rem;
+    }
+
+    .previewStage {
+        min-height: 280px;
+    }
+
+    .exampleList {
+        grid-template-columns: 1fr;
+    }
+
+    .example {
+        display: grid;
+        grid-template-columns: 100px minmax(0, 1fr);
+        gap: 1rem;
+        align-items: center;
+        padding-inline: 0;
+        border-left: 0 !important;
+    }
+
+    .example + .example {
+        border-top: 1px solid #dee2e6;
+    }
+
+    .exampleCell {
+        margin-bottom: 0;
+    }
+}
