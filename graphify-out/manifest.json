@@ -24,9 +24,9 @@
     "semantic_hash": "527fb7ee2dbb3ac594fdc15613e08faa"
   },
   "config/format-baseline.json": {
-    "mtime": 1789422623.6702907,
-    "seen": 1789422957.6109502,
-    "ast_hash": "3dead828fb95c0bd9f7cfb0cc940277d",
+    "mtime": 1790601811.502369,
+    "seen": 1790601824.7083535,
+    "ast_hash": "6802f9fee94f0386263df1039d46f4b9",
     "semantic_hash": ""
   },
   "config/lint-baseline.json": {
@@ -138,10 +138,10 @@
     "semantic_hash": "5289a2f9adff6fb0a3d7f265579a8cfb"
   },
   "scripts/quality-guardrails-policy.test.mjs": {
-    "mtime": 1788898692.3160682,
-    "seen": 1789420641.6022317,
-    "ast_hash": "76422de7a675a7412f1509c444d89e30",
-    "semantic_hash": "76422de7a675a7412f1509c444d89e30"
+    "mtime": 1790601811.5433693,
+    "seen": 1790601824.70838,
+    "ast_hash": "2de2c4b97e135f1bbd8cf6cc86c00b8e",
+    "semantic_hash": ""
   },
   "scripts/react-version-policy.test.mjs": {
     "mtime": 1788898692.3160682,
@@ -570,9 +570,9 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1790545659.1801069,
-    "seen": 1790545951.76515,
-    "ast_hash": "ca59d8393b8e18bb87ef6c922688cc4d",
+    "mtime": 1790601811.62337,
+    "seen": 1790601824.7084856,
+    "ast_hash": "574d8a840be3da80ee0d560152af0cbb",
     "semantic_hash": ""
   },
   "CONTEXT.md": {
@@ -582,10 +582,10 @@
     "semantic_hash": "9e5a961fc8d73fb3b3f9ad7ba7d4b9e4"
   },
   "README.md": {
-    "mtime": 1788879512.0578196,
-    "seen": 1789420641.602405,
-    "ast_hash": "1121e5000654801aba1e8e8fd89b0395",
-    "semantic_hash": "1121e5000654801aba1e8e8fd89b0395"
+    "mtime": 1790601811.5843697,
+    "seen": 1790601824.7084908,
+    "ast_hash": "e771f0ecc552ffb83218156d1195fa94",
+    "semantic_hash": ""
   },
   "docs/adr/0001-motor-braille-como-transicao-pura.md": {
     "mtime": 1787961568.0391788,

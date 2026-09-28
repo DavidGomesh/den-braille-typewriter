@@ -12,10 +12,10 @@
         },
         {
             "pattern": "graphify-out/",
-            "reason": "Os artefatos são regenerados pelo Graphify e a formatação posterior produz diffs extensos e instáveis.",
+            "policy": "generated-artifact",
+            "reason": "O Graphify é a fonte do formato dos artefatos versionados; a formatação posterior produz diffs extensos e instáveis.",
             "risk": "Os artefatos gerados permanecem fora da verificação automática de formato do projeto.",
             "owner": "@DavidGomesh",
-            "expiresOn": "2026-12-31",
             "approvedBy": "@DavidGomesh",
             "trackingIssue": "#85"
         },
