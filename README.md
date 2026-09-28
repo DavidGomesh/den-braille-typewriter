@@ -46,7 +46,12 @@ Executa a suíte Vitest em modo interativo.
 
 Verifica a formatação com Prettier sem modificar arquivos. Documentos de
 arquitetura e pesquisa, fontes e código de terceiros permanecem fora desse
-guardrail.
+guardrail. Os artefatos versionados em `graphify-out/` seguem permanentemente o
+formato emitido pelo Graphify: após `graphify update .`, mantenha a saída gerada
+sem aplicar Prettier. Isso evita diffs de formatação que seriam refeitos na
+próxima geração. A exclusão específica está registrada em
+`config/format-baseline.json`; ela só deve ser retirada se o próprio Graphify
+passar a emitir artefatos estáveis e compatíveis com a configuração do projeto.
 
 ### `npm run lint`
 

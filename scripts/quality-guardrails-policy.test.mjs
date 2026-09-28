@@ -45,9 +45,15 @@ function assertGovernedException(exception, source) {
     assert.match(exception.reason, /\S/)
     assert.match(exception.risk, /\S/)
     assert.match(exception.owner, /^@\S+/)
-    assert.match(exception.expiresOn, /^\d{4}-\d{2}-\d{2}$/)
     assert.match(exception.approvedBy, /^@\S+/)
     assert.match(exception.trackingIssue, /^#\d+$/)
+    if (exception.policy === 'generated-artifact') {
+        assert.equal(source, 'formatting:graphify-out/')
+        assert.equal(exception.expiresOn, undefined)
+        return
+    }
+    assert.equal(exception.policy, undefined)
+    assert.match(exception.expiresOn, /^\d{4}-\d{2}-\d{2}$/)
     assert.ok(
         Date.parse(`${exception.expiresOn}T23:59:59Z`) >= Date.now(),
         `${source} has an expired exception`,

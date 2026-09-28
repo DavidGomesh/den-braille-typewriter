@@ -13,6 +13,11 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo. As
 - Página de demonstração visual do renderer Braille, com comparação de estados,
   ajustes interativos e acesso pelo menu inicial.
 
+### Changed
+
+- Artefatos gerados pelo Graphify seguem permanentemente o formato do gerador,
+  sem reformatação por Prettier após cada atualização do grafo.
+
 ## [3.0.0-alpha.2] - 2026-09-12
 
 ### Added
